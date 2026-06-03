@@ -5,22 +5,688 @@
   --foreground: #171717;
 }
 
+@theme {
+  --color-primary: #0483e2;
+  --color-secondary: #02345a;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-text-black: #172b4d;
+
+  --font-sans: var(--font-jarkata); /* fixed */
   --font-mono: var(--font-geist-mono);
+  --font-inter: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ededed;
+    --foreground: #0a0a0a;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jarkata);
+}
+.mk {
+  background-color: #02345a;
+}
+
+/* ── TipTap / ProseMirror editor styles ────────────────────────────────────── */
+.prose-editor {
+  outline: none;
+  min-height: 420px;
+  line-height: 1.75;
+  color: #111827;
+}
+.prose-editor p.is-editor-empty:first-child::before {
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.prose-editor h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 1.25rem 0 0.5rem;
+  color: #02345a;
+}
+.prose-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.25rem 0 0.5rem;
+  color: #02345a;
+}
+.prose-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 1rem 0 0.4rem;
+  color: #02345a;
+}
+.prose-editor h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.4rem;
+  color: #02345a;
+}
+.prose-editor p {
+  margin: 0.75rem 0;
+}
+.prose-editor strong {
+  font-weight: 700;
+}
+.prose-editor em {
+  font-style: italic;
+}
+.prose-editor u {
+  text-decoration: underline;
+}
+.prose-editor s {
+  text-decoration: line-through;
+}
+.prose-editor a {
+  color: #0483e2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.prose-editor a:hover {
+  color: #0266b0;
+}
+.prose-editor ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+.prose-editor ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+.prose-editor li {
+  margin: 0.3rem 0;
+}
+.prose-editor blockquote {
+  border-left: 4px solid #0483e2;
+  padding: 0.5rem 1.25rem;
+  margin: 1.25rem 0;
+  color: #4b5563;
+  font-style: italic;
+  background: #f0f7ff;
+  border-radius: 0 8px 8px 0;
+}
+.prose-editor pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose-editor code:not(pre code) {
+  background: #f1f5f9;
+  color: #e11d48;
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  font-family: var(--font-mono, monospace);
+}
+.prose-editor pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+.prose-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 1rem 0;
+  display: block;
+}
+.prose-editor hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 2rem 0;
+}
+.prose-editor mark {
+  border-radius: 3px;
+  padding: 0.05em 0.2em;
+}
+/* Tables */
+.prose-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.95rem;
+}
+.prose-editor table td,
+.prose-editor table th {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+  vertical-align: top;
+}
+.prose-editor table th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #374151;
+}
+.prose-editor table .selectedCell {
+  background: #dbeafe;
+}
+.prose-editor table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #0483e2;
+  cursor: col-resize;
+}
+/* Task list */
+.prose-editor ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.prose-editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.prose-editor ul[data-type="taskList"] li > label {
+  display: flex;
+  align-items: center;
+  margin-top: 0.2rem;
+}
+.prose-editor ul[data-type="taskList"] li > label input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
+  accent-color: #0483e2;
+  cursor: pointer;
+}
+.prose-editor ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+.prose-editor ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+/* YouTube iframe */
+.prose-editor div[data-youtube-video] {
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.25rem 0;
+}
+.prose-editor div[data-youtube-video] iframe {
+  width: 100%;
+  height: 360px;
+  border: none;
+  display: block;
+}
+/* Syntax highlighting — hljs tokens */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in {
+  color: #c084fc;
+}
+.hljs-string,
+.hljs-attr {
+  color: #86efac;
+}
+.hljs-number,
+.hljs-literal {
+  color: #fb923c;
+}
+.hljs-comment {
+  color: #64748b;
+  font-style: italic;
+}
+.hljs-function,
+.hljs-title {
+  color: #60a5fa;
+}
+.hljs-variable,
+.hljs-name {
+  color: #f1f5f9;
+}
+.hljs-tag {
+  color: #f87171;
+}
+/* ── Prose (public blog post) ───────────────────────────────────────────────── */
+.blog-prose {
+  line-height: 1.85;
+  color: #1f2937;
+  font-size: 1.0625rem;
+}
+.blog-prose h1,
+.blog-prose h2,
+.blog-prose h3,
+.blog-prose h4 {
+  color: #02345a;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 2rem 0 0.75rem;
+}
+.blog-prose h1 {
+  font-size: 2rem;
+}
+.blog-prose h2 {
+  font-size: 1.6rem;
+}
+.blog-prose h3 {
+  font-size: 1.3rem;
+}
+.blog-prose h4 {
+  font-size: 1.1rem;
+}
+.blog-prose p {
+  margin: 1.1rem 0;
+}
+.blog-prose a {
+  color: #0483e2;
+  text-decoration: underline;
+}
+.blog-prose a:hover {
+  color: #0266b0;
+}
+.blog-prose ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.blog-prose ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.blog-prose li {
+  margin: 0.4rem 0;
+}
+.blog-prose blockquote {
+  border-left: 4px solid #0483e2;
+  padding: 0.75rem 1.5rem;
+  margin: 1.5rem 0;
+  color: #4b5563;
+  font-style: italic;
+  background: #f0f7ff;
+  border-radius: 0 8px 8px 0;
+}
+.blog-prose pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.blog-prose code:not(pre code) {
+  background: #f1f5f9;
+  color: #e11d48;
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+}
+.blog-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 1.5rem auto;
+  display: block;
+}
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+.blog-prose table td,
+.blog-prose table th {
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem 0.9rem;
+}
+.blog-prose table th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+.blog-prose hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 2.5rem 0;
+}
+.blog-prose mark {
+  border-radius: 3px;
+  padding: 0.05em 0.2em;
+}
+.blog-prose ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.blog-prose ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.blog-prose ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+.blog-prose div[data-youtube-video] iframe {
+  width: 100%;
+  height: 360px;
+  border: none;
+  border-radius: 10px;
+  display: block;
+  margin: 1.5rem 0;
+}
+
+/* 🌀 Hero Blob Shape + Animation */
+.clip-hero-blob {
+  clip-path: polygon(
+    72% 0%,
+    100% 50%,
+    95% 55%,
+    80% 90%,
+    50% 100%,
+    20% 90%,
+    0% 60%,
+    5% 25%,
+    30% 20%
+  );
+  animation: heroBlobMorph 10s ease-in-out infinite;
+}
+
+@keyframes heroBlobMorph {
+  0% {
+    clip-path: polygon(
+      72% 0%,
+      100% 20%,
+      95% 55%,
+      80% 90%,
+      50% 100%,
+      20% 90%,
+      0% 60%,
+      5% 25%,
+      30% 5%
+    );
+  }
+  50% {
+    clip-path: polygon(
+      68% 3%,
+      98% 28%,
+      100% 60%,
+      82% 88%,
+      52% 100%,
+      18% 90%,
+      0% 62%,
+      6% 30%,
+      28% 8%
+    );
+  }
+  100% {
+    clip-path: polygon(
+      72% 0%,
+      100% 20%,
+      95% 55%,
+      80% 90%,
+      50% 100%,
+      20% 90%,
+      0% 60%,
+      5% 25%,
+      30% 5%
+    );
+  }
+}
+/* Add this to your globals.css file */
+
+.contact-hero-clip {
+  width: 450px;
+  height: 450px;
+  clip-path: path(
+    "M 450,225 Q 450,100 350,50 Q 250,0 150,50 Q 50,100 50,225 Q 50,350 150,400 Q 250,450 350,400 Q 400,375 425,325 L 450,450 L 0,450 L 0,0 L 450,0 Z"
+  );
+}
+
+@media (max-width: 768px) {
+  .contact-hero-clip {
+    width: 350px;
+    height: 350px;
+    clip-path: path(
+      "M 350,175 Q 350,75 275,40 Q 200,5 125,40 Q 50,75 50,175 Q 50,275 125,310 Q 200,345 275,310 Q 312,288 331,253 L 350,350 L 0,350 L 0,0 L 350,0 Z"
+    );
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Hero slider spring easing ─────────────────────────────────────────────── */
+/* Fallback: expo-out cubic-bezier for Safari / iOS which don't support linear() */
+:root {
+  --ease-spring-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Progressive enhancement: true spring with ~0.3% overshoot for Chrome / Firefox */
+@supports (animation-timing-function: linear(0, 1)) {
+  :root {
+    --ease-spring-out: linear(
+      0,
+      0.006 2.2%,
+      0.051 6.6%,
+      0.169 13.9%,
+      0.428 26.1%,
+      0.568 32.9%,
+      0.688 40%,
+      0.81 48.3%,
+      0.887 55.4%,
+      0.943 63.2%,
+      0.979 71.6%,
+      0.997 80.5%,
+      1.003 89.7%,
+      1.003 94.6%,
+      1
+    );
+  }
+}
+
+/* ── Hero slider enter / exit animations ───────────────────────────────────── */
+/* Text & CTA — clip-path wipe reveals from left to right (reading direction).
+   More editorial than a translate; the content "unveils" from behind an invisible
+   curtain rather than physically flying in. */
+@keyframes hero-enter-left {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+/* Image panels — sweep in from the right with a subtle scale spring */
+@keyframes hero-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(38px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Ken Burns idle — slow pan+zoom that runs continuously between transitions.
+   Applied to an inner wrapper inside the overflow:hidden image container so
+   the pan is clipped cleanly. `alternate` makes it breathe back and forth. */
+@keyframes hero-ken-burns {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.06) translate(-1.5%, -1%);
+  }
+}
+
+/* Floating cards — diagonal corner entries for a sense of depth */
+@keyframes hero-enter-nw {
+  from {
+    opacity: 0;
+    transform: translate(-18px, -18px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+@keyframes hero-enter-ne {
+  from {
+    opacity: 0;
+    transform: translate(18px, -18px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+@keyframes hero-enter-sw {
+  from {
+    opacity: 0;
+    transform: translate(-18px, 18px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Directional exits — old slide travels toward the side the new one enters from.
+   Forward (auto-advance): content exits left  → new content enters from right.
+   Backward (dot click):   content exits right → new content enters from left. */
+@keyframes hero-exit-left {
+  from {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(-60px) scale(0.97);
+  }
+}
+@keyframes hero-exit-right {
+  from {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(60px) scale(0.97);
+  }
+}
+
+/* Floating card idle bob — runs continuously after enter animation finishes.
+   Each card uses a different duration so they never sync up. */
+@keyframes hero-card-bob {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+/* Honour system-level reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  /* Strip all spatial movement; keep only opacity fades */
+  @keyframes hero-enter-left {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 0 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes hero-enter-right {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-enter-nw {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-enter-ne {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-enter-sw {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-exit-left {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes hero-exit-right {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes hero-card-bob {
+    from {
+    }
+    to {
+    }
+  } /* disabled */
+  @keyframes hero-ken-burns {
+    from {
+    }
+    to {
+    }
+  } /* disabled */
 }
