@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Fredoka, Nunito } from "next/font/google";
+import JsonLd from "@/components/common/json-ld";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 // Display: chunky, rounded, playful — used for headings & big friendly text.
 const fredoka = Fredoka({
@@ -44,20 +46,14 @@ export const metadata = {
     siteName: SITE_NAME,
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: SITE_NAME,
-      },
-    ],
+    // OG/Twitter images are supplied automatically by app/opengraph-image.js
+    // and app/twitter-image.js (Next.js file conventions), with correct
+    // absolute URLs derived from metadataBase.
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/og-image.png`],
     creator: "@bluesandsstem",
   },
   robots: {
@@ -80,12 +76,20 @@ export const metadata = {
   alternates: {
     canonical: SITE_URL,
   },
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
+  }),
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
-      <body>{children}</body>
+      <body>
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,6 +1,9 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://k12.bluesandstemlabs.com";
+import { SITE_URL } from "@/lib/seo";
 
 export default function robots() {
+  // A single wildcard rule that allows every well-behaved crawler — including
+  // AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc.) —
+  // to index the public site, while keeping admin/API/dev paths private.
   return {
     rules: [
       {
@@ -10,5 +13,6 @@ export default function robots() {
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }
