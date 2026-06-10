@@ -1,4 +1,21 @@
 import "./globals.css";
+import { Fredoka, Nunito } from "next/font/google";
+
+// Display: chunky, rounded, playful — used for headings & big friendly text.
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fredoka",
+  display: "swap",
+});
+
+// Body: rounded, warm, highly legible — used for paragraphs & UI text.
+const nunito = Nunito({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-nunito",
+  display: "swap",
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://k12.bluesandstemlabs.com";
 const SITE_NAME = "Blue Sands K12 AR Pedia";
@@ -67,7 +84,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
       <body>{children}</body>
     </html>
   );

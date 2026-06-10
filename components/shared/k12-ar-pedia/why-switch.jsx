@@ -86,19 +86,16 @@ export default function WhySwitchSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 space-y-4 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-rose-500 text-white text-sm font-bold shadow-lg shadow-rose-500/40">
-            <RefreshCcw className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+            <RefreshCcw className="w-4 h-4" strokeWidth={2.5} />
             Why Make the Switch?
           </div>
-          <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary leading-tight"
-            style={{ fontFamily: "var(--font-jarkata)" }}
-          >
+          <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Traditional Learning Is{" "}
-            <span className="text-red-500">No Longer Enough</span>
+            <span className="text-coral doodle-underline">No Longer Enough</span>
           </h2>
-          <p className="text-gray-500 text-base sm:text-lg" style={{ fontFamily: "var(--font-jarkata)" }}>
-            Drag the divider to feel the difference.
+          <p className="text-gray-500 text-lg sm:text-xl font-semibold">
+            Drag the slider to feel the difference!
           </p>
         </motion.div>
 

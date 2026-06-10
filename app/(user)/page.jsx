@@ -5,6 +5,7 @@ import WhatIsSection from "@/components/shared/k12-ar-pedia/what-is";
 import WhySwitchSection from "@/components/shared/k12-ar-pedia/why-switch";
 import BenefitsSection from "@/components/shared/k12-ar-pedia/benefits";
 import ProductExperienceSection from "@/components/shared/k12-ar-pedia/product-experience";
+import ProductsTeaserSection from "@/components/shared/k12-ar-pedia/products-teaser";
 import DistributionSection from "@/components/shared/k12-ar-pedia/distribution";
 import CoordinatorSection from "@/components/shared/k12-ar-pedia/coordinator";
 import WhatsAppSection from "@/components/shared/k12-ar-pedia/whatsapp";
@@ -30,6 +31,7 @@ export default function K12ArPediaPage() {
       <WhySwitchSection />
       <BenefitsSection />
       <ProductExperienceSection />
+      <ProductsTeaserSection />
       <DistributionSection />
       <CoordinatorSection />
       <WhatsAppSection />

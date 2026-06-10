@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -168,7 +168,7 @@ export default function PayBalancePage() {
             Chat with us on WhatsApp
           </a>
           {" · "}
-          <Link href="/products/k12-ar-pedia" className="hover:underline">Back to product page</Link>
+          <Link href="/" className="hover:underline">Back to product page</Link>
         </p>
       </div>
     </div>

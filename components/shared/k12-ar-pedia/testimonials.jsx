@@ -69,15 +69,12 @@ export default function TestimonialsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-3"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-bold">
-            <MessageCircle className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-grass px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+            <MessageCircle className="w-4 h-4" strokeWidth={2.5} />
             Real Stories
           </div>
-          <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary"
-            style={{ fontFamily: "var(--font-jarkata)" }}
-          >
-            Educators Love It
+          <h2 className="font-display font-bold text-secondary text-4xl sm:text-5xl lg:text-6xl">
+            Educators <span className="text-grass doodle-underline">Love It</span>
           </h2>
           <div className="flex items-center justify-center gap-2 pt-1">
             <Stars count={5} />

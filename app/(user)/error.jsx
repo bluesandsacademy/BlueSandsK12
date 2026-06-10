@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 
 export default function K12Error({ error, reset }) {
   useEffect(() => {
@@ -13,8 +14,8 @@ export default function K12Error({ error, reset }) {
       className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 text-center"
       style={{ background: "#FFFBF0" }}
     >
-      <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center text-3xl">
-        ⚠️
+      <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center">
+        <AlertTriangle className="w-8 h-8 text-rose-500" strokeWidth={2} />
       </div>
       <div className="space-y-2 max-w-sm">
         <h1

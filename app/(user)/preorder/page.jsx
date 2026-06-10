@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { getProduct } from "@/lib/products";
 import {
   User,
   Building2,
@@ -155,6 +156,7 @@ function PreorderForm() {
   const searchParams = useSearchParams();
   const planParam = searchParams.get("plan"); // "family" | "school" | null
   const planMeta = PLAN_META[planParam] ?? null;
+  const productMeta = getProduct(searchParams.get("product")); // shop device | undefined
 
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -292,7 +294,7 @@ function PreorderForm() {
             slot.
           </p>
           <Link
-            href="/products/k12-ar-pedia"
+            href="/"
             className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -317,7 +319,7 @@ function PreorderForm() {
         />
         <div className="max-w-2xl mx-auto relative">
           <Link
-            href="/products/k12-ar-pedia"
+            href="/"
             className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-6 transition-colors w-fit"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -371,6 +373,39 @@ function PreorderForm() {
 
       {/* Form body */}
       <div className="max-w-2xl mx-auto px-4 py-10">
+        {/* Selected product banner (from the shop) */}
+        {productMeta && (
+          <div
+            className="flex items-center gap-4 p-4 rounded-2xl border-2 mb-8"
+            style={{ background: `${productMeta.color}12`, borderColor: `${productMeta.color}40` }}
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: `${productMeta.color}22` }}
+            >
+              <productMeta.Icon className="w-6 h-6" style={{ color: productMeta.color }} strokeWidth={2} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">
+                Reserving Device
+              </p>
+              <p
+                className="text-sm font-bold text-secondary truncate"
+                style={{ fontFamily: "var(--font-jarkata)" }}
+              >
+                {productMeta.name}
+              </p>
+            </div>
+            <Link
+              href="/products"
+              className="text-xs font-semibold underline underline-offset-2 shrink-0"
+              style={{ color: productMeta.color }}
+            >
+              Change
+            </Link>
+          </div>
+        )}
+
         {/* Selected plan banner */}
         {planMeta && (
           <div
@@ -398,7 +433,7 @@ function PreorderForm() {
               </p>
             </div>
             <Link
-              href="/products/k12-ar-pedia#pricing"
+              href="/#pricing"
               className={`text-xs font-semibold ${planMeta.text} underline underline-offset-2 shrink-0`}
             >
               Change

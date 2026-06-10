@@ -2,95 +2,45 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Rocket, Clock, Sparkles } from "lucide-react";
+import { FloatPlanet, FloatSparkle } from "./science-floats";
 
 export default function FinalCtaSection() {
   return (
-    <section className="relative overflow-hidden">
-      {/* Full-bleed background photo */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1800&q=80"
-          alt=""
-          className="w-full h-full object-cover object-top"
-          loading="lazy"
-        />
-        {/* Deep brand overlay — keeps it on-brand while photo adds emotion */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(160deg, rgba(4,131,226,0.88) 0%, rgba(2,52,90,0.95) 100%)",
-          }}
-        />
-        {/* Subtle diagonal stripes */}
-        <div
-          className="absolute inset-0 opacity-8 pointer-events-none"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 60px,
-              rgba(255,255,255,0.04) 60px,
-              rgba(255,255,255,0.04) 120px
-            )`,
-          }}
-        />
-      </div>
-
-      {/* Dot accents */}
-      <div className="absolute top-8 left-8 lg:top-14 lg:left-16 opacity-15 pointer-events-none">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          {Array.from({ length: 4 }).map((_, row) =>
-            Array.from({ length: 4 }).map((_, col) => (
-              <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r="3" fill="white" />
-            )),
-          )}
-        </svg>
-      </div>
-      <div className="absolute bottom-8 right-8 lg:bottom-14 lg:right-16 opacity-15 pointer-events-none">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          {Array.from({ length: 4 }).map((_, row) =>
-            Array.from({ length: 4 }).map((_, col) => (
-              <circle key={`${row}-${col}`} cx={10 + col * 20} cy={10 + row * 20} r="3" fill="white" />
-            )),
-          )}
-        </svg>
-      </div>
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "linear-gradient(180deg, #FFF6D6 0%, #FFE0A3 100%)" }}
+    >
+      {/* Playful floating shapes */}
+      <FloatPlanet className="absolute top-10 left-6 lg:left-20 opacity-90" size={90} />
+      <FloatSparkle className="absolute top-20 right-1/4 opacity-80" size={40} color="#FF5A5F" />
+      <FloatSparkle className="absolute bottom-24 left-1/4 opacity-70" size={32} color="#9B5DE5" />
+      <div className="absolute bottom-16 right-10 w-12 h-12 bg-grass/40 blob-1 kid-float pointer-events-none" />
+      <div className="absolute top-1/2 right-20 w-8 h-8 bg-primary/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.8s" }} />
 
       {/* Content */}
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40 text-center">
+      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 lg:py-32 text-center">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="space-y-5 max-w-3xl mx-auto mb-14"
+          className="space-y-6 max-w-3xl mx-auto mb-12"
         >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white/90 text-sm font-bold"
-            style={{
-              background: "rgba(255,255,255,0.12)",
-              backdropFilter: "blur(16px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse shrink-0" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+            <Clock className="w-4 h-4" strokeWidth={2.5} />
             Early Access · Closing Soon
           </div>
 
-          <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight"
-            style={{ fontFamily: "var(--font-jarkata)", textShadow: "0 4px 32px rgba(0,0,0,0.3)" }}
-          >
-            Ready to Transform<br />
-            <span className="text-amber-400">Your Classroom?</span>
+          <h2 className="font-display font-bold text-secondary leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
+            Ready to Transform{" "}
+            <br className="hidden sm:block" />
+            <span className="text-primary doodle-underline">Your Classroom?</span>
           </h2>
 
-          <p
-            className="text-white/75 text-lg sm:text-xl leading-relaxed max-w-xl mx-auto"
-            style={{ fontFamily: "var(--font-jarkata)" }}
-          >
-            Early access slots are filling fast. Don&apos;t let your school miss Nigeria&apos;s most exciting STEM movement.
+          <p className="text-gray-700 text-lg sm:text-2xl font-semibold leading-snug max-w-xl mx-auto">
+            Early access slots are filling fast. Don&apos;t let your school miss
+            Nigeria&apos;s most exciting STEM adventure.
           </p>
         </motion.div>
 
@@ -102,30 +52,36 @@ export default function FinalCtaSection() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
+          <Link
+            href="/preorder"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all w-full sm:w-auto"
+          >
+            <Rocket className="w-6 h-6" strokeWidth={2.5} />
+            Preorder Now
+          </Link>
           <a
             href="https://calendly.com/bluesandstemlabs/30min"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 bg-white text-primary font-black rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-2xl hover:shadow-white/20 text-base sm:text-lg w-full sm:w-auto text-center"
-            style={{ fontFamily: "var(--font-jarkata)" }}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10 w-full sm:w-auto"
           >
+            <Sparkles className="w-5 h-5 text-sunshine" strokeWidth={2.5} />
             Request a Free Demo
           </a>
           <Link
-            href="/products/k12-ar-pedia/preorder"
-            className="px-8 py-4 bg-amber-400 text-secondary font-black rounded-2xl hover:bg-amber-300 transition-all duration-300 shadow-2xl shadow-amber-400/30 text-base sm:text-lg w-full sm:w-auto text-center"
-            style={{ fontFamily: "var(--font-jarkata)" }}
-          >
-            Preorder Now
-          </Link>
-          <Link
-            href="/products/k12-ar-pedia/apply"
-            className="px-8 py-4 bg-transparent text-white font-bold rounded-2xl hover:bg-white/10 transition-all duration-300 border-2 border-white/35 text-base sm:text-lg w-full sm:w-auto text-center"
-            style={{ fontFamily: "var(--font-jarkata)" }}
+            href="/apply"
+            className="inline-flex items-center justify-center rounded-2xl bg-secondary px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_rgba(0,0,0,0.2)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(0,0,0,0.2)] transition-all w-full sm:w-auto"
           >
             Become a Partner
           </Link>
         </motion.div>
+      </div>
+
+      {/* Top playful wave divider */}
+      <div className="absolute top-0 left-0 right-0 leading-none pointer-events-none rotate-180">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="w-full" style={{ height: 50 }}>
+          <path fill="#FFFBF0" d="M0,40 C240,90 480,0 720,40 C960,80 1200,10 1440,40 L1440,90 L0,90 Z" />
+        </svg>
       </div>
     </section>
   );

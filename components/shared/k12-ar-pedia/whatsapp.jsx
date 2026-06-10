@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 
 const chatMessages = [
   {
@@ -79,18 +80,16 @@ export default function WhatsAppSection() {
             transition={{ duration: 0.65 }}
             className="space-y-7"
           >
-            <div>
-              <h2
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary leading-tight mb-4"
-                style={{ fontFamily: "var(--font-jarkata)" }}
-              >
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-grass px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+                <MessageCircle className="w-4 h-4" strokeWidth={2.5} />
+                We&apos;re Here to Help
+              </div>
+              <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
                 Questions?{" "}
-                <span className="text-[#25D366]">Let&apos;s Chat.</span>
+                <span className="text-[#25D366] doodle-underline">Let&apos;s Chat.</span>
               </h2>
-              <p
-                className="text-gray-700 text-lg leading-relaxed"
-                style={{ fontFamily: "var(--font-jarkata)" }}
-              >
+              <p className="text-gray-700 text-lg sm:text-xl font-semibold leading-relaxed">
                 Talk directly with our team — from first question to full school deployment, all on WhatsApp.
               </p>
             </div>
@@ -117,7 +116,7 @@ export default function WhatsAppSection() {
             </div>
           </motion.div>
 
-          {/* Right – Chat mockup */}
+          {/* Right – Chat on a landscape tablet (shorter, on-brand device) */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -125,12 +124,14 @@ export default function WhatsAppSection() {
             transition={{ duration: 0.65, delay: 0.15 }}
             className="flex justify-center"
           >
-            <div className="relative w-72 sm:w-80">
-              <div className="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl border-8 border-gray-800">
-                <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-gray-900 rounded-b-2xl z-10" />
-                <div className="rounded-[1.75rem] overflow-hidden" style={{ background: "#E5DDD5" }}>
+            <div className="relative w-full max-w-lg">
+              {/* Tablet frame */}
+              <div className="relative bg-secondary rounded-[2rem] p-2.5 sm:p-3 shadow-[0_22px_50px_rgba(2,52,90,0.3)] border-4 border-secondary">
+                {/* Camera dot */}
+                <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/30 z-10" />
+                <div className="ml-2 rounded-[1.4rem] overflow-hidden" style={{ background: "#E5DDD5" }}>
                   {/* WhatsApp header */}
-                  <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3">
+                  <div className="bg-[#075E54] px-4 py-2.5 flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
                       <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.526 5.847L.057 23.57a.5.5 0 00.603.632l5.913-1.547A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
@@ -140,13 +141,10 @@ export default function WhatsAppSection() {
                       <p className="text-white font-semibold text-sm truncate">Blue Sands Team</p>
                       <p className="text-green-300 text-xs">Online</p>
                     </div>
-                    <svg className="w-5 h-5 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
                   </div>
 
-                  {/* Chat area */}
-                  <div className="px-3 py-4 space-y-3 min-h-[280px]">
+                  {/* Chat area — landscape keeps it short */}
+                  <div className="px-3.5 py-3 space-y-2.5">
                     <div className="flex justify-center">
                       <span className="bg-white/60 text-gray-500 text-[9px] px-2.5 py-0.5 rounded-full">Today</span>
                     </div>
@@ -175,7 +173,6 @@ export default function WhatsAppSection() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-gray-700 rounded-full" />
               </div>
             </div>
           </motion.div>
