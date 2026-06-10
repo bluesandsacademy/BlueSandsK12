@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X, Clock, Rocket } from "lucide-react";
 
 function getTimeLeft() {
   const target = new Date("2026-08-31T23:59:59");
@@ -23,22 +23,12 @@ const CLAIMED     = 100;
 function TimeBlock({ value, label }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <div
-        className="w-[52px] h-[46px] rounded-xl flex items-center justify-center"
-        style={{
-          background: "rgba(255,255,255,0.07)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.09), inset 0 -1px 0 rgba(0,0,0,0.2)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <span
-          className="text-white font-bold text-lg tabular-nums leading-none"
-          style={{ fontFamily: "var(--font-jarkata)" }}
-        >
+      <div className="w-13 h-12 rounded-xl flex items-center justify-center bg-primary shadow-[0_4px_0_#0266b0]">
+        <span className="text-white font-display font-bold text-xl tabular-nums leading-none">
           {String(value).padStart(2, "0")}
         </span>
       </div>
-      <span className="text-white/30 text-[9px] font-semibold uppercase tracking-[0.12em]">
+      <span className="text-secondary/60 text-[10px] font-bold uppercase tracking-wide">
         {label}
       </span>
     </div>
@@ -81,50 +71,26 @@ export default function CountdownFloat() {
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="fixed bottom-6 right-6 z-40 hidden lg:block"
         >
-          <div
-            className="relative w-[296px] rounded-3xl overflow-hidden"
-            style={{
-              background: "linear-gradient(175deg, #0e4068 0%, #071f30 100%)",
-              boxShadow: "0 32px 64px rgba(2,52,90,0.55), 0 0 0 1px rgba(255,255,255,0.07)",
-            }}
-          >
-            {/* Subtle grid texture */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }}
-            />
-
-            {/* Amber accent bar at top */}
-            <div
-              className="h-[3px] w-full"
-              style={{ background: "linear-gradient(90deg, transparent 0%, #f59e0b 40%, #d97706 70%, transparent 100%)" }}
-            />
+          <div className="relative w-74 rounded-3xl overflow-hidden bg-white border-4 border-sunshine shadow-[0_18px_40px_rgba(2,52,90,0.25)]">
+            {/* Sunshine accent bar at top */}
+            <div className="h-2 w-full bg-sunshine" />
 
             <div className="relative p-5 space-y-4">
 
               {/* Header row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400" />
-                  </span>
-                  <span
-                    className="text-white/55 text-[10px] font-bold uppercase tracking-[0.14em]"
-                  >
-                    Rollout closes August 2026
+                  <Clock className="w-4 h-4 text-coral" strokeWidth={2.5} />
+                  <span className="text-secondary text-xs font-extrabold">
+                    Closes August 2026
                   </span>
                 </div>
                 <button
                   onClick={() => setDismissed(true)}
                   aria-label="Dismiss"
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-white/20 hover:text-white/50 hover:bg-white/8 transition-all duration-200"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-all duration-200"
                 >
-                  <X className="w-3 h-3" strokeWidth={2.5} />
+                  <X className="w-3.5 h-3.5" strokeWidth={3} />
                 </button>
               </div>
 
@@ -134,7 +100,7 @@ export default function CountdownFloat() {
                   <div key={unit.label} className="flex items-center gap-1">
                     <TimeBlock value={unit.value} label={unit.label} />
                     {i < units.length - 1 && (
-                      <span className="text-white/20 text-sm font-light mb-4 select-none">:</span>
+                      <span className="text-primary/30 text-sm font-bold mb-4 select-none">:</span>
                     )}
                   </div>
                 ))}
@@ -143,39 +109,31 @@ export default function CountdownFloat() {
               {/* Progress — slots claimed */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider">
+                  <span className="text-secondary/70 text-xs font-bold">
                     Early Access Slots
                   </span>
-                  <span className="text-white/60 text-[10px] font-bold tabular-nums">
+                  <span className="text-secondary text-xs font-extrabold tabular-nums">
                     {CLAIMED.toLocaleString()}
-                    <span className="text-white/25 font-normal"> / {TOTAL_SLOTS.toLocaleString()}</span>
+                    <span className="text-gray-400 font-bold"> / {TOTAL_SLOTS.toLocaleString()}</span>
                   </span>
                 </div>
-                <div
-                  className="h-1 rounded-full overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
+                <div className="h-2.5 rounded-full overflow-hidden bg-gray-100">
                   <motion.div
-                    className="h-full rounded-full"
+                    className="h-full rounded-full bg-grass"
                     initial={{ width: 0 }}
                     animate={{ width: `${(CLAIMED / TOTAL_SLOTS) * 100}%` }}
                     transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-                    style={{ background: "linear-gradient(90deg, #f59e0b, #d97706)" }}
                   />
                 </div>
               </div>
 
               {/* CTA */}
               <Link
-                href="/products/k12-ar-pedia/preorder"
-                className="block w-full py-3 rounded-2xl text-sm font-bold text-white text-center transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
-                style={{
-                  background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-                  boxShadow: "0 8px 24px rgba(245,158,11,0.28), inset 0 1px 0 rgba(255,255,255,0.15)",
-                  fontFamily: "var(--font-jarkata)",
-                }}
+                href="/preorder"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl text-base font-display font-bold text-white text-center bg-coral shadow-[0_6px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_3px_0_#d63a3f] transition-all"
               >
                 Reserve My Slot
+                <Rocket className="w-5 h-5" strokeWidth={2.5} />
               </Link>
 
             </div>

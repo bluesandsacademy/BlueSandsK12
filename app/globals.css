@@ -8,6 +8,19 @@
 @theme {
   --color-primary: #0483e2;
   --color-secondary: #02345a;
+
+  /* ── Candy palette (kid-friendly accents) ───────────────────────────────── */
+  --color-sunshine: #ffc83d; /* sunny yellow  */
+  --color-coral: #ff5a5f; /* tomato / coral */
+  --color-grass: #3dd68c; /* grass green   */
+  --color-grape: #9b5de5; /* grape purple  */
+  --color-sky: #4cc9f0; /* bright sky    */
+  --color-bubble: #ff8fab; /* bubblegum pink */
+  --color-cream: #fffbf0; /* warm cream bg  */
+
+  /* ── Playful type ───────────────────────────────────────────────────────── */
+  --font-display: var(--font-fredoka); /* chunky rounded headings */
+  --font-body: var(--font-nunito); /* rounded legible body    */
 }
 
 @theme inline {
@@ -15,9 +28,15 @@
   --color-foreground: var(--foreground);
   --color-text-black: #172b4d;
 
-  --font-sans: var(--font-jarkata); /* fixed */
+  --font-sans: var(--font-nunito);
   --font-mono: var(--font-geist-mono);
   --font-inter: var(--font-inter);
+}
+
+/* Existing components reference var(--font-jarkata) for display text —
+   alias it to the new playful display font so they instantly become childish. */
+:root {
+  --font-jarkata: var(--font-fredoka);
 }
 
 @media (prefers-color-scheme: light) {
@@ -30,7 +49,63 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-jarkata);
+  font-family: var(--font-nunito);
+}
+
+/* ── Playful global decorations ─────────────────────────────────────────────
+   Reusable kid-friendly flourishes used across landing sections. */
+
+/* Hand-drawn wavy underline accent under highlighted words */
+.doodle-underline {
+  position: relative;
+  display: inline-block;
+}
+.doodle-underline::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -0.18em;
+  height: 0.32em;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M1,6 Q25,1 50,5 T99,4' stroke='%23FFC83D' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Slow wobble for sticker badges & shapes */
+@keyframes kid-wobble {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+.kid-wobble {
+  animation: kid-wobble 3.5s ease-in-out infinite;
+}
+
+/* Gentle float/bob for blobs, stars, mascots-to-be */
+@keyframes kid-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.kid-float {
+  animation: kid-float 5s ease-in-out infinite;
+}
+
+/* Organic blob radius used for friendly shapes */
+.blob-1 {
+  border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+}
+.blob-2 {
+  border-radius: 63% 37% 38% 62% / 54% 38% 62% 46%;
 }
 .mk {
   background-color: #02345a;

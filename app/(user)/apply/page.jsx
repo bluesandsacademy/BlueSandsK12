@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -151,7 +151,7 @@ export default function DistributionApplyPage() {
             Thank you, {form.full_name.split(" ")[0]}! We&apos;ve received your application for {form.state}. Our team will review it and be in touch within 3 business days.
           </p>
           <Link
-            href="/products/k12-ar-pedia"
+            href="/"
             className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function DistributionApplyPage() {
           }}
         />
         <div className="max-w-2xl mx-auto relative">
-          <Link href="/products/k12-ar-pedia" className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-6 transition-colors w-fit">
+          <Link href="/" className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-6 transition-colors w-fit">
             <ArrowLeft className="w-4 h-4" />
             Back to AR Pedia
           </Link>

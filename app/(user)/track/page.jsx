@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -244,7 +244,7 @@ function TrackContent() {
         )}
 
         <p className="text-center text-xs text-gray-400">
-          <Link href="/products/k12-ar-pedia" className="hover:underline">← Back to K12 AR Pedia</Link>
+          <Link href="/" className="hover:underline">← Back to K12 AR Pedia</Link>
         </p>
       </div>
     </div>

@@ -1,4 +1,4 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://k12.bluesandstemlabs.com";
+﻿const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://k12.bluesandstemlabs.com";
 
 export default function sitemap() {
   return [
@@ -9,19 +9,19 @@ export default function sitemap() {
       priority: 1,
     },
     {
-      url: `${SITE_URL}/products/k12-ar-pedia`,
+      url: `${SITE_URL}/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/products/k12-ar-pedia/preorder`,
+      url: `${SITE_URL}/preorder`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/products/k12-ar-pedia/apply`,
+      url: `${SITE_URL}/apply`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,

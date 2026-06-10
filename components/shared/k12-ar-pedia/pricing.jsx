@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -95,18 +95,15 @@ export default function K12PricingSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16 space-y-4 max-w-2xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30">
-            <Star className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-sunshine px-5 py-2.5 text-secondary font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+            <Star className="w-4 h-4 fill-secondary" strokeWidth={2.5} />
             Choose Your Plan
           </div>
-          <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-black text-secondary leading-tight"
-            style={{ fontFamily: "var(--font-jarkata)" }}
-          >
+          <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             One Plan.{" "}
-            <span className="text-primary">Infinite Discovery.</span>
+            <span className="text-primary doodle-underline">Infinite Discovery.</span>
           </h2>
-          <p className="text-gray-600 text-base sm:text-lg" style={{ fontFamily: "var(--font-jarkata)" }}>
+          <p className="text-gray-600 text-lg sm:text-xl font-semibold">
             Pick the right fit — for home or for school.
           </p>
 
@@ -229,7 +226,7 @@ export default function K12PricingSection() {
                 {/* CTA */}
                 <div className="pt-2">
                   <Link
-                    href={`/products/k12-ar-pedia/preorder?plan=${plan.planParam}`}
+                    href={`/preorder?plan=${plan.planParam}`}
                     className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-base transition-all duration-300 ${plan.ctaPrimary}`}
                     style={{ fontFamily: "var(--font-jarkata)" }}
                   >

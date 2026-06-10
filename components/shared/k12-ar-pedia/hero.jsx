@@ -1,319 +1,175 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-import { img } from "@/lib/cloudinary";
+import { Sparkles, Rocket, School, FlaskConical, BookOpen, Users, Monitor } from "lucide-react";
+import { FloatAtom, FloatPlanet, FloatSparkle } from "./science-floats";
 
 const builtFor = [
-  "Schools",
-  "STEM Academies",
-  "Learning Centers",
-  "Parents",
-  "Smart Classrooms",
+  { label: "Schools", Icon: School },
+  { label: "STEM Academies", Icon: FlaskConical },
+  { label: "Learning Centers", Icon: BookOpen },
+  { label: "Parents", Icon: Users },
+  { label: "Smart Classrooms", Icon: Monitor },
 ];
 
-function TabletScreen() {
+/* A bright, friendly "AR magic" scene — a tablet with a storybook and a
+   planet + rocket bursting up off the page. All flat, candy-colored shapes. */
+function ArMagicScene() {
   return (
-    <div className="relative aspect-video" style={{ background: "#060f1f" }}>
-      {/* Grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.18] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(4,131,226,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(4,131,226,0.4) 1px, transparent 1px)",
-          backgroundSize: "26px 26px",
-        }}
-      />
+    <div className="relative mx-auto w-full max-w-md aspect-square">
+      {/* Big soft sun blob behind */}
+      <div className="absolute inset-6 bg-sunshine/40 blob-1 blur-[2px]" />
+      <div className="absolute inset-10 bg-sunshine/70 blob-2" />
 
-      {/* Status bar */}
-      <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 py-2 bg-black/40">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse block" />
-          <span className="text-white/70 text-[8px] font-bold tracking-widest uppercase">
-            AR Pedia
-          </span>
-        </div>
-        <div className="inline-flex items-center gap-1 bg-primary/25 border border-primary/40 rounded-full px-2 py-0.5">
-          <span className="text-[7px] text-primary font-bold uppercase tracking-wide">
-            Human Biology · AR Active
-          </span>
-        </div>
-        <div className="w-5 h-2.5 rounded-sm border border-white/40 flex items-center px-0.5">
-          <div className="w-3 h-1.5 bg-green-400 rounded-sm" />
-        </div>
-      </div>
+      {/* Bursting planet — overflows above the tablet */}
+      <FloatPlanet className="absolute -top-6 left-6 z-20" size={120} />
+      {/* Bursting rocket */}
+      <motion.div
+        animate={{ y: [0, -14, 0], rotate: [0, 6, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-2 right-8 z-20 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
+      >
+        <Rocket className="w-9 h-9 text-white" strokeWidth={2} />
+      </motion.div>
 
-      {/* Content: AR scan + data panel */}
-      <div className="absolute inset-0 top-8 bottom-8 flex">
-        {/* Left – AR scan */}
-        <div className="relative flex-1 flex items-center justify-center border-r border-white/6">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-32 h-32 bg-primary/15 rounded-full blur-2xl" />
-          </div>
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.1, 0.5] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-28 h-28 rounded-full border border-primary/50 pointer-events-none"
-          />
-          <motion.div
-            animate={{ scale: [1, 1.18, 1], opacity: [0.3, 0.06, 0.3] }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.7,
-            }}
-            className="absolute w-44 h-44 rounded-full border border-primary/20 pointer-events-none"
-          />
-          {/* Atom */}
-          <div className="relative z-10 w-16 h-16 flex items-center justify-center">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-              className="absolute w-16 h-16 rounded-full"
-              style={{
-                borderTop: "1px dashed rgba(4,131,226,0.7)",
-                borderBottom: "1px dashed rgba(4,131,226,0.2)",
-              }}
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "linear" }}
-              className="absolute w-10 h-10 rounded-full"
-              style={{
-                borderLeft: "1px solid rgba(96,165,250,0.6)",
-                borderRight: "1px solid rgba(96,165,250,0.2)",
-              }}
-            />
-            <div
-              className="relative z-10 w-5 h-5 bg-primary rounded-full"
-              style={{ boxShadow: "0 0 12px rgba(4,131,226,0.9)" }}
-            >
-              <div className="absolute inset-1 bg-white/20 rounded-full" />
+      {/* Sparkles */}
+      <FloatSparkle className="absolute top-2 left-1/2 z-20" size={40} color="#ffffff" />
+      <FloatSparkle className="absolute bottom-16 -left-2 z-20" size={34} color="#FF5A5F" />
+      <FloatSparkle className="absolute bottom-24 right-0 z-20" size={28} color="#3DD68C" />
+
+      {/* Tablet */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-x-4 bottom-2 top-20 z-10"
+      >
+        <div className="relative h-full w-full rounded-[2.2rem] bg-white border-[10px] border-secondary shadow-[0_24px_60px_rgba(2,52,90,0.28)] overflow-hidden">
+          {/* Screen */}
+          <div className="relative h-full w-full rounded-[1.2rem] bg-gradient-to-b from-sky/20 to-cream flex items-center justify-center overflow-hidden">
+            {/* Open storybook */}
+            <div className="relative w-[78%] aspect-[4/3]">
+              {/* Book shadow */}
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[88%] h-4 bg-secondary/15 blur-md rounded-full" />
+              {/* Pages */}
+              <div className="absolute inset-0 flex rounded-xl overflow-hidden shadow-lg">
+                <div className="flex-1 bg-cream border-r-2 border-amber-200/60 p-3 space-y-1.5">
+                  <div className="h-1.5 rounded-full bg-coral/40 w-3/4" />
+                  <div className="h-1.5 rounded-full bg-gray-200 w-full" />
+                  <div className="h-1.5 rounded-full bg-gray-200 w-5/6" />
+                  <div className="mt-2 h-8 rounded-lg bg-grass/30" />
+                </div>
+                <div className="flex-1 bg-white p-3 flex items-center justify-center">
+                  {/* Atom rising off the page */}
+                  <FloatAtom size={70} />
+                </div>
+              </div>
             </div>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              className="absolute w-16 h-16"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md" />
-            </motion.div>
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "linear" }}
-              className="absolute w-10 h-10"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-300 rounded-full" />
-            </motion.div>
           </div>
+          {/* Camera dot */}
+          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-secondary/40" />
         </div>
-
-        {/* Right – data readouts */}
-        <div className="w-40 flex flex-col justify-center gap-2 px-3 py-2">
-          <motion.div
-            animate={{ y: [0, -2, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="bg-white/7 border border-white/10 rounded-lg px-2.5 py-2"
-          >
-            <p className="text-white/40 text-[7px] mb-0.5">Heart Rate</p>
-            <p className="text-white text-sm font-bold leading-none">72 BPM</p>
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, 2, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            className="bg-white/7 border border-white/10 rounded-lg px-2.5 py-2"
-          >
-            <p className="text-white/40 text-[7px] mb-0.5">Oxygen Level</p>
-            <p className="text-green-400 text-sm font-bold leading-none">
-              98.5%
-            </p>
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, -1.5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="bg-primary/18 border border-primary/35 rounded-lg px-2.5 py-2"
-          >
-            <p className="text-white/40 text-[7px] mb-0.5">Active System</p>
-            <p className="text-primary text-[9px] font-semibold">
-              ● Circulatory
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Subject tabs */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-950/80 border-t border-white/8">
-        <div className="flex items-center justify-around px-4 py-1.5">
-          {[
-            { icon: "🫀", label: "Biology", active: true },
-            { icon: "🌍", label: "Space", active: false },
-            { icon: "🔬", label: "Lab", active: false },
-            { icon: "⚙️", label: "Eng.", active: false },
-          ].map((tab) => (
-            <div
-              key={tab.label}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg ${tab.active ? "bg-primary/20" : ""}`}
-            >
-              <span className="text-xs leading-none">{tab.icon}</span>
-              <span
-                className={`text-[7px] font-semibold ${tab.active ? "text-primary" : "text-white/35"}`}
-              >
-                {tab.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
 export default function K12HeroSection() {
   return (
-    <section className="relative min-h-[600px] bg-primary overflow-hidden">
-      {/* Grid background */}
-      <div className="absolute inset-0 opacity-80">
-        <Image
-          src={img("/grid.png")}
-          alt=""
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
+    <section className="relative overflow-hidden bg-gradient-to-b from-sky/25 via-cream to-cream">
+      {/* Floating background shapes */}
+      <div className="absolute top-16 left-6 w-10 h-10 bg-coral/30 blob-1 kid-float pointer-events-none" />
+      <div className="absolute top-40 right-10 w-6 h-6 bg-grape/40 rounded-full kid-float pointer-events-none" style={{ animationDelay: "1.2s" }} />
+      <div className="absolute top-1/3 right-4 w-8 h-8 bg-grass/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.6s" }} />
+      <FloatSparkle className="absolute top-24 left-1/2 opacity-70" size={30} color="#FFC83D" />
 
-      <div className="max-w-8xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
+      <div className="relative z-10 mx-auto w-full max-w-8xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          {/* Left — copy */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-            className="text-white space-y-7"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-7 text-center lg:text-left"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-[3.4rem] font-bold leading-tight"
-              style={{ fontFamily: "var(--font-jarkata)" }}
-            >
-              Transform How Nigerian Children Learn Science &amp; STEM
-            </motion.h1>
+            {/* Sticker badge */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-sunshine px-5 py-2.5 text-secondary font-extrabold text-sm sm:text-base shadow-[0_6px_0_rgba(0,0,0,0.08)] kid-wobble">
+              <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+              Magic Learning for Ages 5–11
+            </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.2 }}
-              className="text-white/90 text-lg sm:text-xl leading-relaxed max-w-xl"
-              style={{ fontFamily: "var(--font-jarkata)" }}
+            <h1
+              className="font-display font-bold text-secondary leading-[1.05] text-[2.6rem] sm:text-6xl lg:text-7xl"
             >
-              Introducing Blue Sands K12 AR Pedia — an immersive augmented
-              reality learning system designed for children ages 5–11 to
-              experience science, technology, and discovery like never before.
-            </motion.p>
+              Watch Science{" "}
+              <span className="text-primary doodle-underline">Leap</span>{" "}
+              Off the Page!
+            </h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.3 }}
-              className="flex flex-wrap gap-2"
-            >
-              {builtFor.map((item) => (
+            <p className="mx-auto lg:mx-0 max-w-md text-lg sm:text-2xl text-gray-600 font-semibold leading-snug">
+              Point the tablet at any book and watch planets, animals and
+              experiments pop to life right in front of you.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              <Link
+                href="/preorder"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
+              >
+                <Rocket className="w-6 h-6" strokeWidth={2.5} />
+                Preorder Now
+              </Link>
+              <a
+                href="https://calendly.com/bluesandstemlabs/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10"
+              >
+                <Sparkles className="w-6 h-6 text-sunshine" strokeWidth={2.5} />
+                See the Magic
+              </a>
+            </div>
+
+            {/* Built-for pills */}
+            <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start pt-1">
+              {builtFor.map(({ label, Icon }) => (
                 <span
-                  key={item}
-                  className="px-3.5 py-1.5 bg-white/10 border border-white/25 rounded-full text-sm text-white font-medium"
+                  key={label}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-secondary shadow-sm border-2 border-sunshine/40"
                 >
-                  {item}
+                  <Icon className="w-4 h-4 text-primary" strokeWidth={2.5} />
+                  {label}
                 </span>
               ))}
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.4 }}
-              className="flex flex-col gap-3 pt-1"
+            <Link
+              href="/apply"
+              className="inline-block text-base font-bold text-primary underline-offset-4 hover:underline"
             >
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="https://calendly.com/bluesandstemlabs/30min"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-3.5 bg-white text-primary font-bold rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-center text-sm sm:text-base"
-                  style={{ fontFamily: "var(--font-jarkata)" }}
-                >
-                  Request School Demo
-                </a>
-                <Link
-                  href="/products/k12-ar-pedia/preorder"
-                  className="px-6 py-3.5 bg-secondary text-white font-bold rounded-xl hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/10 text-center text-sm sm:text-base"
-                  style={{ fontFamily: "var(--font-jarkata)" }}
-                >
-                  Preorder Now
-                </Link>
-              </div>
-              <Link
-                href="/products/k12-ar-pedia/apply"
-                className="px-6 py-3 bg-transparent text-white/90 font-semibold rounded-xl hover:bg-white/10 transition-all duration-300 border border-white/30 text-center text-sm sm:text-base sm:self-start"
-                style={{ fontFamily: "var(--font-jarkata)" }}
-              >
-                Become a State Distribution Officer
-              </Link>
-            </motion.div>
+              Become a State Distribution Officer →
+            </Link>
           </motion.div>
 
-          {/* Right Content – Tablet Mockup */}
+          {/* Right — AR magic scene */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative h-[400px] lg:h-[600px]"
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="relative"
           >
-            {/* Landscape tablet */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="absolute top-1/2 -translate-y-1/2 left-0 right-0 z-10"
-            >
-              <div className="relative bg-gray-900 rounded-4xl shadow-2xl overflow-hidden border-[7px] border-gray-800">
-                {/* Camera dot */}
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full z-10" />
-                <TabletScreen />
-                {/* Home bar */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-0.5 bg-gray-700 rounded-full" />
-              </div>
-
-              {/* Shadow */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-6 bg-black/25 blur-xl rounded-full" />
-            </motion.div>
-
-            {/* Decorative blurs */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
-              className="absolute top-10 right-10 w-20 h-20 bg-primary/20 rounded-full blur-2xl"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 1.4 }}
-              className="absolute bottom-20 left-10 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"
-            />
+            <ArMagicScene />
           </motion.div>
         </div>
       </div>
 
-      {/* Bottom Wave */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" className="w-full h-auto">
+      {/* Bottom playful wave */}
+      <div className="absolute bottom-0 left-0 right-0 leading-none pointer-events-none">
+        <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="w-full" style={{ height: 70 }}>
           <path
             fill="#ffffff"
-            fillOpacity="0.1"
-            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
+            d="M0,50 C180,100 360,10 540,40 C720,70 900,110 1080,80 C1260,55 1380,20 1440,40 L1440,110 L0,110 Z"
           />
         </svg>
       </div>

@@ -1,47 +1,62 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MapPin, Map, Star } from "lucide-react";
 import { nigeriaStates } from "@/lib/nigeria-map-data";
 
 const priorityStates = nigeriaStates.filter((s) => s.priority);
 const allStates = nigeriaStates;
 
+// Candy colors cycled across the live states so the map feels playful.
+const CANDY = ["#0483e2", "#FF5A5F", "#3DD68C", "#9B5DE5", "#FFC83D", "#4CC9F0", "#FF8FAB"];
+
+function StarPin({ cx, cy, color }) {
+  // Small chunky 5-point star marker.
+  const pts = Array.from({ length: 10 }, (_, i) => {
+    const a = (i * Math.PI) / 5 - Math.PI / 2;
+    const r = i % 2 === 0 ? 9 : 4;
+    return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
+  }).join(" ");
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={13} fill="white" opacity={0.35} />
+      <polygon points={pts} fill={color} stroke="white" strokeWidth={1.5} strokeLinejoin="round" />
+    </g>
+  );
+}
+
 function NigeriaMap() {
+  let live = -1;
   return (
     <svg viewBox="0 0 744 600" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="priority-shadow" x="-8%" y="-8%" width="116%" height="116%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0483e2" floodOpacity="0.45" />
-        </filter>
-      </defs>
-      <rect width="744" height="600" fill="#e8f0fe" rx="6" />
-      {allStates.map((state) => (
-        <path
-          key={state.id}
-          d={state.path}
-          fill={state.priority ? "#0483e2" : "#93c5fd"}
-          stroke="white"
-          strokeWidth={state.priority ? "1.6" : "0.9"}
-          strokeLinejoin="round"
-          filter={state.priority ? "url(#priority-shadow)" : undefined}
-        />
-      ))}
+      <rect width="744" height="600" fill="#FFF7E0" rx="14" />
+      {allStates.map((state) => {
+        const color = state.priority ? CANDY[(++live) % CANDY.length] : "#CFE6FF";
+        return (
+          <path
+            key={state.id}
+            d={state.path}
+            fill={color}
+            stroke="white"
+            strokeWidth={state.priority ? "2.2" : "1.1"}
+            strokeLinejoin="round"
+          />
+        );
+      })}
       {priorityStates.map(
-        (state) =>
+        (state, i) =>
           state.label && (
             <g key={`label-${state.id}`}>
-              <circle cx={state.label.cx} cy={state.label.cy} r={8} fill="white" opacity={0.25} />
-              <circle cx={state.label.cx} cy={state.label.cy} r={5} fill="white" stroke="#0483e2" strokeWidth={1.8} />
+              <StarPin cx={state.label.cx} cy={state.label.cy} color={CANDY[i % CANDY.length]} />
               <rect
-                x={state.label.cx + 10}
-                y={state.label.cy - 11}
-                width={state.label.name.length * 6.4 + 12}
-                height={22}
-                rx={11}
+                x={state.label.cx + 12}
+                y={state.label.cy - 12}
+                width={state.label.name.length * 7 + 16}
+                height={24}
+                rx={12}
                 fill="white"
-                opacity={0.96}
               />
-              <text x={state.label.cx + 15} y={state.label.cy + 5} fontSize="11" fontWeight="700" fill="#02345a" fontFamily="sans-serif">
+              <text x={state.label.cx + 18} y={state.label.cy + 5} fontSize="12" fontWeight="800" fill="#02345a" fontFamily="sans-serif">
                 {state.label.name}
               </text>
             </g>
@@ -76,42 +91,40 @@ export default function DistributionSection() {
             transition={{ duration: 0.65 }}
             className="space-y-7 order-2 lg:order-1"
           >
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-grass px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
+              <MapPin className="w-4 h-4" strokeWidth={2.5} />
               Rolling Out Now
             </div>
 
-            <h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-secondary leading-tight"
-              style={{ fontFamily: "var(--font-jarkata)" }}
-            >
+            <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
               Reaching Every{" "}
-              <span className="text-primary">Corner of Nigeria</span>
+              <span className="text-primary doodle-underline">Corner of Nigeria</span>
             </h2>
 
-            <p
-              className="text-gray-600 text-lg leading-relaxed"
-              style={{ fontFamily: "var(--font-jarkata)" }}
-            >
-              State by state, we are building Nigeria's largest immersive STEM learning network — starting with 7 priority states.
+            <p className="text-gray-600 text-lg sm:text-xl font-semibold leading-relaxed">
+              We&apos;re bringing AR magic to schools all across Nigeria — and we&apos;re
+              starting with these 7 superstar states!
             </p>
 
             {/* Rollout progress */}
-            <div className="space-y-2.5 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
-              <div className="flex justify-between text-sm font-bold">
-                <span className="text-secondary">National Rollout</span>
-                <span className="text-primary">Phase 1 of 3</span>
+            <div className="space-y-2.5 bg-white rounded-3xl p-5 border-4 border-sunshine/50 shadow-[0_8px_0_rgba(0,0,0,0.05)]">
+              <div className="flex justify-between text-base font-display font-bold">
+                <span className="inline-flex items-center gap-1.5 text-secondary">
+                  <Map className="w-4 h-4 text-primary" strokeWidth={2.5} />
+                  We&apos;re growing fast!
+                </span>
+                <span className="text-primary">Step 1 of 3</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-3">
+              <div className="w-full bg-gray-100 rounded-full h-4">
                 <motion.div
-                  className="bg-primary h-3 rounded-full"
+                  className="bg-grass h-4 rounded-full"
                   initial={{ width: 0 }}
                   whileInView={{ width: "33%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
                 />
               </div>
-              <p className="text-gray-500 text-sm">7 priority states active · More joining in Phase 2</p>
+              <p className="text-gray-500 text-sm font-semibold">7 states live now · more joining soon!</p>
             </div>
 
             {/* State pills */}
@@ -123,9 +136,9 @@ export default function DistributionSection() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: i * 0.07 }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary/8 border border-primary/20 text-secondary rounded-full text-sm font-semibold"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border-2 border-primary/25 text-secondary rounded-full text-sm font-bold shadow-sm"
                 >
-                  <span className="w-2 h-2 bg-primary rounded-full shrink-0 animate-pulse" />
+                  <MapPin className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} />
                   {state.id === "fct" ? "Abuja (FCT)" : state.name}
                 </motion.span>
               ))}
@@ -140,27 +153,28 @@ export default function DistributionSection() {
             transition={{ duration: 0.65, delay: 0.15 }}
             className="order-1 lg:order-2 flex justify-center"
           >
-            <div className="relative w-full bg-white rounded-3xl border border-gray-100 shadow-xl p-5 lg:p-6">
+            <div className="relative w-full bg-white rounded-[1.8rem] border-4 border-primary/30 shadow-[0_12px_0_rgba(0,0,0,0.06)] p-5 lg:p-6">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-secondary font-bold text-sm" style={{ fontFamily: "var(--font-jarkata)" }}>
-                  Priority States – Phase 1
+                <p className="inline-flex items-center gap-1.5 text-secondary font-display font-bold text-base">
+                  <Star className="w-4 h-4 fill-sunshine text-sunshine" strokeWidth={2} />
+                  Where We&apos;re Live
                 </p>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  Live
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-grass/15 text-green-700 rounded-full text-xs font-extrabold">
+                  <span className="w-2 h-2 bg-grass rounded-full animate-pulse" />
+                  Live now!
                 </span>
               </div>
               <div className="w-full">
                 <NigeriaMap />
               </div>
-              <div className="flex items-center gap-5 mt-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-5 mt-3 pt-3 border-t-2 border-gray-100">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3.5 h-3.5 rounded-sm bg-primary" />
-                  <span className="text-gray-600 text-xs font-medium">Active State</span>
+                  <Star className="w-4 h-4 fill-sunshine text-sunshine" strokeWidth={2} />
+                  <span className="text-gray-600 text-sm font-bold">Live state</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3.5 h-3.5 rounded-sm bg-[#93c5fd]" />
-                  <span className="text-gray-600 text-xs font-medium">Coming Soon</span>
+                  <div className="w-4 h-4 rounded-md bg-[#CFE6FF]" />
+                  <span className="text-gray-600 text-sm font-bold">Coming soon</span>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -95,7 +95,7 @@ function CallbackContent() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/products/k12-ar-pedia"
+                href="/"
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors"
               >
                 Back to Product Page
@@ -128,7 +128,7 @@ function CallbackContent() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/products/k12-ar-pedia/preorder"
+                href="/preorder"
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-secondary transition-colors"
               >
                 Try Again

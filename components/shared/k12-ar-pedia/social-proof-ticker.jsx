@@ -1,16 +1,18 @@
 "use client";
 
+import { School, Star, PartyPopper, Rocket, Lightbulb, Sparkles, Trophy, Microscope, BookOpen } from "lucide-react";
+
 const events = [
-  { emoji: "🏫", school: "Greenfield Primary", city: "Lagos", action: "reserved 20 slots" },
-  { emoji: "⭐", school: "Sunrise STEM Academy", city: "Abuja", action: "joined early access" },
-  { emoji: "🎉", school: "Lagos Island Prep", city: "Lagos Island", action: "became a partner school" },
-  { emoji: "🚀", school: "New Horizons Junior", city: "Port Harcourt", action: "reserved 15 slots" },
-  { emoji: "💡", school: "Covenant Academy", city: "Ibadan", action: "joined the waitlist" },
-  { emoji: "🌟", school: "Grace International", city: "Kano", action: "booked a free demo" },
-  { emoji: "🏆", school: "Royal Stars Primary", city: "Enugu", action: "became a partner school" },
-  { emoji: "🔬", school: "Discovery STEM Club", city: "Benin City", action: "reserved 30 slots" },
-  { emoji: "📚", school: "Brightfield Academy", city: "Kaduna", action: "joined early access" },
-  { emoji: "✨", school: "Future Leaders Prep", city: "Lekki", action: "booked a free demo" },
+  { Icon: School, school: "Greenfield Primary", city: "Lagos", action: "reserved 20 slots" },
+  { Icon: Star, school: "Sunrise STEM Academy", city: "Abuja", action: "joined early access" },
+  { Icon: PartyPopper, school: "Lagos Island Prep", city: "Lagos Island", action: "became a partner school" },
+  { Icon: Rocket, school: "New Horizons Junior", city: "Port Harcourt", action: "reserved 15 slots" },
+  { Icon: Lightbulb, school: "Covenant Academy", city: "Ibadan", action: "joined the waitlist" },
+  { Icon: Sparkles, school: "Grace International", city: "Kano", action: "booked a free demo" },
+  { Icon: Trophy, school: "Royal Stars Primary", city: "Enugu", action: "became a partner school" },
+  { Icon: Microscope, school: "Discovery STEM Club", city: "Benin City", action: "reserved 30 slots" },
+  { Icon: BookOpen, school: "Brightfield Academy", city: "Kaduna", action: "joined early access" },
+  { Icon: Sparkles, school: "Future Leaders Prep", city: "Lekki", action: "booked a free demo" },
 ];
 
 // Duplicate for seamless infinite scroll
@@ -44,14 +46,14 @@ export default function SocialProofTicker() {
           style={{ background: "linear-gradient(to left, #f0f7ff, transparent)" }} />
 
         <div className="k12-ticker-track flex items-center gap-0 w-max">
-          {track.map(({ emoji, school, city, action }, i) => (
+          {track.map(({ Icon, school, city, action }, i) => (
             <div key={i} className="flex items-center gap-2.5 mx-5 shrink-0">
               {/* Pill card */}
               <div
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-primary/15 shadow-sm"
                 style={{ fontFamily: "var(--font-jarkata)" }}
               >
-                <span className="text-sm">{emoji}</span>
+                <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} />
                 <span className="text-secondary font-bold text-xs">
                   {school}
                   <span className="text-gray-400 font-normal">, {city}</span>
