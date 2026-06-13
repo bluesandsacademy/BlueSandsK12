@@ -106,10 +106,8 @@ export default function WhySwitchSection() {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.8 }}
           ref={containerRef}
-          className="relative rounded-3xl overflow-hidden max-w-5xl mx-auto select-none"
+          className="relative rounded-3xl overflow-hidden max-w-5xl mx-auto select-none aspect-[4/3] sm:aspect-video"
           style={{
-            aspectRatio: "16/9",
-            minHeight: 280,
             cursor: "ew-resize",
             touchAction: "none",
             boxShadow: "0 40px 90px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.08)",
@@ -152,7 +150,7 @@ export default function WhySwitchSection() {
           </div>
 
           {/* AFTER points (bottom-right) */}
-          <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 space-y-1.5 pointer-events-none">
+          <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 space-y-1.5 pointer-events-none hidden sm:block">
             {afterPoints.map((pt) => (
               <div
                 key={pt}
@@ -209,7 +207,7 @@ export default function WhySwitchSection() {
             </div>
 
             {/* BEFORE points (bottom-left, clipped with image) */}
-            <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 space-y-1.5">
+            <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 space-y-1.5 hidden sm:block">
               {beforePoints.map((pt) => (
                 <div
                   key={pt}
@@ -297,12 +295,12 @@ export default function WhySwitchSection() {
           className="mt-12 text-center"
         >
           <div
-            className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 shadow-xl shadow-secondary/30"
+            className="inline-flex items-center gap-3 rounded-2xl px-4 sm:px-8 py-3 sm:py-4 shadow-xl shadow-secondary/30 w-full sm:w-auto justify-center"
             style={{ background: "linear-gradient(135deg, #02345a, #0483e2)" }}
           >
-            <GraduationCap className="w-6 h-6 text-white shrink-0" />
+            <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0" />
             <p
-              className="text-white font-bold text-base sm:text-lg"
+              className="text-white font-bold text-sm sm:text-base lg:text-lg"
               style={{ fontFamily: "var(--font-jarkata)" }}
             >
               Blue Sands K12 AR Pedia transforms classrooms into immersive learning environments.

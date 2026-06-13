@@ -71,7 +71,7 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.06 }}
       whileHover="hovered"
-      className={`group relative overflow-hidden rounded-[1.8rem] cursor-default bg-white border-4 shadow-[0_10px_0_rgba(0,0,0,0.06)] ${wide ? "col-span-2" : ""}`}
+      className={`group relative overflow-hidden rounded-[1.8rem] cursor-pointer bg-white border-4 shadow-[0_10px_0_rgba(0,0,0,0.06)] ${wide ? "col-span-2" : ""}`}
       style={{ aspectRatio: wide ? "16/9" : "3/4", borderColor: color }}
     >
       {/* Photo */}
@@ -97,9 +97,18 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
         <Icon className="w-6 h-6" style={{ color }} strokeWidth={2.5} />
       </div>
 
-      {/* Default title (fades on hover) */}
+      {/* Mobile: always-visible info panel */}
+      <div
+        className="absolute inset-x-0 bottom-0 p-3 sm:hidden"
+        style={{ background: `linear-gradient(to top, ${color} 60%, ${color}ee 100%)` }}
+      >
+        <h3 className="font-display font-bold text-white text-base leading-tight mb-0.5">{title}</h3>
+        <p className="text-white/90 text-[11px] font-semibold leading-snug line-clamp-3">{description}</p>
+      </div>
+
+      {/* Desktop: default title (fades on hover) */}
       <motion.div
-        className="absolute inset-x-0 bottom-0 p-4"
+        className="absolute inset-x-0 bottom-0 p-4 hidden sm:block"
         variants={{ hovered: { opacity: 0, y: 8 } }}
         transition={{ duration: 0.25 }}
       >
@@ -109,9 +118,9 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
         <p className="text-white/90 text-sm font-semibold">{tagline}</p>
       </motion.div>
 
-      {/* Hover reveal panel */}
+      {/* Desktop: hover reveal panel */}
       <motion.div
-        className="absolute inset-x-0 bottom-0 p-4"
+        className="absolute inset-x-0 bottom-0 p-4 hidden sm:block"
         variants={{ initial: { y: "100%", opacity: 0 }, hovered: { y: 0, opacity: 1 } }}
         transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
         style={{ background: `linear-gradient(to top, ${color} 60%, ${color}ee 100%)` }}
