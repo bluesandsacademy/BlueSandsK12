@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { initializeTransaction, generateReference } from "@/lib/paystack";
+import { subtotalFor, validatePromoCode } from "@/lib/promo";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -17,11 +18,8 @@ const VALID_NEEDS       = ["ar_books", "teacher_training", "school_demo", "insta
 const INDIVIDUAL_MAX_QTY = 10;
 const SCHOOL_MIN_QTY     = 5;
 
-// Per-device NGN rates matching the pricing page
-const PLAN_RATES = {
-  family: 210000,
-  school:  84000,
-};
+// Paystack can't process a near-zero charge; reject codes that would zero a cart.
+const MIN_CHARGE_NGN = 100;
 
 export async function POST(request) {
   try {
@@ -32,6 +30,7 @@ export async function POST(request) {
       state, lga, city, postal_code, address_line1, address_line2, landmark,
       device_count, additional_needs,
       student_count, teacher_count, agreed_to_contact,
+      promo_code,
     } = body;
 
     // ── Validation ───────────────────────────────────────────────────────────
@@ -76,8 +75,25 @@ export async function POST(request) {
     const sanitizedNeeds = (additional_needs || []).filter((n) => VALID_NEEDS.includes(n));
 
     // ── Compute amount (full payment only) ────────────────────────────────────
-    const ratePerDevice = PLAN_RATES[selected_plan] ?? PLAN_RATES.school;
-    const chargeNGN     = ratePerDevice * parsedDeviceCount;
+    const subtotalNGN = subtotalFor(selected_plan, parsedDeviceCount);
+
+    // ── Apply promo code (server-authoritative — re-validated, never trusted) ──
+    let promo = null;
+    let discountNGN = 0;
+    if (promo_code?.trim()) {
+      const result = await validatePromoCode(promo_code, subtotalNGN);
+      if (!result.ok)
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      promo = result.promo;
+      discountNGN = result.discount_ngn;
+    }
+
+    const chargeNGN = subtotalNGN - discountNGN;
+    if (chargeNGN < MIN_CHARGE_NGN)
+      return NextResponse.json(
+        { error: "This promo code can't be applied to this order automatically — please contact us to complete it." },
+        { status: 400 }
+      );
 
     // ── Insert preorder ───────────────────────────────────────────────────────
     const { data, error } = await supabaseAdmin
@@ -105,6 +121,10 @@ export async function POST(request) {
         agreed_to_contact:  Boolean(agreed_to_contact),
         order_status:       "pending",
         payment_status:     "unpaid",
+        promo_code_id:      promo?.id ?? null,
+        promo_code:         promo?.code ?? null,
+        subtotal_ngn:       subtotalNGN,
+        discount_ngn:       discountNGN,
       })
       .select("id")
       .single();

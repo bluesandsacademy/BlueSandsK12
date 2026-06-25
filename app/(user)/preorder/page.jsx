@@ -24,6 +24,8 @@ import {
   Wrench,
   Wifi,
   Phone,
+  Tag,
+  X,
 } from "lucide-react";
 
 const PLAN_META = {
@@ -183,11 +185,53 @@ function PreorderForm() {
     teacher_count: "",
     payment_option: "full",
     agreed_to_contact: false,
+    promo_code: "",
   });
+
+  // Promo code: `promo` holds the validated/applied result from the server.
+  const [promo, setPromo] = useState(null);
+  const [promoStatus, setPromoStatus] = useState("idle"); // idle | checking | error
+  const [promoMsg, setPromoMsg] = useState("");
+
+  const clearPromo = () => {
+    setPromo(null);
+    setPromoStatus("idle");
+    setPromoMsg("");
+  };
 
   const set = (field, value) => {
     setForm((f) => ({ ...f, [field]: value }));
     setErrors((e) => ({ ...e, [field]: "" }));
+    // Discount depends on the subtotal — drop any applied code if it changes.
+    if (field === "device_count" || field === "selected_plan") clearPromo();
+  };
+
+  const applyPromo = async () => {
+    const code = form.promo_code.trim();
+    if (!code) return;
+    setPromoStatus("checking");
+    setPromoMsg("");
+    try {
+      const res = await fetch("/api/k12-ar-pedia/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, selected_plan: planParam, device_count: form.device_count }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        setPromo(null);
+        setPromoStatus("error");
+        setPromoMsg(data.error || "That code isn't valid.");
+        return;
+      }
+      setPromo(data);
+      setPromoStatus("idle");
+      setPromoMsg("");
+    } catch {
+      setPromo(null);
+      setPromoStatus("error");
+      setPromoMsg("Could not check that code. Please try again.");
+    }
   };
 
   const toggleNeed = (id) => {
@@ -247,7 +291,9 @@ function PreorderForm() {
       const res = await fetch("/api/k12-ar-pedia/preorder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        // Only send the code if it was successfully applied, so a stray
+        // half-typed code can never block checkout.
+        body: JSON.stringify({ ...form, promo_code: promo ? form.promo_code.trim() : "" }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed.");
@@ -788,10 +834,57 @@ function PreorderForm() {
                           {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
                         </span>
                       </div>
+                      {/* Promo code */}
+                      <div className="pt-2 border-t border-primary/10">
+                        {promo ? (
+                          <div className="flex items-center justify-between">
+                            <span className="inline-flex items-center gap-1.5 text-sm font-bold text-grass">
+                              <Tag className="w-4 h-4" strokeWidth={2.5} />
+                              {form.promo_code.trim().toUpperCase()} applied
+                            </span>
+                            <span className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-grass">− {fmtNGN(promo.discount_ngn)}</span>
+                              <button
+                                type="button"
+                                onClick={() => { set("promo_code", ""); clearPromo(); }}
+                                aria-label="Remove promo code"
+                                className="text-gray-400 hover:text-gray-600"
+                              >
+                                <X className="w-3.5 h-3.5" strokeWidth={2.5} />
+                              </button>
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex gap-2">
+                              <input
+                                value={form.promo_code}
+                                onChange={(e) => {
+                                  set("promo_code", e.target.value);
+                                  if (promoStatus === "error") { setPromoStatus("idle"); setPromoMsg(""); }
+                                }}
+                                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyPromo(); } }}
+                                placeholder="Promo code"
+                                className="flex-1 px-3 py-2 rounded-lg border-2 border-gray-200 focus:border-primary focus:outline-none text-sm uppercase placeholder:normal-case placeholder:text-gray-400"
+                              />
+                              <button
+                                type="button"
+                                onClick={applyPromo}
+                                disabled={promoStatus === "checking" || !form.promo_code.trim()}
+                                className="px-4 py-2 rounded-lg bg-secondary text-white text-sm font-bold hover:bg-secondary/90 transition-colors disabled:opacity-50"
+                              >
+                                {promoStatus === "checking" ? "Checking…" : "Apply"}
+                              </button>
+                            </div>
+                            {promoMsg && <p className="mt-1 text-xs text-rose-500 font-medium">{promoMsg}</p>}
+                          </>
+                        )}
+                      </div>
+
                       <div className="flex items-center justify-between pt-2 border-t border-primary/10">
                         <span className="text-xs text-gray-500">Paid in full at checkout</span>
                         <span className="text-base font-bold text-primary">
-                          {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
+                          {fmtNGN(promo ? promo.total_ngn : form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
                         </span>
                       </div>
                       <p className="text-[10px] text-gray-400 pt-1">
@@ -889,12 +982,20 @@ function PreorderForm() {
                       <span className="font-semibold">{form.device_count}</span>
                     </div>
                     {planParam && PLAN_PRICING[planParam] && form.device_count > 0 && (
-                      <div className="flex justify-between text-gray-600">
-                        <span>Total (paid in full)</span>
-                        <span className="font-bold text-secondary">
-                          {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
-                        </span>
-                      </div>
+                      <>
+                        {promo && (
+                          <div className="flex justify-between text-grass font-semibold">
+                            <span>Promo ({form.promo_code.trim().toUpperCase()})</span>
+                            <span>− {fmtNGN(promo.discount_ngn)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-gray-600">
+                          <span>Total (paid in full)</span>
+                          <span className="font-bold text-secondary">
+                            {fmtNGN(promo ? promo.total_ngn : form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
+                          </span>
+                        </div>
+                      </>
                     )}
                     <div className="flex justify-between text-gray-600">
                       <span>Location</span>
