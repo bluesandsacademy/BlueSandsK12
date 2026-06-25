@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { verifyTransaction } from "@/lib/paystack";
-import { sendOrderConfirmation, sendBalanceConfirmation, sendAdminPaymentAlert } from "@/lib/resend";
+import { sendOrderConfirmation, sendAdminPaymentAlert } from "@/lib/resend";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -33,38 +33,31 @@ export async function GET(request) {
         .update({ paystack_status: "success", updated_at: new Date().toISOString() })
         .eq("id", payment.id);
 
-      const newPaymentStatus = payment.payment_type === "deposit" ? "deposit_paid" : "fully_paid";
-
       const { data: preorder } = await supabaseAdmin
         .from("k12_preorders")
-        .update({ payment_status: newPaymentStatus })
+        .update({ payment_status: "fully_paid" })
         .eq("id", payment.preorder_id)
         .select("full_name, email, selected_plan, device_count")
         .single();
 
       if (preorder?.email) {
         const planLabel    = preorder.selected_plan === "family" ? "Smart Family STEM Pack" : "Smart Classroom Starter";
-        const isBalance    = payment.payment_type === "balance";
-        const emailFn      = isBalance ? sendBalanceConfirmation : sendOrderConfirmation;
-        const subject      = isBalance
-          ? "Full Payment Received — Blue Sands K12 AR Pedia"
-          : "Order Confirmed — Blue Sands K12 AR Pedia";
 
-        await emailFn({
+        await sendOrderConfirmation({
           to:           preorder.email,
           customerName: preorder.full_name,
           plan:         planLabel,
           deviceCount:  preorder.device_count,
           amountPaid:   amountNGN,
-          paymentType:  payment.payment_type,
+          paymentType:  "full",
           orderId:      payment.preorder_id,
         }).catch((err) => console.error("[verify-payment] Customer email error:", err));
 
         await supabaseAdmin.from("email_logs").insert({
           preorder_id: payment.preorder_id,
           recipient:   preorder.email,
-          subject,
-          email_type:  isBalance ? "balance_confirmation" : "order_confirmation",
+          subject:     "Order Confirmed — Blue Sands K12 AR Pedia",
+          email_type:  "order_confirmation",
           status:      "sent",
         });
 

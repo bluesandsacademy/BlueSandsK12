@@ -98,7 +98,6 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
             >
               <option value="">All payments</option>
               <option value="unpaid">Unpaid</option>
-              <option value="deposit_paid">Deposit Paid</option>
               <option value="fully_paid">Fully Paid</option>
             </select>
             <button

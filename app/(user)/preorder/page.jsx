@@ -89,7 +89,11 @@ const NIGERIAN_STATES = [
   "Zamfara",
 ];
 
-const DEVICE_PRESETS = [1, 5, 25, 100];
+// Individuals can order 1–10 units; larger volumes are routed to distributor application.
+const INDIVIDUAL_MAX_QTY = 10;
+const SCHOOL_MIN_QTY = 5;
+const DEVICE_PRESETS_INDIVIDUAL = [1, 2, 5, 10];
+const DEVICE_PRESETS_SCHOOL = [5, 10, 25, 100];
 
 // Per-device rates derived from pricing page:
 //  Family  — ₦210,000 for 1 device
@@ -117,17 +121,11 @@ const USER_TYPES = [
   },
 ];
 
-const PAYMENT_OPTIONS = [
-  { id: "full",    label: "Full Payment", desc: "Pay the complete amount now and get priority processing." },
-  { id: "deposit", label: "30% Deposit",  desc: "Pay 30% now — you'll pay the remaining 70% when your order is ready." },
-];
-
 const SECTIONS = [
   { label: "Who Are You?", step: 1 },
   { label: "Your Details", step: 2 },
   { label: "Location", step: 3 },
-  { label: "Order Details", step: 4 },
-  { label: "Payment", step: 5 },
+  { label: "Review & Pay", step: 4 },
 ];
 
 function Label({ children, required }) {
@@ -183,7 +181,7 @@ function PreorderForm() {
     additional_needs: [],
     student_count: "",
     teacher_count: "",
-    payment_option: "",
+    payment_option: "full",
     agreed_to_contact: false,
   });
 
@@ -221,16 +219,17 @@ function PreorderForm() {
         e.address_line1 = "Street address is required.";
     }
     if (step === 4) {
-      if (!form.device_count || form.device_count < 1)
+      const qty = parseInt(form.device_count, 10);
+      const isSchoolOrg = ["school", "institution"].includes(form.user_type);
+      if (!qty || qty < 1) {
         e.device_count = "At least 1 device is required.";
-      if (form.selected_plan === "school" && form.device_count < 5)
-        e.device_count = "School plans require a minimum of 5 devices.";
-    }
-    if (step === 5) {
-      if (!form.payment_option)
-        e.payment_option = "Please select a payment option.";
+      } else if (isSchoolOrg && qty < SCHOOL_MIN_QTY) {
+        e.device_count = `Schools and organisations require a minimum of ${SCHOOL_MIN_QTY} units.`;
+      } else if (!isSchoolOrg && qty > INDIVIDUAL_MAX_QTY) {
+        e.device_count = `Individual orders are limited to ${INDIVIDUAL_MAX_QTY} units. For larger volumes, please apply as a distributor.`;
+      }
       if (!form.agreed_to_contact)
-        e.agreed_to_contact = "You must agree to be contacted.";
+        e.agreed_to_contact = "Please accept the Terms & Conditions to continue.";
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -267,6 +266,11 @@ function PreorderForm() {
   const isSchoolOrInstitution = ["school", "institution"].includes(
     form.user_type,
   );
+  const devicePresets = isSchoolOrInstitution
+    ? DEVICE_PRESETS_SCHOOL
+    : DEVICE_PRESETS_INDIVIDUAL;
+  const overIndividualLimit =
+    !isSchoolOrInstitution && parseInt(form.device_count, 10) > INDIVIDUAL_MAX_QTY;
 
   if (status === "success") {
     return (
@@ -713,9 +717,9 @@ function PreorderForm() {
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
                   {/* Device count */}
                   <div>
-                    <Label required>Number of Devices Needed</Label>
+                    <Label required>Number of Units Needed</Label>
                     <div className="flex flex-wrap gap-2 mb-3">
-                      {DEVICE_PRESETS.map((n) => (
+                      {devicePresets.map((n) => (
                         <button
                           key={n}
                           type="button"
@@ -729,14 +733,42 @@ function PreorderForm() {
                     <Input
                       type="number"
                       min={1}
+                      max={isSchoolOrInstitution ? undefined : INDIVIDUAL_MAX_QTY}
                       placeholder="Or enter custom number"
                       value={form.device_count}
                       onChange={(e) =>
                         set("device_count", parseInt(e.target.value, 10) || "")
                       }
                     />
+                    <p className="mt-1 text-xs text-gray-400">
+                      {isSchoolOrInstitution
+                        ? `Minimum ${SCHOOL_MIN_QTY} units for schools and organisations.`
+                        : `Individuals can order between 1 and ${INDIVIDUAL_MAX_QTY} units.`}
+                    </p>
                     <FieldError msg={errors.device_count} />
                   </div>
+
+                  {/* Over-limit → route to distributor application */}
+                  {overIndividualLimit && (
+                    <div className="rounded-xl p-4 border-2 border-amber-200 bg-amber-50 flex items-start gap-3">
+                      <Package className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-bold text-amber-700">
+                          Ordering more than {INDIVIDUAL_MAX_QTY} units?
+                        </p>
+                        <p className="text-amber-600/90 mt-0.5">
+                          Larger volumes are handled through our distributor
+                          programme with better pricing and support.{" "}
+                          <Link
+                            href="/apply"
+                            className="font-bold underline underline-offset-2"
+                          >
+                            Apply as a distributor →
+                          </Link>
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Price estimate */}
                   {planParam && PLAN_PRICING[planParam] && form.device_count > 0 && (
@@ -757,13 +789,13 @@ function PreorderForm() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-primary/10">
-                        <span className="text-xs text-gray-500">30% deposit to secure your slot</span>
+                        <span className="text-xs text-gray-500">Paid in full at checkout</span>
                         <span className="text-base font-bold text-primary">
-                          {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN * 0.3)}
+                          {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
                         </span>
                       </div>
                       <p className="text-[10px] text-gray-400 pt-1">
-                        * Estimate only — final quote confirmed by our team before any payment is taken.
+                        * Estimate only — final quote confirmed before checkout.
                       </p>
                     </div>
                   )}
@@ -834,73 +866,6 @@ function PreorderForm() {
                       </div>
                     </div>
                   )}
-                </div>
-              </div>
-            )}
-
-            {/* ── STEP 5: Payment + Confirm ─────────────────── */}
-            {step === 5 && (
-              <div className="space-y-6">
-                <div>
-                  <h2
-                    className="text-xl font-bold text-secondary mb-1"
-                    style={{ fontFamily: "var(--font-jarkata)" }}
-                  >
-                    Payment Preference
-                  </h2>
-                  <p className="text-gray-500 text-sm">
-                    Choose how you&apos;d like to handle payment.
-                  </p>
-                </div>
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
-                  <div className="space-y-3">
-                    {PAYMENT_OPTIONS.map(({ id, label, desc }) => (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => set("payment_option", id)}
-                        className={`w-full flex items-start gap-4 p-4 rounded-xl border-2 text-left transition-all ${form.payment_option === id ? "border-primary bg-primary/5" : "border-gray-200 hover:border-gray-300"}`}
-                      >
-                        <div
-                          className={`w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 flex items-center justify-center ${form.payment_option === id ? "border-primary bg-primary" : "border-gray-300"}`}
-                        >
-                          {form.payment_option === id && (
-                            <div className="w-2 h-2 rounded-full bg-white" />
-                          )}
-                        </div>
-                        <div>
-                          <p
-                            className={`text-sm font-bold ${form.payment_option === id ? "text-primary" : "text-secondary"}`}
-                          >
-                            {label}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <FieldError msg={errors.payment_option} />
-
-                  {/* Agreement */}
-                  <div className="pt-3 border-t border-gray-100">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <div
-                        onClick={() =>
-                          set("agreed_to_contact", !form.agreed_to_contact)
-                        }
-                        className={`w-5 h-5 rounded border-2 shrink-0 mt-0.5 flex items-center justify-center transition-all ${form.agreed_to_contact ? "bg-primary border-primary" : "border-gray-300 group-hover:border-primary/50"}`}
-                      >
-                        {form.agreed_to_contact && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                        )}
-                      </div>
-                      <span className="text-sm text-gray-600 leading-relaxed">
-                        I agree to be contacted by Blue Sands STEM Labs
-                        regarding my preorder.
-                      </span>
-                    </label>
-                    <FieldError msg={errors.agreed_to_contact} />
-                  </div>
 
                   {/* Review summary */}
                   <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
@@ -920,24 +885,16 @@ function PreorderForm() {
                       </span>
                     </div>
                     <div className="flex justify-between text-gray-600">
-                      <span>Devices</span>
+                      <span>Units</span>
                       <span className="font-semibold">{form.device_count}</span>
                     </div>
                     {planParam && PLAN_PRICING[planParam] && form.device_count > 0 && (
-                      <>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Est. Total</span>
-                          <span className="font-bold text-secondary">
-                            {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>30% Deposit</span>
-                          <span className="font-bold text-primary">
-                            {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN * 0.3)}
-                          </span>
-                        </div>
-                      </>
+                      <div className="flex justify-between text-gray-600">
+                        <span>Total (paid in full)</span>
+                        <span className="font-bold text-secondary">
+                          {fmtNGN(form.device_count * PLAN_PRICING[planParam].perDeviceNGN)}
+                        </span>
+                      </div>
                     )}
                     <div className="flex justify-between text-gray-600">
                       <span>Location</span>
@@ -955,6 +912,31 @@ function PreorderForm() {
                         </span>
                       </div>
                     )}
+                  </div>
+
+                  {/* Terms & Conditions — required */}
+                  <div className="pt-3 border-t border-gray-100">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div
+                        onClick={() =>
+                          set("agreed_to_contact", !form.agreed_to_contact)
+                        }
+                        className={`w-5 h-5 rounded border-2 shrink-0 mt-0.5 flex items-center justify-center transition-all ${form.agreed_to_contact ? "bg-primary border-primary" : "border-gray-300 group-hover:border-primary/50"}`}
+                      >
+                        {form.agreed_to_contact && (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-600 leading-relaxed">
+                        I accept the{" "}
+                        <span className="font-semibold text-secondary">
+                          Terms &amp; Conditions
+                        </span>{" "}
+                        and agree to be contacted by Blue Sands STEM Labs about
+                        my preorder.
+                      </span>
+                    </label>
+                    <FieldError msg={errors.agreed_to_contact} />
                   </div>
 
                   {status === "error" && (
@@ -1003,7 +985,7 @@ function PreorderForm() {
                 </>
               ) : (
                 <>
-                  <Package className="w-4 h-4" /> Reserve My Devices
+                  <CreditCard className="w-4 h-4" /> Reserve &amp; Pay in Full
                 </>
               )}
             </button>

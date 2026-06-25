@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Microscope, Heart, Monitor, Star, Sparkles } from "lucide-react";
+import { Microscope, Heart, Monitor, Star } from "lucide-react";
 import { FloatSparkle } from "./science-floats";
+import SectionKicker from "./section-kicker";
 
 const pillars = [
   {
@@ -55,10 +56,7 @@ export default function VisionSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <Sparkles className="w-4 h-4" strokeWidth={2.5} />
-            Our Big Dream
-          </div>
+          <SectionKicker className="text-coral">Our Big Dream</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             A National STEM{" "}
             <span className="text-coral doodle-underline">Movement</span>

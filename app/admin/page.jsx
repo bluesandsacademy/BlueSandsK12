@@ -6,7 +6,7 @@ async function getStats() {
   const [
     { count: totalOrders },
     { count: pendingOrders },
-    { count: depositPaid },
+    { count: unpaidOrders },
     { count: fullyPaid },
     { count: shippedOrders },
     { count: totalApplications },
@@ -15,7 +15,7 @@ async function getStats() {
   ] = await Promise.all([
     supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }),
     supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }).eq("order_status", "pending"),
-    supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }).eq("payment_status", "deposit_paid"),
+    supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }).eq("payment_status", "unpaid"),
     supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }).eq("payment_status", "fully_paid"),
     supabaseAdmin.from("k12_preorders").select("*", { count: "exact", head: true }).in("order_status", ["shipped", "delivered"]),
     supabaseAdmin.from("k12_distribution_applications").select("*", { count: "exact", head: true }),
@@ -26,7 +26,7 @@ async function getStats() {
       .limit(6),
   ]);
 
-  return { totalOrders, pendingOrders, depositPaid, fullyPaid, shippedOrders, totalApplications, pendingApplications, recentOrders };
+  return { totalOrders, pendingOrders, unpaidOrders, fullyPaid, shippedOrders, totalApplications, pendingApplications, recentOrders };
 }
 
 const STATUS_STYLES = {
@@ -68,12 +68,12 @@ export default async function AdminDashboard() {
       sub: "Needs review",
     },
     {
-      label: "Deposit Paid",
-      value: stats.depositPaid ?? 0,
+      label: "Awaiting Payment",
+      value: stats.unpaidOrders ?? 0,
       Icon: CreditCard,
       accent: "#7c3aed",
       accentBg: "#f5f3ff",
-      sub: "30% received",
+      sub: "Reserved, unpaid",
     },
     {
       label: "Fully Paid",

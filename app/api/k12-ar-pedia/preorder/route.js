@@ -11,8 +11,11 @@ const NIGERIAN_STATES = [
 ];
 
 const VALID_USER_TYPES  = ["individual", "school", "institution"];
-const VALID_PAYMENT_OPT = ["full", "deposit"];
 const VALID_NEEDS       = ["ar_books", "teacher_training", "school_demo", "installation_support", "lms_access"];
+
+// Quantity rules: individuals 1–10 units; schools/institutions minimum 5.
+const INDIVIDUAL_MAX_QTY = 10;
+const SCHOOL_MIN_QTY     = 5;
 
 // Per-device NGN rates matching the pricing page
 const PLAN_RATES = {
@@ -28,7 +31,7 @@ export async function POST(request) {
       selected_plan, user_type, full_name, school_org_name, email, phone, whatsapp,
       state, lga, city, postal_code, address_line1, address_line2, landmark,
       device_count, additional_needs,
-      student_count, teacher_count, payment_option, agreed_to_contact,
+      student_count, teacher_count, agreed_to_contact,
     } = body;
 
     // ── Validation ───────────────────────────────────────────────────────────
@@ -58,22 +61,23 @@ export async function POST(request) {
 
     const parsedDeviceCount = parseInt(device_count, 10);
     if (!parsedDeviceCount || parsedDeviceCount < 1)
-      return NextResponse.json({ error: "At least 1 device is required." }, { status: 400 });
+      return NextResponse.json({ error: "At least 1 unit is required." }, { status: 400 });
 
-    if (!payment_option || !VALID_PAYMENT_OPT.includes(payment_option))
-      return NextResponse.json({ error: "Please select a payment option." }, { status: 400 });
+    const isSchoolOrg = ["school", "institution"].includes(user_type);
+    if (isSchoolOrg && parsedDeviceCount < SCHOOL_MIN_QTY)
+      return NextResponse.json({ error: `Schools and organisations require a minimum of ${SCHOOL_MIN_QTY} units.` }, { status: 400 });
+
+    if (!isSchoolOrg && parsedDeviceCount > INDIVIDUAL_MAX_QTY)
+      return NextResponse.json({ error: `Individual orders are limited to ${INDIVIDUAL_MAX_QTY} units. Please apply as a distributor for larger volumes.` }, { status: 400 });
 
     if (!agreed_to_contact)
-      return NextResponse.json({ error: "You must agree to be contacted." }, { status: 400 });
+      return NextResponse.json({ error: "You must accept the Terms & Conditions." }, { status: 400 });
 
     const sanitizedNeeds = (additional_needs || []).filter((n) => VALID_NEEDS.includes(n));
 
-    // ── Compute amount ────────────────────────────────────────────────────────
+    // ── Compute amount (full payment only) ────────────────────────────────────
     const ratePerDevice = PLAN_RATES[selected_plan] ?? PLAN_RATES.school;
-    const fullAmountNGN = ratePerDevice * parsedDeviceCount;
-    const chargeNGN     = payment_option === "deposit"
-      ? Math.round(fullAmountNGN * 0.3)
-      : fullAmountNGN;
+    const chargeNGN     = ratePerDevice * parsedDeviceCount;
 
     // ── Insert preorder ───────────────────────────────────────────────────────
     const { data, error } = await supabaseAdmin
@@ -97,7 +101,7 @@ export async function POST(request) {
         additional_needs:   sanitizedNeeds,
         student_count:      student_count ? parseInt(student_count, 10) : null,
         teacher_count:      teacher_count ? parseInt(teacher_count, 10) : null,
-        payment_option,
+        payment_option:     "full",
         agreed_to_contact:  Boolean(agreed_to_contact),
         order_status:       "pending",
         payment_status:     "unpaid",
@@ -119,7 +123,7 @@ export async function POST(request) {
       callbackUrl: `${siteUrl}/preorder/callback?preorder_id=${preorderId}`,
       metadata: {
         preorder_id:    preorderId,
-        payment_type:   payment_option === "deposit" ? "deposit" : "full",
+        payment_type:   "full",
         customer_name:  full_name.trim(),
         plan:           selected_plan,
         device_count:   parsedDeviceCount,
@@ -129,7 +133,7 @@ export async function POST(request) {
     // ── Record pending payment ────────────────────────────────────────────────
     await supabaseAdmin.from("order_payments").insert({
       preorder_id:     preorderId,
-      payment_type:    payment_option === "deposit" ? "deposit" : "full",
+      payment_type:    "full",
       amount_ngn:      chargeNGN,
       paystack_ref:    reference,
       paystack_status: "pending",

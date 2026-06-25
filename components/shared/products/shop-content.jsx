@@ -6,7 +6,9 @@ import {
   CheckCircle2,
   ShoppingBag,
   ChevronDown,
-  Sparkles,
+  CalendarCheck,
+  ListOrdered,
+  MessageCircle,
   School,
 } from "lucide-react";
 import { products, preorderSteps, fmtUSD, fmtNGN } from "@/lib/products";
@@ -34,7 +36,7 @@ function ProductCard({ p, index }) {
       >
         <p.Icon className="w-20 h-20 sm:w-24 sm:h-24 text-white drop-shadow-xl kid-float" strokeWidth={1.75} />
         <span className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-white/90 text-xs font-extrabold text-secondary">
-          30% deposit to reserve
+          Pre-order now
         </span>
         <FloatSparkle className="absolute top-4 right-4 opacity-80" size={28} color="#ffffff" />
       </Link>
@@ -61,9 +63,9 @@ function ProductCard({ p, index }) {
             <p className="text-xs font-bold text-gray-400">{fmtNGN(p.priceNGN)}</p>
           </div>
           <div className="text-right">
-            <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">30% Deposit</p>
-            <p className="font-display font-bold text-2xl text-secondary">{fmtUSD(p.depositUSD)}</p>
-            <p className="text-xs font-bold text-gray-400">{fmtNGN(p.depositNGN)}</p>
+            <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">Payment</p>
+            <p className="font-display font-bold text-lg text-secondary">Pay in Full</p>
+            <p className="text-xs font-bold text-gray-400">Secure checkout</p>
           </div>
         </div>
 
@@ -132,8 +134,8 @@ export default function ShopContent() {
               </p>
 
               <p className="mx-auto lg:mx-0 max-w-xl text-base sm:text-lg text-gray-500 font-semibold leading-relaxed">
-                Pre-order immersive STEM devices today with only a{" "}
-                <span className="font-display font-bold text-coral">30% deposit</span>{" "}
+                Pre-order immersive STEM devices today with{" "}
+                <span className="font-display font-bold text-coral">secure full payment</span>{" "}
                 and position your school at the forefront of digital learning
                 innovation.
               </p>
@@ -152,7 +154,7 @@ export default function ShopContent() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10"
                 >
-                  <Sparkles className="w-5 h-5 text-sunshine" strokeWidth={2.5} />
+                  <CalendarCheck className="w-5 h-5 text-primary" strokeWidth={2.5} />
                   Book a Demo
                 </a>
               </div>
@@ -221,7 +223,7 @@ export default function ShopContent() {
             className="text-center mb-14 space-y-4"
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-grass px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-              <Sparkles className="w-4 h-4" strokeWidth={2.5} />
+              <ListOrdered className="w-4 h-4" strokeWidth={2.5} />
               Easy as 1-2-3-4
             </div>
             <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
@@ -305,7 +307,7 @@ export default function ShopContent() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-8 py-4 text-white font-display font-bold text-lg border-2 border-white/20 hover:bg-white/20 transition-all"
                 >
-                  <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+                  <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
                   Talk to Us
                 </a>
               </div>

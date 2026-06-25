@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef, useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Map, Star } from "lucide-react";
+import { MapPin, Map, Star, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { nigeriaStates } from "@/lib/nigeria-map-data";
 
 const priorityStates = nigeriaStates.filter((s) => s.priority);
@@ -63,6 +64,114 @@ function NigeriaMap() {
           ),
       )}
     </svg>
+  );
+}
+
+const MIN_SCALE = 1;
+const MAX_SCALE = 4;
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+/* Lightweight pan + zoom wrapper — wheel/pinch to zoom, drag to pan, no deps. */
+function InteractiveMap() {
+  const ref = useRef(null);
+  const [t, setT] = useState({ scale: 1, x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const drag = useRef(null);
+
+  const zoomBy = useCallback((factor) => {
+    setT((prev) => {
+      const scale = clamp(prev.scale * factor, MIN_SCALE, MAX_SCALE);
+      // Re-center pan when fully zoomed out
+      if (scale === 1) return { scale: 1, x: 0, y: 0 };
+      return { ...prev, scale };
+    });
+  }, []);
+
+  const reset = useCallback(() => setT({ scale: 1, x: 0, y: 0 }), []);
+
+  const onWheel = useCallback((e) => {
+    e.preventDefault();
+    zoomBy(e.deltaY < 0 ? 1.15 : 1 / 1.15);
+  }, [zoomBy]);
+
+  const onPointerDown = (e) => {
+    if (t.scale <= 1) return;
+    drag.current = { startX: e.clientX, startY: e.clientY, ox: t.x, oy: t.y };
+    setDragging(true);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    setT((prev) => ({ ...prev, x: d.ox + dx, y: d.oy + dy }));
+  };
+  const endDrag = () => { drag.current = null; setDragging(false); };
+
+  // Non-passive wheel listener so preventDefault works
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [onWheel]);
+
+  return (
+    <div className="relative">
+      <div
+        ref={ref}
+        className="relative w-full overflow-hidden rounded-2xl bg-[#FFF7E0] touch-none select-none"
+        style={{ cursor: t.scale > 1 ? "grab" : "default" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerLeave={endDrag}
+      >
+        <div
+          style={{
+            transform: `translate(${t.x}px, ${t.y}px) scale(${t.scale})`,
+            transformOrigin: "center center",
+            transition: dragging ? "none" : "transform 0.15s ease-out",
+          }}
+        >
+          <NigeriaMap />
+        </div>
+      </div>
+
+      {/* Zoom controls — top-right, over the empty NE of the map so they
+         don't collide with the southern city markers or the hint text. */}
+      <div className="absolute top-3 right-3 flex flex-col gap-1.5">
+        <button
+          type="button"
+          onClick={() => zoomBy(1.3)}
+          aria-label="Zoom in"
+          className="w-9 h-9 rounded-xl bg-white border-2 border-primary/20 text-secondary flex items-center justify-center shadow-md hover:bg-primary hover:text-white transition-colors"
+        >
+          <ZoomIn className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+        <button
+          type="button"
+          onClick={() => zoomBy(1 / 1.3)}
+          aria-label="Zoom out"
+          className="w-9 h-9 rounded-xl bg-white border-2 border-primary/20 text-secondary flex items-center justify-center shadow-md hover:bg-primary hover:text-white transition-colors"
+        >
+          <ZoomOut className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+        <button
+          type="button"
+          onClick={reset}
+          aria-label="Reset map"
+          className="w-9 h-9 rounded-xl bg-white border-2 border-primary/20 text-secondary flex items-center justify-center shadow-md hover:bg-primary hover:text-white transition-colors"
+        >
+          <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+      </div>
+
+      <p className="mt-2 text-center text-[11px] text-gray-400 font-semibold">
+        Scroll to zoom · drag to explore
+      </p>
+    </div>
   );
 }
 
@@ -165,7 +274,7 @@ export default function DistributionSection() {
                 </span>
               </div>
               <div className="w-full">
-                <NigeriaMap />
+                <InteractiveMap />
               </div>
               <div className="flex items-center gap-5 mt-3 pt-3 border-t-2 border-gray-100">
                 <div className="flex items-center gap-1.5">

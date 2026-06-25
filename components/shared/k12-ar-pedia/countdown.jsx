@@ -114,7 +114,7 @@ export default function CountdownSection() {
             Nigeria National Rollout Countdown
           </h2>
           <p className="text-white/60 text-sm font-medium uppercase tracking-wider">
-            First 1,000 Orders Campaign
+            First 10,000 Orders Campaign
           </p>
         </motion.div>
 

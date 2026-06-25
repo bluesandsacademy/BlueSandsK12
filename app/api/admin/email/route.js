@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/admin-auth";
-import { sendBalancePaymentLink, sendTrackingNotification } from "@/lib/resend";
+import { sendTrackingNotification } from "@/lib/resend";
 
 const PLAN_LABEL = { family: "Smart Family STEM Pack", school: "Smart Classroom Starter" };
-const PLAN_RATES = { family: 210000, school: 84000 };
 
 export async function POST(request) {
   const { error: authError } = await requireAdmin();
@@ -30,31 +29,7 @@ export async function POST(request) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   try {
-    if (email_type === "order_ready") {
-      if (preorder.payment_option !== "deposit" || preorder.payment_status !== "deposit_paid")
-        return NextResponse.json({ error: "This order is not eligible for a balance payment email." }, { status: 400 });
-
-      const ratePerDevice = PLAN_RATES[preorder.selected_plan] ?? PLAN_RATES.school;
-      const fullAmount    = ratePerDevice * preorder.device_count;
-      const balanceNGN    = Math.round(fullAmount * 0.7);
-
-      // Update order status
-      await supabaseAdmin
-        .from("k12_preorders")
-        .update({ order_status: "ready" })
-        .eq("id", preorder_id);
-
-      emailResult = await sendBalancePaymentLink({
-        to:           preorder.email,
-        customerName: preorder.full_name,
-        plan:         PLAN_LABEL[preorder.selected_plan] || preorder.selected_plan,
-        balanceNGN,
-        siteUrl,
-        orderId:      preorder_id,
-      });
-
-      subject = "Your Order is Ready — Pay Balance";
-    } else if (email_type === "tracking_update") {
+    if (email_type === "tracking_update") {
       const { data: tracking } = await supabaseAdmin
         .from("order_tracking")
         .select("*")

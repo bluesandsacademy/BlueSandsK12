@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
   User, MapPin, Briefcase, FileText, ChevronRight, ChevronLeft,
-  CheckCircle2, Loader2, ArrowLeft, Upload, Users, Building2,
+  CheckCircle2, Loader2, ArrowLeft, Upload, Users,
 } from "lucide-react";
+import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -135,16 +136,16 @@ export default function DistributionApplyPage() {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen bg-[#f0f9ff] flex items-center justify-center px-4 py-20">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-20">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="bg-white rounded-3xl p-10 max-w-md w-full text-center shadow-xl border border-gray-100"
         >
-          <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500" strokeWidth={1.75} />
+          <div className="w-20 h-20 rounded-full bg-grass/15 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-10 h-10 text-grass" strokeWidth={1.75} />
           </div>
-          <h2 className="text-2xl font-bold text-secondary mb-3" style={{ fontFamily: "var(--font-jarkata)" }}>
+          <h2 className="font-display text-2xl font-bold text-secondary mb-3">
             Application Received!
           </h2>
           <p className="text-gray-500 text-sm leading-relaxed mb-8">
@@ -163,30 +164,25 @@ export default function DistributionApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f9ff]">
+    <div className="min-h-screen bg-cream">
       {/* Header */}
-      <div className="bg-secondary py-12 px-4 relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
+      <div className="bg-secondary py-14 px-4 relative overflow-hidden">
+        {/* Brand accent shapes */}
+        <div className="absolute -top-10 -right-10 w-44 h-44 bg-grape/30 blob-1 pointer-events-none" />
+        <div className="absolute bottom-0 left-8 w-24 h-24 bg-coral/20 rounded-full blur-2xl pointer-events-none" />
         <div className="max-w-2xl mx-auto relative">
           <Link href="/" className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-6 transition-colors w-fit">
             <ArrowLeft className="w-4 h-4" />
             Back to AR Pedia
           </Link>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500 text-white text-xs font-bold mb-4">
-            <Building2 className="w-3.5 h-3.5" />
-            State Distribution Officer
+          <div className="mb-4">
+            <SectionKicker className="text-sunshine">State Distribution Officer</SectionKicker>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-jarkata)" }}>
-            Become A State Distribution Officer
+          <h1 className="font-display font-bold text-white text-3xl sm:text-4xl lg:text-5xl leading-tight mb-3">
+            Become a State Distribution Officer
           </h1>
-          <p className="text-white/65 text-sm sm:text-base">
-            Help deploy immersive STEM learning across Nigeria.
+          <p className="text-white/70 text-base sm:text-lg max-w-xl">
+            Join the people bringing hands-on AR learning to schools across your state.
           </p>
         </div>
       </div>
@@ -198,13 +194,13 @@ export default function DistributionApplyPage() {
             {SECTIONS.map(({ label, step: s }) => (
               <div key={s} className="flex items-center gap-2 flex-1">
                 <div className={`flex items-center gap-1.5 ${s <= step ? "opacity-100" : "opacity-40"}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${s < step ? "bg-emerald-500 text-white" : s === step ? "bg-primary text-white" : "bg-gray-200 text-gray-500"}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${s < step ? "bg-grass text-white" : s === step ? "bg-primary text-white" : "bg-gray-200 text-gray-500"}`}>
                     {s < step ? <CheckCircle2 className="w-3.5 h-3.5" /> : s}
                   </div>
                   <span className="text-xs font-semibold text-gray-600 hidden sm:block whitespace-nowrap">{label}</span>
                 </div>
                 {s < SECTIONS.length && (
-                  <div className={`flex-1 h-0.5 rounded-full mx-1 transition-colors ${s < step ? "bg-emerald-400" : "bg-gray-200"}`} />
+                  <div className={`flex-1 h-0.5 rounded-full mx-1 transition-colors ${s < step ? "bg-grass" : "bg-gray-200"}`} />
                 )}
               </div>
             ))}
@@ -227,7 +223,7 @@ export default function DistributionApplyPage() {
             {step === 1 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold text-secondary mb-1" style={{ fontFamily: "var(--font-jarkata)" }}>Basic Information</h2>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Basic Information</h2>
                   <p className="text-gray-500 text-sm">Your personal contact details.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
@@ -261,7 +257,7 @@ export default function DistributionApplyPage() {
             {step === 2 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold text-secondary mb-1" style={{ fontFamily: "var(--font-jarkata)" }}>Location</h2>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Location</h2>
                   <p className="text-gray-500 text-sm">Which state are you applying to represent?</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
@@ -292,7 +288,7 @@ export default function DistributionApplyPage() {
             {step === 3 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold text-secondary mb-1" style={{ fontFamily: "var(--font-jarkata)" }}>Your Background</h2>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Your Background</h2>
                   <p className="text-gray-500 text-sm">Help us understand your professional background.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
@@ -346,7 +342,7 @@ export default function DistributionApplyPage() {
                             key={id}
                             type="button"
                             onClick={() => set("school_network_size", id)}
-                            className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all ${form.school_network_size === id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                            className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all ${form.school_network_size === id ? "border-grass bg-grass/10 text-secondary" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
                           >
                             {label}
                           </button>
@@ -362,7 +358,7 @@ export default function DistributionApplyPage() {
             {step === 4 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold text-secondary mb-1" style={{ fontFamily: "var(--font-jarkata)" }}>Why You?</h2>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Why You?</h2>
                   <p className="text-gray-500 text-sm">Tell us why you&apos;d be a great Distribution Officer.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
@@ -377,7 +373,7 @@ export default function DistributionApplyPage() {
                     />
                     <div className="flex justify-between mt-1">
                       <FieldError msg={errors.why_apply} />
-                      <span className={`text-xs ml-auto ${form.why_apply.length >= 30 ? "text-emerald-500" : "text-gray-400"}`}>
+                      <span className={`text-xs ml-auto ${form.why_apply.length >= 30 ? "text-grass" : "text-gray-400"}`}>
                         {form.why_apply.length} / 30+ chars
                       </span>
                     </div>
@@ -440,7 +436,7 @@ export default function DistributionApplyPage() {
               Continue <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
-            <button type="button" onClick={submit} disabled={status === "loading"} className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/30 disabled:opacity-60">
+            <button type="button" onClick={submit} disabled={status === "loading"} className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-grass text-white text-sm font-bold hover:bg-grass/90 transition-colors shadow-lg shadow-grass/30 disabled:opacity-60">
               {status === "loading" ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
               ) : (

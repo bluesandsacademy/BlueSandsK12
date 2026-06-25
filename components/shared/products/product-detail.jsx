@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, Rocket, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Rocket, CalendarCheck } from "lucide-react";
 import {
   products,
   getProduct,
@@ -49,7 +49,7 @@ export default function ProductDetail({ slug }) {
             >
               <p.Icon className="w-40 h-40 sm:w-52 sm:h-52 text-white drop-shadow-xl kid-float" strokeWidth={1.5} />
               <span className="absolute top-5 left-5 px-4 py-1.5 rounded-full bg-white/90 text-xs font-extrabold text-secondary">
-                30% deposit to reserve
+                Pre-order now
               </span>
               <FloatSparkle className="absolute bottom-6 right-6 opacity-80" size={36} color="#ffffff" />
             </motion.div>
@@ -88,9 +88,9 @@ export default function ProductDetail({ slug }) {
                   <p className="text-sm font-bold text-gray-400">{fmtNGN(p.priceNGN)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">30% Deposit</p>
-                  <p className="font-display font-bold text-3xl text-secondary">{fmtUSD(p.depositUSD)}</p>
-                  <p className="text-sm font-bold text-gray-400">{fmtNGN(p.depositNGN)}</p>
+                  <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">Payment</p>
+                  <p className="font-display font-bold text-xl text-secondary">Pay in Full</p>
+                  <p className="text-sm font-bold text-gray-400">Secure checkout</p>
                 </div>
               </div>
 
@@ -108,7 +108,7 @@ export default function ProductDetail({ slug }) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg border-2 border-secondary/10 shadow-[0_8px_0_rgba(2,52,90,0.12)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.12)] transition-all"
                 >
-                  <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+                  <CalendarCheck className="w-5 h-5" strokeWidth={2.5} />
                   Request a Demo
                 </a>
               </div>

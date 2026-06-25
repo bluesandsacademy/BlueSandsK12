@@ -1,6 +1,5 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import { img } from "@/lib/cloudinary";
 
 // Brand glyphs as inline SVGs — lucide-react dropped its brand icon set.
@@ -23,8 +22,9 @@ const Twitter = (props) => (
 const quickLinks = [
   { name: "Shop", href: "/products" },
   { name: "Preorder", href: "/preorder" },
+  { name: "Partnership", href: "/partnership" },
   { name: "Track Order", href: "/track" },
-  { name: "Pay Balance", href: "/pay-balance" },
+  { name: "Contact", href: "/contact" },
 ];
 
 const socials = [
@@ -63,10 +63,9 @@ export default function Footer() {
               className="h-10 w-auto"
             />
           </Link>
-          <span className="inline-flex items-center gap-1 text-xs text-white/50 font-semibold">
-            © {new Date().getFullYear()} Blue Sands STEM Labs · Made with
-            <Heart className="w-3.5 h-3.5 fill-coral text-coral" />
-            for curious kids
+          <span className="inline-flex items-center gap-1.5 text-xs text-white/50 font-semibold text-center sm:text-left">
+            © {new Date().getFullYear()} Blue Sands STEM Labs · Revolutionizing STEM
+            learning with AR across Nigeria
           </span>
         </div>
 

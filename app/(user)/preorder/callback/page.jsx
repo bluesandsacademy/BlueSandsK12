@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { CheckCircle2, XCircle, Loader2, ArrowRight, MessageCircle, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, ArrowRight, MessageCircle } from "lucide-react";
 
 const WA = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   ? `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`
@@ -15,9 +15,8 @@ function CallbackContent() {
   const preorderId = searchParams.get("preorder_id");
   const trxref     = searchParams.get("trxref") || searchParams.get("reference");
 
-  const [status,      setStatus]      = useState("verifying");
-  const [orderRef,    setOrderRef]    = useState("");
-  const [paymentType, setPaymentType] = useState("full"); // "full" | "deposit" | "balance"
+  const [status,   setStatus]   = useState("verifying");
+  const [orderRef, setOrderRef] = useState("");
 
   useEffect(() => {
     if (!trxref) { setStatus("failed"); return; }
@@ -27,7 +26,6 @@ function CallbackContent() {
       .then((data) => {
         if (data.success) {
           setOrderRef(`BSL-${preorderId?.slice(0, 8).toUpperCase()}`);
-          setPaymentType(data.payment_type || "full");
           setStatus("success");
         } else {
           setStatus("failed");
@@ -35,9 +33,6 @@ function CallbackContent() {
       })
       .catch(() => setStatus("failed"));
   }, [trxref, preorderId]);
-
-  const isDepositOnly = paymentType === "deposit";
-  const isBalance     = paymentType === "balance";
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16" style={{ background: "#FFFBF0" }}>
@@ -59,14 +54,12 @@ function CallbackContent() {
 
         {status === "success" && (
           <div className="space-y-6">
-            <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto ${isDepositOnly ? "bg-amber-100" : "bg-emerald-100"}`}>
-              {isDepositOnly
-                ? <Clock className="w-14 h-14 text-amber-500" />
-                : <CheckCircle2 className="w-14 h-14 text-emerald-500" />}
+            <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto bg-emerald-100">
+              <CheckCircle2 className="w-14 h-14 text-emerald-500" />
             </div>
             <div>
               <h1 className="text-2xl font-black text-secondary mb-2" style={{ fontFamily: "var(--font-jarkata)" }}>
-                {isDepositOnly ? "Deposit Confirmed!" : "Payment Complete!"}
+                Payment Complete!
               </h1>
               {orderRef && (
                 <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm">
@@ -75,21 +68,9 @@ function CallbackContent() {
               )}
             </div>
 
-            {isDepositOnly ? (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-left space-y-2">
-                <p className="font-bold text-amber-800 text-sm">Your 30% deposit is secured ✓</p>
-                <p className="text-amber-700 text-sm leading-relaxed">
-                  Your order is reserved. When your devices are ready, we&apos;ll send you an email to pay the remaining 70% at{" "}
-                  <strong>bluesandsstem.com/pay-balance</strong>.
-                </p>
-              </div>
-            ) : (
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {isBalance
-                  ? "Your full balance is paid. We'll dispatch your order shortly and send tracking information."
-                  : "Your order is fully paid. We'll be in touch within 1–2 business days with next steps."}
-              </p>
-            )}
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Your order is fully paid. We&apos;ll be in touch within 1–2 business days with next steps.
+            </p>
 
             <p className="text-gray-500 text-sm">A confirmation email has been sent to you.</p>
 

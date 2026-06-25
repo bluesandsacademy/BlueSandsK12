@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ShoppingBag, ShoppingCart, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight } from "lucide-react";
 import { products, fmtNGN } from "@/lib/products";
+import SectionKicker from "./section-kicker";
 import { FloatSparkle } from "./science-floats";
 
 export default function ProductsTeaserSection() {
@@ -26,16 +27,13 @@ export default function ProductsTeaserSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <ShoppingCart className="w-4 h-4" strokeWidth={2.5} />
-            Meet the Family
-          </div>
+          <SectionKicker className="text-coral">Meet the Family</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Devices That Make Learning{" "}
             <span className="text-coral doodle-underline">Pop</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-2xl font-semibold">
-            Four immersive tools for curious classrooms — preorder with just 30% down.
+            Four immersive tools for curious classrooms — preorder with secure full payment.
           </p>
         </motion.div>
 
@@ -62,7 +60,7 @@ export default function ProductsTeaserSection() {
                 >
                   <p.Icon className="w-16 h-16 sm:w-20 sm:h-20 text-white drop-shadow-lg kid-float" strokeWidth={1.75} style={{ animationDelay: `${i * 0.3}s` }} />
                   <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-[11px] font-extrabold text-secondary">
-                    30% down
+                    Preorder
                   </span>
                 </div>
                 {/* Body */}

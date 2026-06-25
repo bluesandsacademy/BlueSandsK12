@@ -6,7 +6,7 @@ import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import {
   ChevronLeft, CheckCircle2, Package, MapPin, CreditCard,
-  Mail, Truck, StickyNote, XCircle, Send, AlertTriangle, RefreshCw, PackageCheck,
+  Mail, Truck, StickyNote, XCircle, RefreshCw, PackageCheck,
 } from "lucide-react";
 
 const STATUS_COLORS = {
@@ -69,8 +69,6 @@ export default function PreorderDetailClient({ preorder, payments, tracking, ema
   const orderId = `BSL-${preorder.id.slice(0, 8).toUpperCase()}`;
   const ratePerDevice = PLAN_RATES[preorder.selected_plan] ?? PLAN_RATES.school;
   const fullAmount    = ratePerDevice * preorder.device_count;
-  const depositAmount = Math.round(fullAmount * 0.3);
-  const balanceAmount = Math.round(fullAmount * 0.7);
 
   const updateStatus = async (order_status) => {
     setLoading(order_status);
@@ -204,14 +202,12 @@ export default function PreorderDetailClient({ preorder, payments, tracking, ema
             <div className="grid grid-cols-2 gap-4 mb-4">
               <Field label="Plan"             value={PLAN_LABELS[preorder.selected_plan] || preorder.selected_plan} />
               <Field label="Devices"          value={String(preorder.device_count)} />
-              <Field label="Payment Option"   value={preorder.payment_option === "deposit" ? "30% Deposit" : "Full Payment"} />
+              <Field label="Payment"          value="Full Payment" />
               <Field label="Students"         value={preorder.student_count ? String(preorder.student_count) : undefined} />
               <Field label="Teachers"         value={preorder.teacher_count ? String(preorder.teacher_count) : undefined} />
             </div>
             <div className="bg-gray-50 rounded-xl p-4 space-y-1.5 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500">Full Amount</span><span className="font-bold text-secondary">₦{fullAmount.toLocaleString("en-NG")}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">30% Deposit</span><span className="font-semibold text-amber-600">₦{depositAmount.toLocaleString("en-NG")}</span></div>
-              <div className="flex justify-between border-t border-gray-200 pt-1.5"><span className="text-gray-500">70% Balance</span><span className="font-bold text-primary">₦{balanceAmount.toLocaleString("en-NG")}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Order Total</span><span className="font-bold text-secondary">₦{fullAmount.toLocaleString("en-NG")}</span></div>
             </div>
           </Section>
 
@@ -357,15 +353,6 @@ export default function PreorderDetailClient({ preorder, payments, tracking, ema
                 </button>
               )}
 
-              {/* Send balance payment email */}
-              {preorder.payment_status === "deposit_paid" && preorder.order_status === "ready" && (
-                <button onClick={() => sendEmail("order_ready")} disabled={loading === "order_ready"}
-                  className="flex items-center gap-2 w-full px-4 py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-secondary transition-colors disabled:opacity-50">
-                  <Send className="w-4 h-4" />
-                  {loading === "order_ready" ? "Sending…" : "Send Balance Payment Link"}
-                </button>
-              )}
-
               {/* Mark Delivered */}
               {preorder.order_status === "shipped" && (
                 <button
@@ -405,19 +392,9 @@ export default function PreorderDetailClient({ preorder, payments, tracking, ema
               <div className="flex justify-between"><span className="text-gray-400">Order Ref</span><span className="font-mono font-bold text-secondary text-xs">{orderId}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">Plan</span><span className="font-semibold text-secondary">{PLAN_LABELS[preorder.selected_plan] || "—"}</span></div>
               <div className="flex justify-between"><span className="text-gray-400">Devices</span><span className="font-semibold">{preorder.device_count}</span></div>
-              <div className="flex justify-between border-t border-gray-100 pt-2"><span className="text-gray-400">Full Amount</span><span className="font-bold text-secondary">₦{fullAmount.toLocaleString("en-NG")}</span></div>
+              <div className="flex justify-between border-t border-gray-100 pt-2"><span className="text-gray-400">Order Total</span><span className="font-bold text-secondary">₦{fullAmount.toLocaleString("en-NG")}</span></div>
             </div>
           </div>
-
-          {/* Warning if deposit paid but order ready not sent */}
-          {preorder.payment_status === "deposit_paid" && preorder.order_status === "ready" && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3">
-              <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-700 font-medium leading-relaxed">
-                Customer paid a 30% deposit. Send the balance payment link when you&apos;re ready to ship.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>

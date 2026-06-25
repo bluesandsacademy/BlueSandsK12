@@ -69,7 +69,7 @@ export default function CountdownFloat() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.97 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-6 right-6 z-40 hidden lg:block"
+          className="fixed bottom-6 left-6 z-40 hidden lg:block"
         >
           <div className="relative w-74 rounded-3xl overflow-hidden bg-white border-4 border-sunshine shadow-[0_18px_40px_rgba(2,52,90,0.25)]">
             {/* Sunshine accent bar at top */}

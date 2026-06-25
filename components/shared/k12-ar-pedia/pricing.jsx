@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Users, GraduationCap, CheckCircle2, Star, Award } from "lucide-react";
+import SectionKicker from "./section-kicker";
 
 const plans = [
   {
@@ -25,7 +26,6 @@ const plans = [
     ctaPrimary: "bg-amber-400 hover:bg-amber-500 text-white shadow-xl shadow-amber-400/30",
     ctaSecondary: "border-amber-300 text-amber-700 hover:bg-amber-50",
     fullUSD: 150, fullNGN: 210000,
-    depositUSD: 45, depositNGN: 63000,
     highlights: [
       "1 AR Pedia Tablet",
       "5 Interactive AR Books",
@@ -55,7 +55,6 @@ const plans = [
     ctaPrimary: "bg-primary hover:bg-secondary text-white shadow-xl shadow-primary/30",
     ctaSecondary: "border-blue-300 text-primary hover:bg-blue-50",
     fullUSD: 300, fullNGN: 420000,
-    depositUSD: 90, depositNGN: 126000,
     highlights: [
       "5–10 AR Pedia Tablets",
       "Classroom AR Book Library",
@@ -95,10 +94,7 @@ export default function K12PricingSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16 space-y-4 max-w-2xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-sunshine px-5 py-2.5 text-secondary font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <Star className="w-4 h-4 fill-secondary" strokeWidth={2.5} />
-            Choose Your Plan
-          </div>
+          <SectionKicker className="text-primary">Choose Your Plan</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             One Plan.{" "}
             <span className="text-primary doodle-underline">Infinite Discovery.</span>
@@ -194,14 +190,11 @@ export default function K12PricingSection() {
                     {fmt(plan.fullUSD, plan.fullNGN)}
                   </p>
                   <div className="mt-3 pt-3 border-t border-gray-200/60 flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-0.5">30% Deposit</p>
-                      <p className="text-xl font-black text-secondary" style={{ fontFamily: "var(--font-jarkata)" }}>
-                        {fmt(plan.depositUSD, plan.depositNGN)}
-                      </p>
-                    </div>
+                    <span className="text-xs font-semibold text-gray-500">
+                      One-time payment · pay in full
+                    </span>
                     <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
-                      Reserve Now
+                      Secure Checkout
                     </span>
                   </div>
                 </div>

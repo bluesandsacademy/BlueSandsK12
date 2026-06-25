@@ -2,7 +2,8 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { XCircle, CheckCircle2, GraduationCap, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { XCircle, CheckCircle2, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
+import SectionKicker from "./section-kicker";
 
 // Swap to Cloudinary paths when ready:
 // import { img } from "@/lib/cloudinary";
@@ -86,10 +87,7 @@ export default function WhySwitchSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 space-y-4 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <RefreshCcw className="w-4 h-4" strokeWidth={2.5} />
-            Why Make the Switch?
-          </div>
+          <SectionKicker className="text-coral">Why Make the Switch?</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Traditional Learning Is{" "}
             <span className="text-coral doodle-underline">No Longer Enough</span>
