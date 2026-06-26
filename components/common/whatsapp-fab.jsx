@@ -43,8 +43,12 @@ export default function WhatsAppFab() {
               <WhatsAppGlyph className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white font-semibold text-sm leading-tight">Blue Sands Team</p>
-              <p className="text-green-300 text-xs">Typically replies in minutes</p>
+              <p className="text-white font-semibold text-sm leading-tight">
+                Blue Sands Team
+              </p>
+              <p className="text-green-300 text-xs">
+                Typically replies in minutes
+              </p>
             </div>
             <button
               onClick={() => setOpen(false)}
@@ -56,8 +60,7 @@ export default function WhatsAppFab() {
           </div>
           <div className="p-4 space-y-3" style={{ background: "#E5DDD5" }}>
             <div className="bg-white rounded-xl rounded-tl-sm px-3.5 py-2.5 text-sm text-gray-800 shadow-sm">
-              👋 Hi there! Have a question about K12 AR Pedia? Chat with us on
-              WhatsApp.
+              👋 Hi there! Have a question about K12 AR Pedia? Join Community
             </div>
             <a
               href={WA_LINK}
@@ -75,12 +78,13 @@ export default function WhatsAppFab() {
       {/* Floating button */}
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Chat with us on WhatsApp"
+        aria-label="Join Community
+      "
         className="flex items-center gap-2.5 rounded-full bg-[#25D366] text-white pl-3.5 pr-4 py-3 shadow-xl hover:bg-[#1fb558] hover:shadow-2xl transition-all"
       >
         <WhatsAppGlyph className="w-6 h-6 shrink-0" />
         <span className="font-bold text-sm hidden sm:inline whitespace-nowrap">
-          {open ? "Close" : "Chat with us"}
+          {open ? "Close" : "Join Community"}
         </span>
       </button>
 

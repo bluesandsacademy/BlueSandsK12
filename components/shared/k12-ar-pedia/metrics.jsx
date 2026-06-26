@@ -8,20 +8,40 @@ import SectionKicker from "./section-kicker";
 const metrics = [
   { value: "30M+", label: "Learners", Icon: Users, color: "#0483e2" },
   { value: "1M+", label: "Schools", Icon: School, color: "#FF5A5F" },
-  { value: "150+", label: "STEM Experiences", Icon: FlaskConical, color: "#3DD68C" },
+  {
+    value: "150+",
+    label: "STEM Experiences",
+    Icon: FlaskConical,
+    color: "#3DD68C",
+  },
   { value: "36+FCT", label: "States Covered", Icon: MapPin, color: "#9B5DE5" },
-  { value: "$2B+", label: "Market Opportunity", Icon: TrendingUp, color: "#FFC83D" },
+  {
+    value: "$2B+",
+    label: "Market Opportunity",
+    Icon: TrendingUp,
+    color: "#FFC83D",
+  },
 ];
 
 export default function MetricsSection() {
   return (
     <section
       className="relative py-14 sm:py-16 lg:py-20 overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #ffffff 0%, #EAF6FF 100%)" }}
+      style={{
+        background: "linear-gradient(180deg, #ffffff 0%, #EAF6FF 100%)",
+      }}
     >
       {/* Playful decorations */}
-      <FloatSparkle className="absolute top-8 left-[12%] opacity-50" size={28} color="#FFC83D" />
-      <FloatSparkle className="absolute bottom-10 right-[14%] opacity-40" size={32} color="#9B5DE5" />
+      <FloatSparkle
+        className="absolute top-8 left-[12%] opacity-50"
+        size={28}
+        color="#FFC83D"
+      />
+      <FloatSparkle
+        className="absolute bottom-10 right-[14%] opacity-40"
+        size={32}
+        color="#9B5DE5"
+      />
 
       <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -32,7 +52,7 @@ export default function MetricsSection() {
           transition={{ duration: 0.55 }}
           className="text-center mb-10 sm:mb-12 max-w-2xl mx-auto"
         >
-          <SectionKicker className="text-secondary">The Opportunity</SectionKicker>
+          <SectionKicker className="text-secondary">The Impact</SectionKicker>
           <h2 className="mt-4 font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
             A Nation Ready for{" "}
             <span className="text-primary doodle-underline">AR Learning</span>
@@ -66,7 +86,9 @@ export default function MetricsSection() {
               >
                 {value}
               </p>
-              <p className="text-gray-600 text-sm font-bold leading-snug">{label}</p>
+              <p className="text-gray-600 text-sm font-bold leading-snug">
+                {label}
+              </p>
             </motion.div>
           ))}
         </div>

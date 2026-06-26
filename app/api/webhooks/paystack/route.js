@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { sendOrderConfirmation, sendAdminPaymentAlert } from "@/lib/resend";
+import { ingestStorefrontCharge } from "@/lib/paystack-orders";
 
 export async function POST(request) {
   try {
@@ -14,7 +15,26 @@ export async function POST(request) {
       .update(rawBody)
       .digest("hex");
 
-    if (hash !== signature) {
+    const signatureValid = hash === signature;
+
+    // ── SPIKE (temporary): capture the full payload of every Paystack event so
+    // we can inspect what a real Storefront order carries (line items, discount
+    // code, etc.). Best-effort and isolated — it must never break the live
+    // preorder confirmation below. Remove once the Storefront integration ships.
+    try {
+      let parsed = null;
+      try { parsed = JSON.parse(rawBody); } catch { /* non-JSON body */ }
+      await supabaseAdmin.from("paystack_webhook_logs").insert({
+        event:           parsed?.event ?? null,
+        reference:       parsed?.data?.reference ?? null,
+        signature_valid: signatureValid,
+        payload:         parsed ?? { raw_body: rawBody },
+      });
+    } catch (logErr) {
+      console.error("[paystack webhook] spike log failed:", logErr);
+    }
+
+    if (!signatureValid) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
@@ -32,7 +52,14 @@ export async function POST(request) {
         .single();
 
       if (!payment) {
-        console.warn(`[paystack webhook] No payment record for ref: ${reference}`);
+        // Not a bls preorder charge → it's a Paystack Storefront order. Ingest
+        // it into the fulfilment back-office. Wrapped so it can never break the
+        // webhook response.
+        try {
+          await ingestStorefrontCharge(event);
+        } catch (e) {
+          console.error("[paystack webhook] storefront ingest failed:", e);
+        }
         return NextResponse.json({ received: true });
       }
 

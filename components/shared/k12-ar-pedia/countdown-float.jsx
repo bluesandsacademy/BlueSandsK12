@@ -10,15 +10,15 @@ function getTimeLeft() {
   const diff = target - new Date();
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   return {
-    days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
     minutes: Math.floor((diff / (1000 * 60)) % 60),
     seconds: Math.floor((diff / 1000) % 60),
   };
 }
 
-const TOTAL_SLOTS = 1000;
-const CLAIMED     = 100;
+const TOTAL_SLOTS = 10000;
+const CLAIMED = 100;
 
 function TimeBlock({ value, label }) {
   return (
@@ -36,9 +36,9 @@ function TimeBlock({ value, label }) {
 }
 
 export default function CountdownFloat() {
-  const [visible,   setVisible]   = useState(false);
+  const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [time,      setTime]      = useState(null);
+  const [time, setTime] = useState(null);
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 600);
@@ -53,10 +53,10 @@ export default function CountdownFloat() {
   }, []);
 
   const units = [
-    { label: "Days",  value: time?.days    ?? 0 },
-    { label: "Hours", value: time?.hours   ?? 0 },
-    { label: "Mins",  value: time?.minutes ?? 0 },
-    { label: "Secs",  value: time?.seconds ?? 0 },
+    { label: "Days", value: time?.days ?? 0 },
+    { label: "Hours", value: time?.hours ?? 0 },
+    { label: "Mins", value: time?.minutes ?? 0 },
+    { label: "Secs", value: time?.seconds ?? 0 },
   ];
 
   const expired = time !== null && units.every((u) => u.value === 0);
@@ -76,7 +76,6 @@ export default function CountdownFloat() {
             <div className="h-2 w-full bg-sunshine" />
 
             <div className="relative p-5 space-y-4">
-
               {/* Header row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -100,7 +99,9 @@ export default function CountdownFloat() {
                   <div key={unit.label} className="flex items-center gap-1">
                     <TimeBlock value={unit.value} label={unit.label} />
                     {i < units.length - 1 && (
-                      <span className="text-primary/30 text-sm font-bold mb-4 select-none">:</span>
+                      <span className="text-primary/30 text-sm font-bold mb-4 select-none">
+                        :
+                      </span>
                     )}
                   </div>
                 ))}
@@ -114,7 +115,10 @@ export default function CountdownFloat() {
                   </span>
                   <span className="text-secondary text-xs font-extrabold tabular-nums">
                     {CLAIMED.toLocaleString()}
-                    <span className="text-gray-400 font-bold"> / {TOTAL_SLOTS.toLocaleString()}</span>
+                    <span className="text-gray-400 font-bold">
+                      {" "}
+                      / {TOTAL_SLOTS.toLocaleString()}
+                    </span>
                   </span>
                 </div>
                 <div className="h-2.5 rounded-full overflow-hidden bg-gray-100">
@@ -135,7 +139,6 @@ export default function CountdownFloat() {
                 Reserve My Slot
                 <Rocket className="w-5 h-5" strokeWidth={2.5} />
               </Link>
-
             </div>
           </div>
         </motion.div>
