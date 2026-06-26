@@ -8,25 +8,25 @@ const features = [
   {
     label: "Interactive Learning",
     line: "AR books turn reading into an animated, hands-on experience.",
-    imgSrc: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=700&q=85",
+    imgSrc: "/interactive-learning.JPG",
     color: "#0483e2",
   },
   {
     label: "Hands-On STEM",
     line: "Run real experiments — zero mess, zero risk.",
-    imgSrc: "https://images.unsplash.com/photo-1532094349884-543559059989?auto=format&fit=crop&w=700&q=85",
+    imgSrc: "/hands-on-stem.jpg",
     color: "#9B5DE5",
   },
   {
     label: "Adaptive AI",
     line: "Smart guidance that adapts to each child's pace.",
-    imgSrc: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=85",
+    imgSrc: "/adaptive-ai.jpg",
     color: "#3DD68C",
   },
   {
     label: "Any Classroom",
     line: "Works in any school — online or offline.",
-    imgSrc: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=700&q=85",
+    imgSrc: "/any-classroom.jpg",
     color: "#FFC83D",
   },
 ];

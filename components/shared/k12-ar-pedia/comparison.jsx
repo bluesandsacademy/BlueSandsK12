@@ -5,8 +5,8 @@ import Link from "next/link";
 import { XCircle, CheckCircle2, BookX, Tablet, ArrowRight } from "lucide-react";
 import SectionKicker from "./section-kicker";
 
-const BORED = "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1000&q=85";
-const ENGAGED = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1000&q=85";
+const BORED = "/bored.JPG";
+const ENGAGED = "/happy.jpg";
 
 const columns = [
   {
@@ -16,7 +16,7 @@ const columns = [
     img: BORED,
     Icon: BookX,
     accent: "#dc2626",
-    tint: "rgba(160,0,0,0.55)",
+    scrimRGB: "94,12,12",
     points: [
       "Passive memorisation from static pages",
       "Low engagement and short attention",
@@ -31,7 +31,7 @@ const columns = [
     img: ENGAGED,
     Icon: Tablet,
     accent: "#10b981",
-    tint: "rgba(2,52,90,0.55)",
+    scrimRGB: "2,40,70",
     points: [
       "Hands-on AR exploration on smart tablets",
       "High curiosity and full participation",
@@ -50,52 +50,61 @@ function CompareCard({ col, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6, delay: index * 0.12 }}
-      className="relative rounded-[1.8rem] overflow-hidden border-4 bg-white shadow-[0_12px_0_rgba(0,0,0,0.06)]"
+      className="group relative rounded-[1.8rem] overflow-hidden border-4 shadow-[0_12px_0_rgba(0,0,0,0.06)] min-h-[520px] sm:min-h-[580px] lg:min-h-[640px]"
       style={{ borderColor: col.accent }}
     >
-      {/* Photo header */}
-      <div className="relative aspect-[16/10]">
-        <img
-          src={col.img}
-          alt={col.title}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: isAfter ? "none" : "grayscale(0.4)" }}
-        />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, transparent 0%, ${col.tint} 100%)` }} />
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <div
-            className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md"
-          >
-            <col.Icon className="w-5 h-5" style={{ color: col.accent }} strokeWidth={2.5} />
-          </div>
-          <span
-            className="px-3 py-1.5 rounded-full text-white text-xs font-extrabold"
-            style={{ background: col.accent }}
-          >
-            {col.eyebrow}
-          </span>
+      {/* Full-bleed photo — the image is the card */}
+      <img
+        src={col.img}
+        alt={col.title}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        style={{ filter: isAfter ? "none" : "grayscale(0.4)" }}
+      />
+
+      {/* Gradient scrim — keeps the overlaid copy legible over the photo */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to top, rgba(${col.scrimRGB},0.96) 0%, rgba(${col.scrimRGB},0.72) 38%, rgba(${col.scrimRGB},0.18) 64%, transparent 84%)`,
+        }}
+      />
+
+      {/* Top chip */}
+      <div className="absolute top-4 left-4 flex items-center gap-2">
+        <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md">
+          <col.Icon className="w-5 h-5" style={{ color: col.accent }} strokeWidth={2.5} />
         </div>
-        <h3 className="absolute bottom-4 left-4 font-display font-bold text-white text-2xl sm:text-3xl drop-shadow-lg">
-          {col.title}
-        </h3>
+        <span
+          className="px-3 py-1.5 rounded-full text-white text-xs font-extrabold shadow-sm"
+          style={{ background: col.accent }}
+        >
+          {col.eyebrow}
+        </span>
       </div>
 
-      {/* Points */}
-      <ul className="p-5 sm:p-6 space-y-3">
-        {col.points.map((pt) => (
-          <li key={pt} className="flex items-start gap-3">
-            <PointIcon
-              className="w-5 h-5 shrink-0 mt-0.5"
-              style={{ color: col.accent }}
-              strokeWidth={2.5}
-            />
-            <span className="text-sm sm:text-base font-semibold text-gray-700 leading-snug">
-              {pt}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {/* Bottom — title + points overlaid on the photo */}
+      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+        <h3 className="font-display font-bold text-white text-3xl sm:text-4xl drop-shadow-lg mb-4">
+          {col.title}
+        </h3>
+        <ul className="space-y-2.5">
+          {col.points.map((pt) => (
+            <li key={pt} className="flex items-start gap-2.5">
+              <span className="shrink-0 mt-0.5 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm">
+                <PointIcon
+                  className="w-4 h-4"
+                  style={{ color: col.accent }}
+                  strokeWidth={2.5}
+                />
+              </span>
+              <span className="text-sm sm:text-base font-semibold text-white leading-snug drop-shadow">
+                {pt}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </motion.div>
   );
 }

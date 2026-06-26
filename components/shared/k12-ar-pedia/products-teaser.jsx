@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, ArrowRight } from "lucide-react";
-import { products, fmtNGN } from "@/lib/products";
+import { products, fmtUSD } from "@/lib/products";
 import SectionKicker from "./section-kicker";
 import { FloatSparkle } from "./science-floats";
 
@@ -27,18 +28,18 @@ export default function ProductsTeaserSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
         >
-          <SectionKicker className="text-coral">Meet the Family</SectionKicker>
+          <SectionKicker className="text-coral">Meet the Books</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
-            Devices That Make Learning{" "}
+            AR Books That Make Learning{" "}
             <span className="text-coral doodle-underline">Pop</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-2xl font-semibold">
-            Four immersive tools for curious classrooms — preorder with secure full payment.
+            Three augmented-reality book sets for curious kids ages 4–13.
           </p>
         </motion.div>
 
         {/* Product cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
           {products.map((p, i) => (
             <motion.div
               key={p.slug}
@@ -54,26 +55,34 @@ export default function ProductsTeaserSection() {
                 style={{ borderColor: p.color }}
               >
                 {/* Image placeholder */}
-                <div
-                  className="relative aspect-square flex items-center justify-center"
-                  style={{ background: p.gradient }}
-                >
-                  <p.Icon className="w-16 h-16 sm:w-20 sm:h-20 text-white drop-shadow-lg kid-float" strokeWidth={1.75} style={{ animationDelay: `${i * 0.3}s` }} />
-                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-[11px] font-extrabold text-secondary">
-                    Preorder
+                <div className="relative aspect-square flex items-center justify-center p-3 bg-white">
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    width={p.imageW}
+                    height={p.imageH}
+                    sizes="(min-width: 640px) 30vw, 90vw"
+                    className="w-full h-full object-contain kid-float"
+                    style={{ animationDelay: `${i * 0.3}s` }}
+                  />
+                  <span
+                    className="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-extrabold text-white shadow-sm"
+                    style={{ background: p.color }}
+                  >
+                    {p.ageRange}
                   </span>
                 </div>
                 {/* Body */}
                 <div className="flex flex-col flex-1 p-4 gap-1">
                   <h3 className="font-display font-bold text-secondary text-base sm:text-lg leading-tight">
-                    {p.name.replace("Blue Sands ", "")}
+                    {p.name}
                   </h3>
                   <p className="text-gray-500 text-sm font-semibold leading-snug flex-1">
                     {p.tagline}
                   </p>
                   <div className="flex items-center justify-between pt-2 mt-1 border-t-2 border-gray-100">
                     <span className="font-display font-bold text-lg" style={{ color: p.color }}>
-                      {fmtNGN(p.priceNGN)}
+                      from {fmtUSD(p.priceUSD)}
                     </span>
                     <span className="inline-flex items-center gap-1 text-primary text-sm font-bold group-hover:translate-x-0.5 transition-transform">
                       View <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

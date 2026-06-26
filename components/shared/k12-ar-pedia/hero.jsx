@@ -12,7 +12,7 @@ import {
   Monitor,
   MapPin,
 } from "lucide-react";
-import { FloatAtom, FloatPlanet, FloatSparkle } from "./science-floats";
+import { FloatPlanet, FloatSparkle } from "./science-floats";
 import SectionKicker from "./section-kicker";
 
 const builtFor = [
@@ -23,8 +23,8 @@ const builtFor = [
   { label: "Smart Classrooms", Icon: Monitor },
 ];
 
-/* A bright, friendly "AR magic" scene — a tablet with a storybook and a
-   planet + rocket bursting up off the page. All flat, candy-colored shapes. */
+/* A bright, friendly "AR magic" scene — real photos of children learning,
+   framed playfully with a planet + rocket bursting up and floating sparkles. */
 function ArMagicScene() {
   return (
     <div className="relative mx-auto w-full max-w-md aspect-square">
@@ -32,64 +32,61 @@ function ArMagicScene() {
       <div className="absolute inset-6 bg-sunshine/40 blob-1 blur-[2px]" />
       <div className="absolute inset-10 bg-sunshine/70 blob-2" />
 
-      {/* Bursting planet — overflows above the tablet */}
-      <FloatPlanet className="absolute -top-6 left-6 z-20" size={120} />
+      {/* Bursting planet — overflows above the photo */}
+      <FloatPlanet className="absolute -top-6 left-6 z-30" size={110} />
       {/* Bursting rocket */}
       <motion.div
         animate={{ y: [0, -14, 0], rotate: [0, 6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-2 right-8 z-20 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
+        className="absolute -top-2 right-8 z-30 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
       >
         <Rocket className="w-9 h-9 text-white" strokeWidth={2} />
       </motion.div>
 
       {/* Sparkles */}
       <FloatSparkle
-        className="absolute top-2 left-1/2 z-20"
+        className="absolute top-2 left-1/2 z-30"
         size={40}
         color="#ffffff"
       />
       <FloatSparkle
-        className="absolute bottom-16 -left-2 z-20"
+        className="absolute bottom-16 -left-2 z-30"
         size={34}
         color="#FF5A5F"
       />
       <FloatSparkle
-        className="absolute bottom-24 right-0 z-20"
+        className="absolute bottom-24 right-0 z-30"
         size={28}
         color="#3DD68C"
       />
 
-      {/* Tablet */}
+      {/* Main photo — a child exploring a lesson */}
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-x-4 bottom-2 top-20 z-10"
+        className="absolute inset-x-6 bottom-4 top-14 z-10"
       >
-        <div className="relative h-full w-full rounded-[2.2rem] bg-white border-[10px] border-secondary shadow-[0_24px_60px_rgba(2,52,90,0.28)] overflow-hidden">
-          {/* Screen */}
-          <div className="relative h-full w-full rounded-[1.2rem] bg-gradient-to-b from-sky/20 to-cream flex items-center justify-center overflow-hidden">
-            {/* Open storybook */}
-            <div className="relative w-[78%] aspect-[4/3]">
-              {/* Book shadow */}
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[88%] h-4 bg-secondary/15 blur-md rounded-full" />
-              {/* Pages */}
-              <div className="absolute inset-0 flex rounded-xl overflow-hidden shadow-lg">
-                <div className="flex-1 bg-cream border-r-2 border-amber-200/60 p-3 space-y-1.5">
-                  <div className="h-1.5 rounded-full bg-coral/40 w-3/4" />
-                  <div className="h-1.5 rounded-full bg-gray-200 w-full" />
-                  <div className="h-1.5 rounded-full bg-gray-200 w-5/6" />
-                  <div className="mt-2 h-8 rounded-lg bg-grass/30" />
-                </div>
-                <div className="flex-1 bg-white p-3 flex items-center justify-center">
-                  {/* Atom rising off the page */}
-                  <FloatAtom size={70} />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Camera dot */}
-          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-secondary/40" />
+        <div className="relative h-full w-full rounded-[2.2rem] overflow-hidden border-[8px] border-white shadow-[0_24px_60px_rgba(2,52,90,0.28)]">
+          <img
+            src="/hero2.jpg"
+            alt="A child exploring a STEM lesson with Blue Sands K12 AR Pedia"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      </motion.div>
+
+      {/* Smaller overlapping photo — a classroom moment */}
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -bottom-3 -right-1 z-20 w-40 sm:w-48"
+      >
+        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border-[6px] border-white shadow-[0_16px_40px_rgba(2,52,90,0.25)]">
+          <img
+            src="/hero1.jpg"
+            alt="Children learning together in an AR-powered classroom"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
       </motion.div>
     </div>

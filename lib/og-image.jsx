@@ -70,7 +70,7 @@ export function renderOgImage() {
             maxWidth: 900,
           }}
         >
-          AR headsets, smart boards, lab kits & learning tablets for K–12 across
+          AR books that bring STEM learning to life for kids ages 4–13 across
           Nigeria.
         </div>
       </div>

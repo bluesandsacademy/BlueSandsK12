@@ -2,18 +2,16 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, Rocket, CalendarCheck } from "lucide-react";
-import {
-  products,
-  getProduct,
-  preorderSteps,
-  fmtUSD,
-  fmtNGN,
-} from "@/lib/products";
+import Image from "next/image";
+import { ArrowLeft, ArrowRight, CheckCircle2, CalendarCheck, BookOpen } from "lucide-react";
+import { products, getProduct, howItWorks, fmtUSD, STORE_URL } from "@/lib/products";
+import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import {
   FloatPlanet,
   FloatSparkle,
 } from "@/components/shared/k12-ar-pedia/science-floats";
+
+const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
 
 export default function ProductDetail({ slug }) {
   // Resolve the product (incl. its lucide Icon) on the client so the
@@ -21,6 +19,7 @@ export default function ProductDetail({ slug }) {
   const p = getProduct(slug);
   if (!p) return null;
   const others = products.filter((x) => x.slug !== p.slug);
+  const buyHref = STORE_URL || DEMO_URL;
 
   return (
     <>
@@ -39,19 +38,29 @@ export default function ProductDetail({ slug }) {
           </Link>
 
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            {/* Image placeholder */}
+            {/* Cover */}
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
-              className="relative rounded-[2.2rem] border-4 overflow-hidden aspect-square flex items-center justify-center shadow-[0_14px_0_rgba(0,0,0,0.08)]"
-              style={{ borderColor: p.color, background: p.gradient }}
+              className="relative rounded-4xl border-4 overflow-hidden aspect-square flex items-center justify-center p-8 bg-white shadow-[0_14px_0_rgba(0,0,0,0.08)]"
+              style={{ borderColor: p.color }}
             >
-              <p.Icon className="w-40 h-40 sm:w-52 sm:h-52 text-white drop-shadow-xl kid-float" strokeWidth={1.5} />
-              <span className="absolute top-5 left-5 px-4 py-1.5 rounded-full bg-white/90 text-xs font-extrabold text-secondary">
-                Pre-order now
+              <span
+                className="absolute top-5 left-5 z-10 px-4 py-1.5 rounded-full text-xs font-extrabold text-white shadow-sm"
+                style={{ background: p.color }}
+              >
+                {p.ageRange}
               </span>
-              <FloatSparkle className="absolute bottom-6 right-6 opacity-80" size={36} color="#ffffff" />
+              <Image
+                src={p.image}
+                alt={p.name}
+                width={p.imageW}
+                height={p.imageH}
+                priority
+                sizes="(min-width: 1024px) 480px, 90vw"
+                className="w-full h-full object-contain drop-shadow-[0_16px_28px_rgba(2,52,90,0.18)] kid-float"
+              />
             </motion.div>
 
             {/* Info */}
@@ -61,55 +70,55 @@ export default function ProductDetail({ slug }) {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="space-y-6"
             >
-              <div
-                className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-white font-extrabold text-sm shadow-[0_4px_0_rgba(0,0,0,0.12)]"
-                style={{ background: p.color }}
-              >
-                <p.Icon className="w-4 h-4" strokeWidth={2.5} />
-                Blue Sands Device
-              </div>
+              <SectionKicker className="text-primary">AR Book · {p.ageRange}</SectionKicker>
               <h1 className="font-display font-bold text-secondary leading-[1.05] text-4xl sm:text-5xl">
-                {p.name.replace("Blue Sands ", "")}
+                {p.name}
               </h1>
               <p className="text-gray-600 text-lg sm:text-2xl font-semibold leading-snug">
                 {p.tagline}
               </p>
 
-              {/* Price box */}
+              {/* Variant pricing */}
               <div
-                className="rounded-2xl p-5 flex items-center justify-between border-2"
+                className="rounded-2xl p-5 border-2 space-y-3"
                 style={{ background: `${p.color}10`, borderColor: `${p.color}40` }}
               >
-                <div>
-                  <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">Full Price</p>
-                  <p className="font-display font-bold text-3xl" style={{ color: p.color }}>
-                    {fmtUSD(p.priceUSD)}
-                  </p>
-                  <p className="text-sm font-bold text-gray-400">{fmtNGN(p.priceNGN)}</p>
+                <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
+                  Pick your {p.optionLabel} edition
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {p.variants.map((v) => (
+                    <div key={v.label} className="rounded-xl bg-white px-4 py-3 border border-gray-100">
+                      <p className="font-display font-bold text-secondary">{v.label}</p>
+                      <p className="font-display font-bold text-xl" style={{ color: p.color }}>
+                        {fmtUSD(v.priceUSD)}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <div className="text-right">
-                  <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">Payment</p>
-                  <p className="font-display font-bold text-xl text-secondary">Pay in Full</p>
-                  <p className="text-sm font-bold text-gray-400">Secure checkout</p>
-                </div>
+                <p className="text-xs font-semibold text-gray-400">
+                  Spotty holds your own tablet — a tablet is not included.
+                </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href={`/preorder?product=${p.slug}`}
+                <a
+                  href={buyHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
                 >
-                  <Rocket className="w-6 h-6" strokeWidth={2.5} />
-                  Preorder Now
-                </Link>
+                  Get Yours
+                  <ArrowRight className="w-6 h-6" strokeWidth={2.5} />
+                </a>
                 <a
-                  href="https://calendly.com/bluesandstemlabs/30min"
+                  href={DEMO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg border-2 border-secondary/10 shadow-[0_8px_0_rgba(2,52,90,0.12)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.12)] transition-all"
                 >
                   <CalendarCheck className="w-5 h-5" strokeWidth={2.5} />
-                  Request a Demo
+                  Book a Demo
                 </a>
               </div>
             </motion.div>
@@ -158,14 +167,42 @@ export default function ProductDetail({ slug }) {
         </div>
       </section>
 
-      {/* ── How pre-order works ── */}
-      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}>
+      {/* ── What's included (series titles) ── */}
+      {p.included?.length > 0 && (
+        <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}>
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10 space-y-3">
+              <SectionKicker className="text-primary">8 Books · 130 Experiments</SectionKicker>
+              <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
+                What&apos;s in the{" "}
+                <span className="doodle-underline" style={{ color: p.color }}>kit</span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {p.included.map((title) => (
+                <div
+                  key={title}
+                  className="flex items-center gap-3 rounded-2xl bg-white p-4 border-2 border-primary/10 shadow-[0_5px_0_rgba(0,0,0,0.05)]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <BookOpen className="w-5 h-5 text-primary" strokeWidth={2.25} />
+                  </div>
+                  <span className="font-bold text-secondary text-sm sm:text-base">{title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── How it works ── */}
+      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl lg:text-5xl mb-12">
-            How Pre-Order <span className="text-grass doodle-underline">Works</span>
+            How the AR Books <span className="text-grass doodle-underline">Work</span>
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {preorderSteps.map((s, i) => (
+            {howItWorks.map((s, i) => (
               <div
                 key={s.title}
                 className="relative flex flex-col items-center text-center gap-2 rounded-[1.6rem] bg-white p-6 border-4 border-primary/15 shadow-[0_8px_0_rgba(0,0,0,0.06)]"
@@ -185,13 +222,13 @@ export default function ProductDetail({ slug }) {
       </section>
 
       {/* ── Other products ── */}
-      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
+      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}>
         <FloatPlanet className="absolute top-10 right-8 opacity-40" size={70} />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl mb-10">
-            Explore More <span className="text-coral doodle-underline">Devices</span>
+            Explore More <span className="text-coral doodle-underline">Books</span>
           </h2>
-          <div className="grid grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
             {others.map((o) => (
               <Link
                 key={o.slug}
@@ -199,12 +236,19 @@ export default function ProductDetail({ slug }) {
                 className="group flex flex-col rounded-[1.6rem] bg-white border-4 overflow-hidden shadow-[0_8px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform"
                 style={{ borderColor: o.color }}
               >
-                <div className="relative aspect-square flex items-center justify-center" style={{ background: o.gradient }}>
-                  <o.Icon className="w-14 h-14 sm:w-16 sm:h-16 text-white drop-shadow-lg" strokeWidth={1.75} />
+                <div className="relative aspect-square flex items-center justify-center p-4 bg-white">
+                  <Image
+                    src={o.image}
+                    alt={o.name}
+                    width={o.imageW}
+                    height={o.imageH}
+                    sizes="(min-width: 768px) 300px, 45vw"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
                 <div className="p-3 sm:p-4">
                   <h3 className="font-display font-bold text-secondary text-sm sm:text-base leading-tight">
-                    {o.name.replace("Blue Sands ", "")}
+                    {o.name}
                   </h3>
                   <p className="inline-flex items-center gap-1 text-primary text-sm font-bold mt-1 group-hover:translate-x-0.5 transition-transform">
                     View <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
