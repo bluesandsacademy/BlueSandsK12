@@ -1,79 +1,17 @@
-﻿"use client";
+"use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Users, GraduationCap, CheckCircle2, Star, Award } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { products, fmtUSD, STORE_URL } from "@/lib/products";
 import SectionKicker from "./section-kicker";
 
-const plans = [
-  {
-    id: "family",
-    planParam: "family",
-    badge: "Most Popular",
-    Icon: Users,
-    iconBg: "bg-amber-400",
-    iconShadow: "shadow-amber-400/50",
-    name: "Smart Family STEM Pack",
-    tagline: "For parents, homeschool families & multi-child households.",
-    cardBg: "from-amber-50 via-orange-50 to-yellow-50",
-    border: "border-amber-200",
-    priceBg: "bg-amber-100/70",
-    accentText: "text-amber-600",
-    checkBg: "bg-amber-400/15",
-    checkColor: "text-amber-600",
-    glow: "bg-amber-300/20",
-    ctaPrimary: "bg-amber-400 hover:bg-amber-500 text-white shadow-xl shadow-amber-400/30",
-    ctaSecondary: "border-amber-300 text-amber-700 hover:bg-amber-50",
-    fullUSD: 150, fullNGN: 210000,
-    highlights: [
-      "1 AR Pedia Tablet",
-      "5 Interactive AR Books",
-      "STEM Challenges & Activities",
-      "Parent Support Community",
-      "Monthly STEM Challenges",
-      "Learning Analytics Dashboard",
-    ],
-    popular: true,
-  },
-  {
-    id: "school",
-    planParam: "school",
-    badge: "For Schools",
-    Icon: GraduationCap,
-    iconBg: "bg-primary",
-    iconShadow: "shadow-primary/50",
-    name: "Smart Classroom Starter",
-    tagline: "For nursery & primary schools with 100–300 students.",
-    cardBg: "from-blue-50 via-sky-50 to-indigo-50",
-    border: "border-blue-200",
-    priceBg: "bg-blue-100/70",
-    accentText: "text-primary",
-    checkBg: "bg-primary/10",
-    checkColor: "text-primary",
-    glow: "bg-blue-300/20",
-    ctaPrimary: "bg-primary hover:bg-secondary text-white shadow-xl shadow-primary/30",
-    ctaSecondary: "border-blue-300 text-primary hover:bg-blue-50",
-    fullUSD: 300, fullNGN: 420000,
-    highlights: [
-      "5–10 AR Pedia Tablets",
-      "Classroom AR Book Library",
-      "Teacher Orientation",
-      "Classroom Deployment Setup",
-      "School LMS Access",
-      "STEM Showcase Session",
-      "Basic Technical Support",
-    ],
-    popular: false,
-  },
-];
+const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
+const TABLET_USD = 75;
+const buyHref = STORE_URL || DEMO_URL;
 
 export default function K12PricingSection() {
-  const [currency, setCurrency] = useState("ngn");
-
-  const fmt = (usd, ngn) =>
-    currency === "usd" ? `$${usd.toLocaleString()}` : `₦${ngn.toLocaleString()}`;
-
   return (
     <section
       id="pricing"
@@ -83,164 +21,100 @@ export default function K12PricingSection() {
       {/* Background blobs */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-64 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-200/25 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16 space-y-4 max-w-2xl mx-auto"
+          className="text-center mb-12 sm:mb-14 space-y-3 max-w-2xl mx-auto"
         >
-          <SectionKicker className="text-primary">Choose Your Plan</SectionKicker>
-          <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
-            One Plan.{" "}
-            <span className="text-primary doodle-underline">Infinite Discovery.</span>
+          <SectionKicker className="text-primary">Simple Pricing</SectionKicker>
+          <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
+            Pick Your{" "}
+            <span className="text-primary doodle-underline">AR Books</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-xl font-semibold">
-            Pick the right fit — for home or for school.
+            Each title comes in a Mirror or Camera edition. Prices in USD.
           </p>
-
-          {/* Currency toggle */}
-          <div className="flex items-center justify-center gap-3 pt-1">
-            <span className={`text-sm font-bold ${currency === "usd" ? "text-secondary" : "text-gray-400"}`}>USD</span>
-            <button
-              onClick={() => setCurrency(currency === "usd" ? "ngn" : "usd")}
-              aria-label="Toggle currency"
-              className="relative w-14 h-7 bg-primary rounded-full transition-all duration-300 shadow-inner"
-            >
-              <span
-                className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${currency === "ngn" ? "translate-x-7" : ""}`}
-              />
-            </button>
-            <span className={`text-sm font-bold ${currency === "ngn" ? "text-secondary" : "text-gray-400"}`}>NGN</span>
-          </div>
         </motion.div>
 
-        {/* Plan cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {plans.map((plan, i) => (
+        {/* Product pricing cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
+          {products.map((p, i) => (
             <motion.div
-              key={plan.id}
+              key={p.slug}
               initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.65, delay: i * 0.12 }}
-              className="relative"
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              className="group flex flex-col h-full text-center"
             >
-              {/* Floating "Most Popular" badge above card */}
-              {plan.popular && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10">
-                  <div
-                    className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-amber-400 text-white text-xs font-black shadow-lg shadow-amber-400/40 whitespace-nowrap"
-                    style={{ fontFamily: "var(--font-jarkata)" }}
-                  >
-                    <Star className="w-3.5 h-3.5 fill-white" />
-                    Most Popular
-                  </div>
-                </div>
-              )}
-
-              <div
-                className={`relative rounded-3xl border-2 ${plan.border} bg-linear-to-br ${plan.cardBg} p-7 sm:p-8 flex flex-col gap-6 overflow-hidden h-full`}
-                style={{
-                  boxShadow: plan.popular
-                    ? "0 20px 60px rgba(245,158,11,0.18), 0 0 0 2px rgba(245,158,11,0.3)"
-                    : "0 20px 60px rgba(4,131,226,0.12)",
-                }}
+              {/* Image — fixed-height box so every card's image aligns */}
+              <Link
+                href={`/products/${p.slug}`}
+                className="flex items-center justify-center h-52 sm:h-56 mb-2"
               >
-                {/* Decorative background glow */}
-                <div className={`absolute -top-12 -right-12 w-48 h-48 rounded-full ${plan.glow} pointer-events-none blur-2xl`} />
+                <Image
+                  src={p.image}
+                  alt={p.name}
+                  width={p.imageW}
+                  height={p.imageH}
+                  sizes="(min-width: 1024px) 320px, (min-width: 640px) 30vw, 80vw"
+                  className="w-full h-full object-contain drop-shadow-[0_20px_34px_rgba(2,52,90,0.20)] group-hover:scale-105 transition-transform duration-500"
+                />
+              </Link>
 
-                {/* Icon + name */}
-                <div className="flex items-start gap-4 relative">
-                  <div
-                    className={`w-20 h-20 rounded-2xl ${plan.iconBg} flex items-center justify-center shadow-2xl ${plan.iconShadow} shrink-0`}
-                  >
-                    <plan.Icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+              {/* Name + age */}
+              <h3 className="font-display font-bold text-secondary text-xl leading-tight">{p.name}</h3>
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mt-1">{p.ageRange}</p>
+              <p className="text-gray-500 text-sm font-semibold mt-2 mb-4 px-2 min-h-11">{p.blurb}</p>
+
+              {/* Variant prices */}
+              <div className="flex items-center justify-center gap-6 mb-5">
+                {p.variants.map((v) => (
+                  <div key={v.label}>
+                    <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">{v.label}</p>
+                    <p className="font-display font-bold text-lg" style={{ color: p.color }}>{fmtUSD(v.priceUSD)}</p>
                   </div>
-                  <div className="pt-1">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-2 ${plan.popular ? "bg-amber-400/20 text-amber-700" : "bg-primary/10 text-primary"}`}
-                    >
-                      {plan.badge}
-                    </span>
-                    <h3
-                      className="text-lg font-black text-secondary leading-tight"
-                      style={{ fontFamily: "var(--font-jarkata)" }}
-                    >
-                      {plan.name}
-                    </h3>
-                  </div>
-                </div>
+                ))}
+              </div>
 
-                <p className="text-gray-500 text-sm leading-relaxed -mt-2" style={{ fontFamily: "var(--font-jarkata)" }}>
-                  {plan.tagline}
-                </p>
-
-                {/* Price box */}
-                <div className={`rounded-2xl p-5 ${plan.priceBg} border ${plan.border}`}>
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-1">Full Price</p>
-                  <p
-                    className={`text-4xl font-black ${plan.accentText} leading-none`}
-                    style={{ fontFamily: "var(--font-jarkata)" }}
-                  >
-                    {fmt(plan.fullUSD, plan.fullNGN)}
-                  </p>
-                  <div className="mt-3 pt-3 border-t border-gray-200/60 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-gray-500">
-                      One-time payment · pay in full
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
-                      Secure Checkout
-                    </span>
-                  </div>
-                </div>
-
-                {/* Features */}
-                <ul className="space-y-2.5 flex-1">
-                  {plan.highlights.map((item) => (
-                    <li key={item} className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full ${plan.checkBg} flex items-center justify-center shrink-0`}>
-                        <CheckCircle2 className={`w-3.5 h-3.5 ${plan.checkColor}`} strokeWidth={2.5} />
-                      </div>
-                      <span
-                        className="text-sm font-medium text-gray-700"
-                        style={{ fontFamily: "var(--font-jarkata)" }}
-                      >
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <div className="pt-2">
-                  <Link
-                    href={`/preorder?plan=${plan.planParam}`}
-                    className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-base transition-all duration-300 ${plan.ctaPrimary}`}
-                    style={{ fontFamily: "var(--font-jarkata)" }}
-                  >
-                    <Award className="w-5 h-5 shrink-0" />
-                    Preorder {plan.popular ? "Family Pack" : "School Pack"}
-                  </Link>
-                </div>
+              {/* CTAs */}
+              <div className="flex gap-3 justify-center mt-auto">
+                <Link
+                  href={`/products/${p.slug}`}
+                  className="rounded-xl bg-white px-5 py-3 font-display font-bold text-secondary border-2 border-secondary/10 shadow-[0_5px_0_rgba(2,52,90,0.12)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(2,52,90,0.12)] transition-all"
+                >
+                  Details
+                </Link>
+                <a
+                  href={buyHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl px-5 py-3 font-display font-bold text-white shadow-[0_5px_0_rgba(0,0,0,0.18)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(0,0,0,0.18)] transition-all"
+                  style={{ background: p.color }}
+                >
+                  Get it
+                  <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                </a>
               </div>
             </motion.div>
           ))}
         </div>
 
+        {/* Add-on / footnote */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center text-gray-400 text-sm mt-10"
-          style={{ fontFamily: "var(--font-jarkata)" }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center text-gray-500 text-sm font-semibold mt-10 max-w-2xl mx-auto"
         >
-          All prices include setup and onboarding support. Early access slots are limited.
+          Every book is read with <span className="text-secondary">Spotty</span>, the giraffe tablet
+          holder. A tablet is not included — add one for <span className="text-secondary">{fmtUSD(TABLET_USD)}</span>.
         </motion.p>
       </div>
     </section>

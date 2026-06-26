@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { initializeTransaction, generateReference } from "@/lib/paystack";
-import { subtotalFor, validatePromoCode } from "@/lib/promo";
+import { getProduct, STORE_URL } from "@/lib/products";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -11,158 +10,115 @@ const NIGERIAN_STATES = [
   "Yobe","Zamfara",
 ];
 
-const VALID_USER_TYPES  = ["individual", "school", "institution"];
-const VALID_NEEDS       = ["ar_books", "teacher_training", "school_demo", "installation_support", "lms_access"];
+const VALID_USER_TYPES = ["individual", "school", "institution"];
+const VALID_NEEDS = ["ar_books", "teacher_training", "school_demo", "installation_support", "lms_access"];
 
-// Quantity rules: individuals 1–10 units; schools/institutions minimum 5.
 const INDIVIDUAL_MAX_QTY = 10;
-const SCHOOL_MIN_QTY     = 5;
+const SCHOOL_MIN_QTY = 5;
+const TABLET_USD = 75;
 
-// Paystack can't process a near-zero charge; reject codes that would zero a cart.
-const MIN_CHARGE_NGN = 100;
-
+/*
+ * The preorder form is now a LEAD-CAPTURE step: it records who is preordering
+ * and exactly what they want, then hands the customer to the Paystack store to
+ * pay. No money is taken on-site, so there is no Paystack transaction init,
+ * no order_payments row, and no on-site promo discount here anymore.
+ */
 export async function POST(request) {
   try {
     const body = await request.json();
 
     const {
-      selected_plan, user_type, full_name, school_org_name, email, phone, whatsapp,
+      product_slug, variant_label, quantity, tablet_count,
+      user_type, full_name, school_org_name, email, phone, whatsapp,
       state, lga, city, postal_code, address_line1, address_line2, landmark,
-      device_count, additional_needs,
-      student_count, teacher_count, agreed_to_contact,
-      promo_code,
+      additional_needs, student_count, teacher_count, agreed_to_contact,
     } = body;
 
-    // ── Validation ───────────────────────────────────────────────────────────
+    // ── Product validation (against the real catalogue) ───────────────────────
+    const product = getProduct(product_slug);
+    if (!product)
+      return NextResponse.json({ error: "Please choose a product." }, { status: 400 });
+
+    const variant = product.variants.find((v) => v.label === variant_label);
+    if (!variant)
+      return NextResponse.json({ error: `Please choose a ${product.optionLabel} edition.` }, { status: 400 });
+
+    const qty = parseInt(quantity, 10);
+    if (!qty || qty < 1)
+      return NextResponse.json({ error: "Quantity must be at least 1." }, { status: 400 });
+
+    const tablets = Math.max(0, parseInt(tablet_count, 10) || 0);
+
+    // ── Lead validation ───────────────────────────────────────────────────────
     if (!user_type || !VALID_USER_TYPES.includes(user_type))
       return NextResponse.json({ error: "Invalid user type." }, { status: 400 });
-
     if (!full_name?.trim())
       return NextResponse.json({ error: "Full name is required." }, { status: 400 });
-
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return NextResponse.json({ error: "A valid email address is required." }, { status: 400 });
-
     if (!phone?.trim())
       return NextResponse.json({ error: "Phone number is required." }, { status: 400 });
-
     if (!whatsapp?.trim())
       return NextResponse.json({ error: "WhatsApp number is required." }, { status: 400 });
-
     if (!state || !NIGERIAN_STATES.includes(state))
       return NextResponse.json({ error: "Please select a valid state." }, { status: 400 });
-
     if (!city?.trim())
       return NextResponse.json({ error: "City / town is required." }, { status: 400 });
-
     if (!address_line1?.trim())
       return NextResponse.json({ error: "Street address is required." }, { status: 400 });
 
-    const parsedDeviceCount = parseInt(device_count, 10);
-    if (!parsedDeviceCount || parsedDeviceCount < 1)
-      return NextResponse.json({ error: "At least 1 unit is required." }, { status: 400 });
-
     const isSchoolOrg = ["school", "institution"].includes(user_type);
-    if (isSchoolOrg && parsedDeviceCount < SCHOOL_MIN_QTY)
-      return NextResponse.json({ error: `Schools and organisations require a minimum of ${SCHOOL_MIN_QTY} units.` }, { status: 400 });
-
-    if (!isSchoolOrg && parsedDeviceCount > INDIVIDUAL_MAX_QTY)
-      return NextResponse.json({ error: `Individual orders are limited to ${INDIVIDUAL_MAX_QTY} units. Please apply as a distributor for larger volumes.` }, { status: 400 });
+    if (isSchoolOrg && qty < SCHOOL_MIN_QTY)
+      return NextResponse.json({ error: `Schools and organisations preorder a minimum of ${SCHOOL_MIN_QTY} sets.` }, { status: 400 });
+    if (!isSchoolOrg && qty > INDIVIDUAL_MAX_QTY)
+      return NextResponse.json({ error: `Individual orders are limited to ${INDIVIDUAL_MAX_QTY} sets. Apply as a distributor for larger volumes.` }, { status: 400 });
 
     if (!agreed_to_contact)
       return NextResponse.json({ error: "You must accept the Terms & Conditions." }, { status: 400 });
 
     const sanitizedNeeds = (additional_needs || []).filter((n) => VALID_NEEDS.includes(n));
+    const amountUSD = variant.priceUSD * qty + tablets * TABLET_USD;
 
-    // ── Compute amount (full payment only) ────────────────────────────────────
-    const subtotalNGN = subtotalFor(selected_plan, parsedDeviceCount);
-
-    // ── Apply promo code (server-authoritative — re-validated, never trusted) ──
-    let promo = null;
-    let discountNGN = 0;
-    if (promo_code?.trim()) {
-      const result = await validatePromoCode(promo_code, subtotalNGN);
-      if (!result.ok)
-        return NextResponse.json({ error: result.error }, { status: 400 });
-      promo = result.promo;
-      discountNGN = result.discount_ngn;
-    }
-
-    const chargeNGN = subtotalNGN - discountNGN;
-    if (chargeNGN < MIN_CHARGE_NGN)
-      return NextResponse.json(
-        { error: "This promo code can't be applied to this order automatically — please contact us to complete it." },
-        { status: 400 }
-      );
-
-    // ── Insert preorder ───────────────────────────────────────────────────────
+    // ── Save the preorder lead ────────────────────────────────────────────────
     const { data, error } = await supabaseAdmin
       .from("k12_preorders")
       .insert({
-        selected_plan:      selected_plan || null,
+        product_slug:    product.slug,
+        variant_label:   variant.label,
+        device_count:    qty,
+        tablet_count:    tablets,
+        amount_usd:      amountUSD,
         user_type,
-        full_name:          full_name.trim(),
-        school_org_name:    school_org_name?.trim() || null,
-        email:              email.trim().toLowerCase(),
-        phone:              phone.trim(),
-        whatsapp:           whatsapp.trim(),
+        full_name:       full_name.trim(),
+        school_org_name: school_org_name?.trim() || null,
+        email:           email.trim().toLowerCase(),
+        phone:           phone.trim(),
+        whatsapp:        whatsapp.trim(),
         state,
-        lga:                lga?.trim() || null,
-        city:               city.trim(),
-        postal_code:        postal_code?.trim() || null,
-        address_line1:      address_line1.trim(),
-        address_line2:      address_line2?.trim() || null,
-        landmark:           landmark?.trim() || null,
-        device_count:       parsedDeviceCount,
-        additional_needs:   sanitizedNeeds,
-        student_count:      student_count ? parseInt(student_count, 10) : null,
-        teacher_count:      teacher_count ? parseInt(teacher_count, 10) : null,
-        payment_option:     "full",
-        agreed_to_contact:  Boolean(agreed_to_contact),
-        order_status:       "pending",
-        payment_status:     "unpaid",
-        promo_code_id:      promo?.id ?? null,
-        promo_code:         promo?.code ?? null,
-        subtotal_ngn:       subtotalNGN,
-        discount_ngn:       discountNGN,
+        lga:             lga?.trim() || null,
+        city:            city.trim(),
+        postal_code:     postal_code?.trim() || null,
+        address_line1:   address_line1.trim(),
+        address_line2:   address_line2?.trim() || null,
+        landmark:        landmark?.trim() || null,
+        additional_needs: sanitizedNeeds,
+        student_count:   student_count ? parseInt(student_count, 10) : null,
+        teacher_count:   teacher_count ? parseInt(teacher_count, 10) : null,
+        agreed_to_contact: Boolean(agreed_to_contact),
+        order_status:    "pending",
+        payment_status:  "unpaid",
       })
       .select("id")
       .single();
 
     if (error) throw error;
 
-    const preorderId = data.id;
-    const reference  = generateReference(preorderId);
-    const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
-    // ── Initialize Paystack transaction ──────────────────────────────────────
-    const paystackData = await initializeTransaction({
-      email:       email.trim().toLowerCase(),
-      amountNGN:   chargeNGN,
-      reference,
-      callbackUrl: `${siteUrl}/preorder/callback?preorder_id=${preorderId}`,
-      metadata: {
-        preorder_id:    preorderId,
-        payment_type:   "full",
-        customer_name:  full_name.trim(),
-        plan:           selected_plan,
-        device_count:   parsedDeviceCount,
-      },
-    });
-
-    // ── Record pending payment ────────────────────────────────────────────────
-    await supabaseAdmin.from("order_payments").insert({
-      preorder_id:     preorderId,
-      payment_type:    "full",
-      amount_ngn:      chargeNGN,
-      paystack_ref:    reference,
-      paystack_status: "pending",
-    });
-
+    // Hand off to the Paystack store to complete payment. When the store URL
+    // isn't configured yet, the client shows a "we'll be in touch" success.
     return NextResponse.json({
-      success:      true,
-      id:           preorderId,
-      paystack_url: paystackData.authorization_url,
+      success: true,
+      id: data.id,
+      redirect_url: STORE_URL || null,
     });
   } catch (err) {
     console.error("[POST /api/k12-ar-pedia/preorder]", err);

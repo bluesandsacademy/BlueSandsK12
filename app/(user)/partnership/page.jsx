@@ -47,7 +47,7 @@ export default function PartnershipPage() {
               className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10"
             >
               <Rocket className="w-5 h-5 text-primary" strokeWidth={2.5} />
-              See Pre-Order Options
+              See Pricing
             </Link>
           </div>
         </div>
