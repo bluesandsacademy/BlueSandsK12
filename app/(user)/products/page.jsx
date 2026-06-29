@@ -3,16 +3,16 @@ import JsonLd from "@/components/common/json-ld";
 import { productListSchema, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata = {
-  title: "AR Media Shop — Immersive STEM Devices",
+  title: "Shop AR Books — ARpedia Collection",
   description:
-    "Preorder Blue Sands immersive EdTech devices for K–12: the AR Vision Headset, Smart Interactive Board, STEM Lab Kit, and Immersive Learning Tablet. Reserve with just a 30% deposit.",
+    "Shop the ARpedia collection: Into the Community, Into the Curiosity Q, and the 8-book AR Science Lab Kit. Augmented-reality books that bring STEM to life for kids ages 4–13, read with the Spotty tablet holder.",
   alternates: { canonical: "/products" },
   openGraph: {
     type: "website",
     url: "/products",
-    title: "AR Media Shop — Immersive STEM Devices",
+    title: "Shop AR Books — ARpedia Collection",
     description:
-      "Preorder Blue Sands immersive EdTech devices for K–12 schools and families across Nigeria.",
+      "Augmented-reality books that bring STEM learning to life for children ages 4–13 across Nigeria.",
   },
 };
 

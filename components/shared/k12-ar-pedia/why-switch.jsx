@@ -2,7 +2,8 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { XCircle, CheckCircle2, GraduationCap, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { XCircle, CheckCircle2, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
+import SectionKicker from "./section-kicker";
 
 // Swap to Cloudinary paths when ready:
 // import { img } from "@/lib/cloudinary";
@@ -86,10 +87,7 @@ export default function WhySwitchSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 space-y-4 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <RefreshCcw className="w-4 h-4" strokeWidth={2.5} />
-            Why Make the Switch?
-          </div>
+          <SectionKicker className="text-coral">Why Make the Switch?</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Traditional Learning Is{" "}
             <span className="text-coral doodle-underline">No Longer Enough</span>
@@ -106,8 +104,10 @@ export default function WhySwitchSection() {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.8 }}
           ref={containerRef}
-          className="relative rounded-3xl overflow-hidden max-w-5xl mx-auto select-none aspect-[4/3] sm:aspect-video"
+          className="relative rounded-3xl overflow-hidden max-w-5xl mx-auto select-none"
           style={{
+            aspectRatio: "16/9",
+            minHeight: 280,
             cursor: "ew-resize",
             touchAction: "none",
             boxShadow: "0 40px 90px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.08)",
@@ -150,7 +150,7 @@ export default function WhySwitchSection() {
           </div>
 
           {/* AFTER points (bottom-right) */}
-          <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 space-y-1.5 pointer-events-none hidden sm:block">
+          <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 z-20 space-y-1.5 pointer-events-none">
             {afterPoints.map((pt) => (
               <div
                 key={pt}
@@ -207,7 +207,7 @@ export default function WhySwitchSection() {
             </div>
 
             {/* BEFORE points (bottom-left, clipped with image) */}
-            <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 space-y-1.5 hidden sm:block">
+            <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 space-y-1.5">
               {beforePoints.map((pt) => (
                 <div
                   key={pt}
@@ -295,12 +295,12 @@ export default function WhySwitchSection() {
           className="mt-12 text-center"
         >
           <div
-            className="inline-flex items-center gap-3 rounded-2xl px-4 sm:px-8 py-3 sm:py-4 shadow-xl shadow-secondary/30 w-full sm:w-auto justify-center"
+            className="inline-flex items-center gap-3 rounded-2xl px-8 py-4 shadow-xl shadow-secondary/30"
             style={{ background: "linear-gradient(135deg, #02345a, #0483e2)" }}
           >
-            <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0" />
+            <GraduationCap className="w-6 h-6 text-white shrink-0" />
             <p
-              className="text-white font-bold text-sm sm:text-base lg:text-lg"
+              className="text-white font-bold text-base sm:text-lg"
               style={{ fontFamily: "var(--font-jarkata)" }}
             >
               Blue Sands K12 AR Pedia transforms classrooms into immersive learning environments.

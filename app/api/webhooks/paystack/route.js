@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { sendOrderConfirmation, sendBalanceConfirmation, sendAdminPaymentAlert } from "@/lib/resend";
+import { sendOrderConfirmation, sendAdminPaymentAlert } from "@/lib/resend";
+import { ingestStorefrontCharge } from "@/lib/paystack-orders";
 
 export async function POST(request) {
   try {
@@ -14,7 +15,26 @@ export async function POST(request) {
       .update(rawBody)
       .digest("hex");
 
-    if (hash !== signature) {
+    const signatureValid = hash === signature;
+
+    // ── SPIKE (temporary): capture the full payload of every Paystack event so
+    // we can inspect what a real Storefront order carries (line items, discount
+    // code, etc.). Best-effort and isolated — it must never break the live
+    // preorder confirmation below. Remove once the Storefront integration ships.
+    try {
+      let parsed = null;
+      try { parsed = JSON.parse(rawBody); } catch { /* non-JSON body */ }
+      await supabaseAdmin.from("paystack_webhook_logs").insert({
+        event:           parsed?.event ?? null,
+        reference:       parsed?.data?.reference ?? null,
+        signature_valid: signatureValid,
+        payload:         parsed ?? { raw_body: rawBody },
+      });
+    } catch (logErr) {
+      console.error("[paystack webhook] spike log failed:", logErr);
+    }
+
+    if (!signatureValid) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
@@ -32,7 +52,14 @@ export async function POST(request) {
         .single();
 
       if (!payment) {
-        console.warn(`[paystack webhook] No payment record for ref: ${reference}`);
+        // Not a bls preorder charge → it's a Paystack Storefront order. Ingest
+        // it into the fulfilment back-office. Wrapped so it can never break the
+        // webhook response.
+        try {
+          await ingestStorefrontCharge(event);
+        } catch (e) {
+          console.error("[paystack webhook] storefront ingest failed:", e);
+        }
         return NextResponse.json({ received: true });
       }
 
@@ -42,42 +69,33 @@ export async function POST(request) {
         .update({ paystack_status: "success", updated_at: new Date().toISOString() })
         .eq("id", payment.id);
 
-      // Update preorder payment_status
-      const newPaymentStatus =
-        payment.payment_type === "deposit" ? "deposit_paid" : "fully_paid";
-
+      // Full payment only — mark order fully paid
       const { data: preorder } = await supabaseAdmin
         .from("k12_preorders")
-        .update({ payment_status: newPaymentStatus })
+        .update({ payment_status: "fully_paid" })
         .eq("id", payment.preorder_id)
         .select("full_name, email, selected_plan, device_count, payment_option")
         .single();
 
-      // Send customer confirmation email (type-aware)
+      // Send customer confirmation email
       if (preorder?.email) {
         const planLabel = preorder.selected_plan === "family" ? "Smart Family STEM Pack" : "Smart Classroom Starter";
-        const isBalance = payment.payment_type === "balance";
 
-        const emailFn = isBalance ? sendBalanceConfirmation : sendOrderConfirmation;
-        const subject  = isBalance
-          ? "Full Payment Received — Blue Sands K12 AR Pedia"
-          : "Order Confirmed — Blue Sands K12 AR Pedia";
-
-        await emailFn({
+        await sendOrderConfirmation({
           to:          preorder.email,
           customerName: preorder.full_name,
           plan:        planLabel,
           deviceCount: preorder.device_count,
           amountPaid:  amountNGN,
-          paymentType: payment.payment_type,
+          paymentType: "full",
           orderId:     payment.preorder_id,
         }).catch((err) => console.error("[paystack webhook] Customer email error:", err));
 
         await supabaseAdmin.from("email_logs").insert({
           preorder_id: payment.preorder_id,
           recipient:   preorder.email,
-          subject,
-          email_type:  isBalance ? "balance_confirmation" : "order_confirmation",
+          subject:     "Order Confirmed — Blue Sands K12 AR Pedia",
+          email_type:  "order_confirmation",
           status:      "sent",
         });
 

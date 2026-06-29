@@ -6,11 +6,11 @@ import { useState, useEffect } from "react";
 import {
   Menu,
   X,
-  Sparkles,
   ShoppingBag,
   Package,
   House,
-  CreditCard,
+  Handshake,
+  Mail,
   Rocket,
 } from "lucide-react";
 import { img } from "@/lib/cloudinary";
@@ -18,8 +18,9 @@ import { img } from "@/lib/cloudinary";
 const navLinks = [
   { name: "Home", href: "/", Icon: House },
   { name: "Shop", href: "/products", Icon: ShoppingBag },
+  { name: "Partnership", href: "/partnership", Icon: Handshake },
   { name: "Track Order", href: "/track", Icon: Package },
-  { name: "Pay Balance", href: "/pay-balance", Icon: CreditCard },
+  { name: "Contact", href: "/contact", Icon: Mail },
 ];
 
 export default function Header() {

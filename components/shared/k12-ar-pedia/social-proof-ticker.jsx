@@ -1,6 +1,6 @@
 "use client";
 
-import { School, Star, PartyPopper, Rocket, Lightbulb, Sparkles, Trophy, Microscope, BookOpen } from "lucide-react";
+import { School, Star, PartyPopper, Rocket, Lightbulb, CalendarCheck, Trophy, Microscope, BookOpen } from "lucide-react";
 
 const events = [
   { Icon: School, school: "Greenfield Primary", city: "Lagos", action: "reserved 20 slots" },
@@ -8,11 +8,11 @@ const events = [
   { Icon: PartyPopper, school: "Lagos Island Prep", city: "Lagos Island", action: "became a partner school" },
   { Icon: Rocket, school: "New Horizons Junior", city: "Port Harcourt", action: "reserved 15 slots" },
   { Icon: Lightbulb, school: "Covenant Academy", city: "Ibadan", action: "joined the waitlist" },
-  { Icon: Sparkles, school: "Grace International", city: "Kano", action: "booked a free demo" },
+  { Icon: CalendarCheck, school: "Grace International", city: "Kano", action: "booked a free demo" },
   { Icon: Trophy, school: "Royal Stars Primary", city: "Enugu", action: "became a partner school" },
   { Icon: Microscope, school: "Discovery STEM Club", city: "Benin City", action: "reserved 30 slots" },
   { Icon: BookOpen, school: "Brightfield Academy", city: "Kaduna", action: "joined early access" },
-  { Icon: Sparkles, school: "Future Leaders Prep", city: "Lekki", action: "booked a free demo" },
+  { Icon: CalendarCheck, school: "Future Leaders Prep", city: "Lekki", action: "booked a free demo" },
 ];
 
 // Duplicate for seamless infinite scroll

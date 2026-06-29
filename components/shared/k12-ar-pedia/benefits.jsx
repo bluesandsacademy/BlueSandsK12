@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Microscope, TrendingUp, Rocket, GraduationCap, BookOpen, Wifi } from "lucide-react";
 import { FloatDNA, FloatSparkle } from "./science-floats";
+import SectionKicker from "./section-kicker";
 
 const superpowers = [
   { Icon: Microscope, title: "Immersive STEM", desc: "Touch and explore science in 3D — not just read about it.", color: "#0483e2" },
@@ -34,10 +35,7 @@ export default function BenefitsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-3"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <Rocket className="w-4 h-4" strokeWidth={2.5} />
-            Why It Works
-          </div>
+          <SectionKicker className="text-primary">Why It Works</SectionKicker>
           <h2 className="font-display font-bold text-secondary text-4xl sm:text-5xl lg:text-6xl">
             Your Child Gains{" "}
             <span className="text-primary doodle-underline">Real Superpowers</span>

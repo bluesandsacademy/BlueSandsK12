@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Heart, PawPrint, Orbit, FlaskConical, Wrench, BookOpen, Lightbulb, Globe } from "lucide-react";
+import { Heart, PawPrint, Orbit, FlaskConical, Wrench, Lightbulb } from "lucide-react";
 import { FloatSparkle } from "./science-floats";
+import SectionKicker from "./section-kicker";
 
 const modules = [
   {
@@ -46,24 +47,16 @@ const modules = [
     color: "#FFC83D",
   },
   {
-    Icon: BookOpen,
-    title: "AR Storytelling",
-    tagline: "Stories that leap off the page",
-    description: "Characters leap out of the book and act their scenes. Reading that children actually beg for.",
-    imgSrc: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=600&q=85",
-    color: "#FF8FAB",
-  },
-  {
     Icon: Lightbulb,
     title: "STEM Discovery",
     tagline: "Guided curiosity challenges",
-    description: "Why does a bridge hold? How does electricity flow? What makes a plant grow? Find out through hands-on AR challenges built to spark the next generation of Nigerian scientists.",
-    imgSrc: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=85",
+    description: "Why does a bridge hold? How does electricity flow? Find out through hands-on AR challenges built to spark curiosity.",
+    imgSrc: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=85",
     color: "#0483e2",
   },
 ];
 
-function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, wide }) {
+function PortalCard({ Icon, title, tagline, description, imgSrc, color, index }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 36 }}
@@ -71,8 +64,8 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.06 }}
       whileHover="hovered"
-      className={`group relative overflow-hidden rounded-[1.8rem] cursor-pointer bg-white border-4 shadow-[0_10px_0_rgba(0,0,0,0.06)] ${wide ? "col-span-2" : ""}`}
-      style={{ aspectRatio: wide ? "16/9" : "3/4", borderColor: color }}
+      className="group relative overflow-hidden rounded-[1.8rem] cursor-default bg-white border-4 shadow-[0_10px_0_rgba(0,0,0,0.06)]"
+      style={{ aspectRatio: "1/1", borderColor: color }}
     >
       {/* Photo */}
       <motion.img
@@ -97,18 +90,9 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
         <Icon className="w-6 h-6" style={{ color }} strokeWidth={2.5} />
       </div>
 
-      {/* Mobile: always-visible info panel */}
-      <div
-        className="absolute inset-x-0 bottom-0 p-3 sm:hidden"
-        style={{ background: `linear-gradient(to top, ${color} 60%, ${color}ee 100%)` }}
-      >
-        <h3 className="font-display font-bold text-white text-base leading-tight mb-0.5">{title}</h3>
-        <p className="text-white/90 text-[11px] font-semibold leading-snug line-clamp-3">{description}</p>
-      </div>
-
-      {/* Desktop: default title (fades on hover) */}
+      {/* Default title (fades on hover) */}
       <motion.div
-        className="absolute inset-x-0 bottom-0 p-4 hidden sm:block"
+        className="absolute inset-x-0 bottom-0 p-4"
         variants={{ hovered: { opacity: 0, y: 8 } }}
         transition={{ duration: 0.25 }}
       >
@@ -118,9 +102,9 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
         <p className="text-white/90 text-sm font-semibold">{tagline}</p>
       </motion.div>
 
-      {/* Desktop: hover reveal panel */}
+      {/* Hover reveal panel */}
       <motion.div
-        className="absolute inset-x-0 bottom-0 p-4 hidden sm:block"
+        className="absolute inset-x-0 bottom-0 p-4"
         variants={{ initial: { y: "100%", opacity: 0 }, hovered: { y: 0, opacity: 1 } }}
         transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
         style={{ background: `linear-gradient(to top, ${color} 60%, ${color}ee 100%)` }}
@@ -139,7 +123,7 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index, w
 export default function ProductExperienceSection() {
   return (
     <section
-      className="relative py-16 sm:py-20 lg:py-28 overflow-hidden"
+      className="relative py-12 sm:py-14 lg:py-16 overflow-hidden"
       style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}
     >
       {/* Playful floating shapes */}
@@ -154,25 +138,22 @@ export default function ProductExperienceSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
+          className="text-center mb-8 sm:mb-10 space-y-3 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-grape px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <Globe className="w-4 h-4" strokeWidth={2.5} />
-            Explore the Worlds
-          </div>
-          <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
-            7 Amazing Worlds{" "}
+          <SectionKicker className="text-grape">Explore the Worlds</SectionKicker>
+          <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
+            6 Amazing Worlds{" "}
             <span className="text-grape doodle-underline">to Discover</span>
           </h2>
-          <p className="text-gray-600 text-lg sm:text-2xl font-semibold">
+          <p className="text-gray-600 text-base sm:text-xl font-semibold">
             Tap a world to unlock its secrets!
           </p>
         </motion.div>
 
-        {/* Portal grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+        {/* Portal grid — 6 worlds in an even 2 / 3 column layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 max-w-6xl mx-auto">
           {modules.map((mod, i) => (
-            <PortalCard key={mod.title} {...mod} index={i} wide={i === 6} />
+            <PortalCard key={mod.title} {...mod} index={i} />
           ))}
         </div>
       </div>

@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Rocket, Clock, Sparkles } from "lucide-react";
+import { Rocket, CalendarCheck } from "lucide-react";
 import { FloatPlanet, FloatSparkle } from "./science-floats";
+import SectionKicker from "./section-kicker";
 
 export default function FinalCtaSection() {
   return (
@@ -27,10 +28,7 @@ export default function FinalCtaSection() {
           transition={{ duration: 0.7 }}
           className="space-y-6 max-w-3xl mx-auto mb-12"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-coral px-5 py-2.5 text-white font-extrabold text-sm sm:text-base shadow-[0_5px_0_rgba(0,0,0,0.1)] kid-wobble">
-            <Clock className="w-4 h-4" strokeWidth={2.5} />
-            Early Access · Closing Soon
-          </div>
+          <SectionKicker className="text-coral">Early Access · Closing Soon</SectionKicker>
 
           <h2 className="font-display font-bold text-secondary leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
             Ready to Transform{" "}
@@ -65,7 +63,7 @@ export default function FinalCtaSection() {
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10 w-full sm:w-auto"
           >
-            <Sparkles className="w-5 h-5 text-sunshine" strokeWidth={2.5} />
+            <CalendarCheck className="w-5 h-5 text-primary" strokeWidth={2.5} />
             Request a Free Demo
           </a>
           <Link

@@ -2,19 +2,29 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, Rocket, School, FlaskConical, BookOpen, Users, Monitor } from "lucide-react";
-import { FloatAtom, FloatPlanet, FloatSparkle } from "./science-floats";
+import {
+  Wand2,
+  Rocket,
+  School,
+  FlaskConical,
+  BookOpen,
+  Users,
+  Monitor,
+  MapPin,
+} from "lucide-react";
+import { FloatPlanet, FloatSparkle } from "./science-floats";
+import SectionKicker from "./section-kicker";
 
 const builtFor = [
   { label: "Schools", Icon: School },
   { label: "STEM Academies", Icon: FlaskConical },
-  { label: "Learning Centers", Icon: BookOpen },
+
   { label: "Parents", Icon: Users },
   { label: "Smart Classrooms", Icon: Monitor },
 ];
 
-/* A bright, friendly "AR magic" scene — a tablet with a storybook and a
-   planet + rocket bursting up off the page. All flat, candy-colored shapes. */
+/* A bright, friendly "AR magic" scene — real photos of children learning,
+   framed playfully with a planet + rocket bursting up and floating sparkles. */
 function ArMagicScene() {
   return (
     <div className="relative mx-auto w-full max-w-md aspect-square">
@@ -22,52 +32,61 @@ function ArMagicScene() {
       <div className="absolute inset-6 bg-sunshine/40 blob-1 blur-[2px]" />
       <div className="absolute inset-10 bg-sunshine/70 blob-2" />
 
-      {/* Bursting planet — overflows above the tablet */}
-      <FloatPlanet className="absolute -top-6 left-6 z-20" size={120} />
+      {/* Bursting planet — overflows above the photo */}
+      <FloatPlanet className="absolute -top-6 left-6 z-30" size={110} />
       {/* Bursting rocket */}
       <motion.div
         animate={{ y: [0, -14, 0], rotate: [0, 6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-2 right-8 z-20 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
+        className="absolute -top-2 right-8 z-30 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
       >
         <Rocket className="w-9 h-9 text-white" strokeWidth={2} />
       </motion.div>
 
       {/* Sparkles */}
-      <FloatSparkle className="absolute top-2 left-1/2 z-20" size={40} color="#ffffff" />
-      <FloatSparkle className="absolute bottom-16 -left-2 z-20" size={34} color="#FF5A5F" />
-      <FloatSparkle className="absolute bottom-24 right-0 z-20" size={28} color="#3DD68C" />
+      <FloatSparkle
+        className="absolute top-2 left-1/2 z-30"
+        size={40}
+        color="#ffffff"
+      />
+      <FloatSparkle
+        className="absolute bottom-16 -left-2 z-30"
+        size={34}
+        color="#FF5A5F"
+      />
+      <FloatSparkle
+        className="absolute bottom-24 right-0 z-30"
+        size={28}
+        color="#3DD68C"
+      />
 
-      {/* Tablet */}
+      {/* Main photo — a child exploring a lesson */}
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-x-4 bottom-2 top-20 z-10"
+        className="absolute inset-x-6 bottom-4 top-14 z-10"
       >
-        <div className="relative h-full w-full rounded-[2.2rem] bg-white border-[10px] border-secondary shadow-[0_24px_60px_rgba(2,52,90,0.28)] overflow-hidden">
-          {/* Screen */}
-          <div className="relative h-full w-full rounded-[1.2rem] bg-gradient-to-b from-sky/20 to-cream flex items-center justify-center overflow-hidden">
-            {/* Open storybook */}
-            <div className="relative w-[78%] aspect-[4/3]">
-              {/* Book shadow */}
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[88%] h-4 bg-secondary/15 blur-md rounded-full" />
-              {/* Pages */}
-              <div className="absolute inset-0 flex rounded-xl overflow-hidden shadow-lg">
-                <div className="flex-1 bg-cream border-r-2 border-amber-200/60 p-3 space-y-1.5">
-                  <div className="h-1.5 rounded-full bg-coral/40 w-3/4" />
-                  <div className="h-1.5 rounded-full bg-gray-200 w-full" />
-                  <div className="h-1.5 rounded-full bg-gray-200 w-5/6" />
-                  <div className="mt-2 h-8 rounded-lg bg-grass/30" />
-                </div>
-                <div className="flex-1 bg-white p-3 flex items-center justify-center">
-                  {/* Atom rising off the page */}
-                  <FloatAtom size={70} />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Camera dot */}
-          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-secondary/40" />
+        <div className="relative h-full w-full rounded-[2.2rem] overflow-hidden border-[8px] border-white shadow-[0_24px_60px_rgba(2,52,90,0.28)]">
+          <img
+            src="/hero2.jpg"
+            alt="A child exploring a STEM lesson with Blue Sands K12 AR Pedia"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      </motion.div>
+
+      {/* Smaller overlapping photo — a classroom moment */}
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -bottom-3 -right-1 z-20 w-40 sm:w-48"
+      >
+        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border-[6px] border-white shadow-[0_16px_40px_rgba(2,52,90,0.25)]">
+          <img
+            src="/hero1.jpg"
+            alt="Children learning together in an AR-powered classroom"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
       </motion.div>
     </div>
@@ -79,9 +98,19 @@ export default function K12HeroSection() {
     <section className="relative overflow-hidden bg-gradient-to-b from-sky/25 via-cream to-cream">
       {/* Floating background shapes */}
       <div className="absolute top-16 left-6 w-10 h-10 bg-coral/30 blob-1 kid-float pointer-events-none" />
-      <div className="absolute top-40 right-10 w-6 h-6 bg-grape/40 rounded-full kid-float pointer-events-none" style={{ animationDelay: "1.2s" }} />
-      <div className="absolute top-1/3 right-4 w-8 h-8 bg-grass/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.6s" }} />
-      <FloatSparkle className="absolute top-24 left-1/2 opacity-70" size={30} color="#FFC83D" />
+      <div
+        className="absolute top-40 right-10 w-6 h-6 bg-grape/40 rounded-full kid-float pointer-events-none"
+        style={{ animationDelay: "1.2s" }}
+      />
+      <div
+        className="absolute top-1/3 right-4 w-8 h-8 bg-grass/30 rounded-full kid-float pointer-events-none"
+        style={{ animationDelay: "0.6s" }}
+      />
+      <FloatSparkle
+        className="absolute top-24 left-1/2 opacity-70"
+        size={30}
+        color="#FFC83D"
+      />
 
       <div className="relative z-10 mx-auto w-full max-w-8xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -92,18 +121,14 @@ export default function K12HeroSection() {
             transition={{ duration: 0.6 }}
             className="space-y-7 text-center lg:text-left"
           >
-            {/* Sticker badge */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-sunshine px-5 py-2.5 text-secondary font-extrabold text-sm sm:text-base shadow-[0_6px_0_rgba(0,0,0,0.08)] kid-wobble">
-              <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+            {/* Eyebrow */}
+            <SectionKicker className="text-primary">
               Magic Learning for Ages 5–11
-            </div>
+            </SectionKicker>
 
-            <h1
-              className="font-display font-bold text-secondary leading-[1.05] text-[2.6rem] sm:text-6xl lg:text-7xl"
-            >
-              Watch Science{" "}
-              <span className="text-primary doodle-underline">Leap</span>{" "}
-              Off the Page!
+            <h1 className="font-display font-bold text-secondary leading-[1.05] text-[2.4rem] sm:text-5xl lg:text-6xl">
+              Revolutionizing STEM Learning with{" "}
+              <span className="text-primary doodle-underline">AR Books</span>
             </h1>
 
             <p className="mx-auto lg:mx-0 max-w-md text-lg sm:text-2xl text-gray-600 font-semibold leading-snug">
@@ -126,7 +151,7 @@ export default function K12HeroSection() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10"
               >
-                <Sparkles className="w-6 h-6 text-sunshine" strokeWidth={2.5} />
+                <Wand2 className="w-6 h-6 text-grape" strokeWidth={2.5} />
                 See the Magic
               </a>
             </div>
@@ -144,12 +169,19 @@ export default function K12HeroSection() {
               ))}
             </div>
 
-            <Link
-              href="/apply"
-              className="inline-block text-base font-bold text-primary underline-offset-4 hover:underline"
-            >
-              Become a State Distribution Officer →
-            </Link>
+            {/* Partner CTA — tertiary action for a different audience,
+               separated and visually quieter than the primary CTAs above */}
+            <div className="flex justify-center lg:justify-start border-t border-secondary/10 pt-6 mt-2">
+              <Link
+                href="/apply"
+                className="group inline-flex items-center gap-2.5 rounded-2xl border-2 border-grape/60 bg-grape/5 px-6 py-3 text-grape font-display font-bold text-base hover:bg-grape/10 hover:border-grape transition-colors"
+              >
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-grape/15">
+                  <MapPin className="w-4 h-4" strokeWidth={2.5} />
+                </span>
+                Become a State Distribution Officer
+              </Link>
+            </div>
           </motion.div>
 
           {/* Right — AR magic scene */}
@@ -166,7 +198,12 @@ export default function K12HeroSection() {
 
       {/* Bottom playful wave */}
       <div className="absolute bottom-0 left-0 right-0 leading-none pointer-events-none">
-        <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="w-full" style={{ height: 70 }}>
+        <svg
+          viewBox="0 0 1440 110"
+          preserveAspectRatio="none"
+          className="w-full"
+          style={{ height: 70 }}
+        >
           <path
             fill="#ffffff"
             d="M0,50 C180,100 360,10 540,40 C720,70 900,110 1080,80 C1260,55 1380,20 1440,40 L1440,110 L0,110 Z"
