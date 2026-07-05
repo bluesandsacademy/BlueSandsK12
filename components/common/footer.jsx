@@ -20,10 +20,10 @@ const Twitter = (props) => (
 );
 
 const quickLinks = [
-  { name: "Shop", href: "/products" },
-  { name: "Preorder", href: "/preorder" },
-  { name: "Partnership", href: "/partnership" },
-  { name: "Track Order", href: "/track" },
+  { name: "Privacy Policy", href: "/products" },
+  { name: "Refund Policy", href: "/preorder" },
+  { name: "Shipping Policy", href: "/partnership" },
+  { name: "Terms of service", href: "/track" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -46,12 +46,20 @@ export default function Footer() {
     <footer className="relative bg-secondary text-white overflow-hidden">
       {/* Playful wave top edge */}
       <div className="absolute top-0 left-0 right-0 leading-none pointer-events-none">
-        <svg viewBox="0 0 1440 70" preserveAspectRatio="none" className="w-full" style={{ height: 40 }}>
-          <path fill="#FFFBF0" d="M0,0 C240,50 480,50 720,25 C960,0 1200,0 1440,30 L1440,0 Z" />
+        <svg
+          viewBox="0 0 1440 70"
+          preserveAspectRatio="none"
+          className="w-full"
+          style={{ height: 40 }}
+        >
+          <path
+            fill="#FFFBF0"
+            d="M0,0 C240,50 480,50 720,25 C960,0 1200,0 1440,30 L1440,0 Z"
+          />
         </svg>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 flex flex-col sm:flex-row items-center justify-between gap-5">
         {/* Logo + copyright */}
         <div className="flex flex-col items-center sm:items-start gap-2">
           <Link href="/" className="inline-flex shrink-0">
@@ -64,8 +72,8 @@ export default function Footer() {
             />
           </Link>
           <span className="inline-flex items-center gap-1.5 text-xs text-white/50 font-semibold text-center sm:text-left">
-            © {new Date().getFullYear()} Blue Sands STEM Labs · Revolutionizing STEM
-            learning with AR across Nigeria
+            © {new Date().getFullYear()} Blue Sands STEM Labs · Revolutionizing
+            STEM learning with AR across Nigeria
           </span>
         </div>
 

@@ -28,7 +28,7 @@ export default function FinalCtaSection() {
           transition={{ duration: 0.7 }}
           className="space-y-6 max-w-3xl mx-auto mb-12"
         >
-          <SectionKicker className="text-coral">Early Access · Closing Soon</SectionKicker>
+          <SectionKicker>Early Access · Closing Soon</SectionKicker>
 
           <h2 className="font-display font-bold text-secondary leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
             Ready to Transform{" "}

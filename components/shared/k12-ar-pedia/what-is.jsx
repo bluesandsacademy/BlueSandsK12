@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { FloatAtom, FloatPlanet, FloatSparkle } from "./science-floats";
 import SectionKicker from "./section-kicker";
 
@@ -41,11 +42,12 @@ function FeatureCard({ label, line, imgSrc, color, index }) {
       className="group relative overflow-hidden rounded-4xl cursor-default bg-white shadow-[0_12px_30px_rgba(2,52,90,0.12)] aspect-5/8"
     >
       {/* Photo */}
-      <img
+      <Image
         src={imgSrc}
         alt=""
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out lg:group-hover:scale-105"
+        fill
+        sizes="(min-width: 1024px) 25vw, 50vw"
+        className="object-cover transition-transform duration-500 ease-out lg:group-hover:scale-105"
       />
 
       {/* Color tint — clean photo at rest on desktop, washes in on hover.
@@ -88,7 +90,7 @@ export default function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 sm:mb-10 space-y-3 max-w-2xl mx-auto"
         >
-          <SectionKicker className="text-primary">What Makes It Magic</SectionKicker>
+          <SectionKicker>What Makes It Magic</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
             Four Ways Learning{" "}
             <span className="text-primary doodle-underline">Comes Alive</span>

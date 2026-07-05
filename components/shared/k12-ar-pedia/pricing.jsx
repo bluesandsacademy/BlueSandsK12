@@ -8,7 +8,6 @@ import { products, fmtUSD, STORE_URL } from "@/lib/products";
 import SectionKicker from "./section-kicker";
 
 const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
-const TABLET_USD = 75;
 const buyHref = STORE_URL || DEMO_URL;
 
 export default function K12PricingSection() {
@@ -31,13 +30,13 @@ export default function K12PricingSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-14 space-y-3 max-w-2xl mx-auto"
         >
-          <SectionKicker className="text-primary">Simple Pricing</SectionKicker>
+          <SectionKicker>Simple Pricing</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
             Pick Your{" "}
             <span className="text-primary doodle-underline">AR Books</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-xl font-semibold">
-            Each title comes in a Mirror or Camera edition. Prices in USD.
+            One complete kit per title. Prices in USD.
           </p>
         </motion.div>
 
@@ -72,14 +71,10 @@ export default function K12PricingSection() {
               <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mt-1">{p.ageRange}</p>
               <p className="text-gray-500 text-sm font-semibold mt-2 mb-4 px-2 min-h-11">{p.blurb}</p>
 
-              {/* Variant prices */}
-              <div className="flex items-center justify-center gap-6 mb-5">
-                {p.variants.map((v) => (
-                  <div key={v.label}>
-                    <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">{v.label}</p>
-                    <p className="font-display font-bold text-lg" style={{ color: p.color }}>{fmtUSD(v.priceUSD)}</p>
-                  </div>
-                ))}
+              {/* From price */}
+              <div className="mb-5">
+                <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">From</p>
+                <p className="font-display font-bold text-2xl" style={{ color: p.color }}>{fmtUSD(p.priceUSD)}</p>
               </div>
 
               {/* CTAs */}
@@ -104,18 +99,6 @@ export default function K12PricingSection() {
             </motion.div>
           ))}
         </div>
-
-        {/* Add-on / footnote */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center text-gray-500 text-sm font-semibold mt-10 max-w-2xl mx-auto"
-        >
-          Every book is read with <span className="text-secondary">Spotty</span>, the giraffe tablet
-          holder. A tablet is not included — add one for <span className="text-secondary">{fmtUSD(TABLET_USD)}</span>.
-        </motion.p>
       </div>
     </section>
   );

@@ -140,7 +140,7 @@ export default function ProductExperienceSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 sm:mb-10 space-y-3 max-w-3xl mx-auto"
         >
-          <SectionKicker className="text-grape">Explore the Worlds</SectionKicker>
+          <SectionKicker>Explore the Worlds</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
             6 Amazing Worlds{" "}
             <span className="text-grape doodle-underline">to Discover</span>

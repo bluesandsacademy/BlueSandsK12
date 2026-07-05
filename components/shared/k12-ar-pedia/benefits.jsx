@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Microscope, TrendingUp, Rocket, GraduationCap, BookOpen, Wifi } from "lucide-react";
 import { FloatDNA, FloatSparkle } from "./science-floats";
 import SectionKicker from "./section-kicker";
@@ -35,7 +36,7 @@ export default function BenefitsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-3"
         >
-          <SectionKicker className="text-primary">Why It Works</SectionKicker>
+          <SectionKicker>Why It Works</SectionKicker>
           <h2 className="font-display font-bold text-secondary text-4xl sm:text-5xl lg:text-6xl">
             Your Child Gains{" "}
             <span className="text-primary doodle-underline">Real Superpowers</span>
@@ -102,11 +103,12 @@ export default function BenefitsSection() {
 
           {/* Photo */}
           <div className="relative order-1 md:order-2 min-h-60 md:min-h-0">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=900&q=85"
               alt="Children engaged and excited learning"
-              loading="lazy"
-              className="absolute inset-0 w-full h-full object-cover"
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover"
             />
             <div
               className="absolute inset-0"

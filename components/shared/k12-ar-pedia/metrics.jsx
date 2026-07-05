@@ -6,11 +6,16 @@ import { FloatSparkle } from "./science-floats";
 import SectionKicker from "./section-kicker";
 
 const metrics = [
-  { value: "30M+", label: "Learners", Icon: Users, color: "#0483e2" },
-  { value: "1M+", label: "Schools", Icon: School, color: "#FF5A5F" },
+  {
+    value: "30M+",
+    label: "Accessible K-12 Learners",
+    Icon: Users,
+    color: "#0483e2",
+  },
+  { value: "1M+", label: "K-12 Schools", Icon: School, color: "#FF5A5F" },
   {
     value: "150+",
-    label: "STEM Experiences",
+    label: "Virtual STEM Experiments",
     Icon: FlaskConical,
     color: "#3DD68C",
   },
@@ -52,7 +57,9 @@ export default function MetricsSection() {
           transition={{ duration: 0.55 }}
           className="text-center mb-10 sm:mb-12 max-w-2xl mx-auto"
         >
-          <SectionKicker className="text-secondary">The Impact</SectionKicker>
+          <SectionKicker>
+            The Opportunity Ahead
+          </SectionKicker>
           <h2 className="mt-4 font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
             A Nation Ready for{" "}
             <span className="text-primary doodle-underline">AR Learning</span>

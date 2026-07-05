@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { getProduct, STORE_URL } from "@/lib/products";
+import { getProduct, STORE_URL, TABLET_USD } from "@/lib/products";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -15,7 +15,6 @@ const VALID_NEEDS = ["ar_books", "teacher_training", "school_demo", "installatio
 
 const INDIVIDUAL_MAX_QTY = 10;
 const SCHOOL_MIN_QTY = 5;
-const TABLET_USD = 75;
 
 /*
  * The preorder form is now a LEAD-CAPTURE step: it records who is preordering
@@ -28,7 +27,7 @@ export async function POST(request) {
     const body = await request.json();
 
     const {
-      product_slug, variant_label, quantity, tablet_count,
+      product_slug, quantity, tablet_count,
       user_type, full_name, school_org_name, email, phone, whatsapp,
       state, lga, city, postal_code, address_line1, address_line2, landmark,
       additional_needs, student_count, teacher_count, agreed_to_contact,
@@ -38,10 +37,6 @@ export async function POST(request) {
     const product = getProduct(product_slug);
     if (!product)
       return NextResponse.json({ error: "Please choose a product." }, { status: 400 });
-
-    const variant = product.variants.find((v) => v.label === variant_label);
-    if (!variant)
-      return NextResponse.json({ error: `Please choose a ${product.optionLabel} edition.` }, { status: 400 });
 
     const qty = parseInt(quantity, 10);
     if (!qty || qty < 1)
@@ -77,14 +72,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "You must accept the Terms & Conditions." }, { status: 400 });
 
     const sanitizedNeeds = (additional_needs || []).filter((n) => VALID_NEEDS.includes(n));
-    const amountUSD = variant.priceUSD * qty + tablets * TABLET_USD;
+    const amountUSD = product.priceUSD * qty + tablets * TABLET_USD;
 
     // ── Save the preorder lead ────────────────────────────────────────────────
+    // Kits no longer have editions, so variant_label (kept in the schema) is a
+    // constant. The tablet is an optional add-on, priced at TABLET_USD each.
     const { data, error } = await supabaseAdmin
       .from("k12_preorders")
       .insert({
         product_slug:    product.slug,
-        variant_label:   variant.label,
+        variant_label:   "Standard",
         device_count:    qty,
         tablet_count:    tablets,
         amount_usd:      amountUSD,

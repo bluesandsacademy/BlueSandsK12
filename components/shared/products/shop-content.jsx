@@ -62,9 +62,7 @@ function ProductCard({ p, index }) {
               <p className="font-display font-bold text-2xl leading-none mt-0.5" style={{ color: p.color }}>
                 {fmtUSD(p.priceUSD)}
               </p>
-              <p className="text-xs font-bold text-gray-400 mt-1">
-                {p.variants.map((v) => `${v.label} ${fmtUSD(v.priceUSD)}`).join(" · ")}
-              </p>
+              <p className="text-xs font-bold text-gray-400 mt-1">{p.ageRange}</p>
             </div>
             <span
               className="font-display font-bold text-sm group-hover:translate-x-0.5 transition-transform"
@@ -182,10 +180,6 @@ export default function ShopContent() {
               <ProductCard key={p.slug} p={p} index={i} />
             ))}
           </div>
-          <p className="text-center text-gray-400 text-sm font-semibold mt-8">
-            Every book is read with <span className="text-secondary">Spotty</span>, the giraffe tablet holder —
-            choose the Mirror or Camera edition. A tablet is not included.
-          </p>
         </div>
       </section>
 
