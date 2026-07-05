@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { XCircle, CheckCircle2, BookX, Tablet, ArrowRight } from "lucide-react";
 import SectionKicker from "./section-kicker";
 
@@ -54,11 +55,12 @@ function CompareCard({ col, index }) {
       style={{ borderColor: col.accent }}
     >
       {/* Full-bleed photo — the image is the card */}
-      <img
+      <Image
         src={col.img}
         alt={col.title}
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        fill
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         style={{ filter: isAfter ? "none" : "grayscale(0.4)" }}
       />
 
@@ -124,7 +126,7 @@ export default function ComparisonSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 space-y-4 max-w-3xl mx-auto"
         >
-          <SectionKicker className="text-coral">See the Difference</SectionKicker>
+          <SectionKicker>See the Difference</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Two Very Different{" "}
             <span className="text-coral doodle-underline">Classrooms</span>

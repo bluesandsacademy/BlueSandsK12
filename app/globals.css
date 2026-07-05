@@ -33,6 +33,13 @@
   --font-inter: var(--font-inter);
 }
 
+/* Shared page frame: navbar, footer and all content sections use max-w-8xl so
+   their left/right edges line up on every page. Defined explicitly because this
+   project uses max-w-8xl throughout but it isn't a built-in Tailwind size. */
+@utility max-w-8xl {
+  max-width: 90rem;
+}
+
 /* Existing components reference var(--font-jarkata) for display text —
    alias it to the new playful display font so they instantly become childish. */
 :root {

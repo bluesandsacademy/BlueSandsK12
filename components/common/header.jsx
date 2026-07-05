@@ -10,6 +10,7 @@ import {
   Package,
   House,
   Handshake,
+  HeartHandshake,
   Mail,
   Rocket,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const navLinks = [
   { name: "Home", href: "/", Icon: House },
   { name: "Shop", href: "/products", Icon: ShoppingBag },
   { name: "Partnership", href: "/partnership", Icon: Handshake },
+  { name: "Social Impact", href: "/social-impact", Icon: HeartHandshake },
   { name: "Track Order", href: "/track", Icon: Package },
   { name: "Contact", href: "/contact", Icon: Mail },
 ];
@@ -58,7 +60,7 @@ export default function Header() {
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+      <nav className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
@@ -71,7 +73,7 @@ export default function Header() {
             height={50}
             alt="Blue Sands STEM Labs"
             className="h-7 sm:h-9 w-auto"
-            priority
+            preload
           />
         </Link>
 

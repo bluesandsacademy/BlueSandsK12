@@ -28,7 +28,7 @@ export default function ProductsTeaserSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
         >
-          <SectionKicker className="text-coral">Meet the Books</SectionKicker>
+          <SectionKicker>Meet the Books</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             AR Books That Make Learning{" "}
             <span className="text-coral doodle-underline">Pop</span>

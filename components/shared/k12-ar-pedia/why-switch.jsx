@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { XCircle, CheckCircle2, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionKicker from "./section-kicker";
 
@@ -87,7 +88,7 @@ export default function WhySwitchSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 space-y-4 max-w-3xl mx-auto"
         >
-          <SectionKicker className="text-coral">Why Make the Switch?</SectionKicker>
+          <SectionKicker>Why Make the Switch?</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
             Traditional Learning Is{" "}
             <span className="text-coral doodle-underline">No Longer Enough</span>
@@ -119,12 +120,13 @@ export default function WhySwitchSection() {
         >
           {/* ── AFTER (base layer, always visible) ── */}
           <div className="absolute inset-0">
-            <img
+            <Image
               src={AFTER}
               alt="Children thriving with K12 AR Pedia"
-              className="w-full h-full object-cover object-center"
-              loading="lazy"
-              draggable="false"
+              fill
+              sizes="(min-width: 768px) 80vw, 100vw"
+              className="object-cover object-center"
+              draggable={false}
             />
             <div
               className="absolute inset-0"
@@ -174,12 +176,13 @@ export default function WhySwitchSection() {
             className="absolute inset-0"
             style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
           >
-            <img
+            <Image
               src={BEFORE}
               alt="Child struggling with traditional classroom learning"
-              className="w-full h-full object-cover object-center"
-              loading="lazy"
-              draggable="false"
+              fill
+              sizes="(min-width: 768px) 80vw, 100vw"
+              className="object-cover object-center"
+              draggable={false}
             />
             {/* Red desaturating overlay */}
             <div

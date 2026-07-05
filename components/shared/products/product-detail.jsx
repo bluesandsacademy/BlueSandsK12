@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, CheckCircle2, CalendarCheck, BookOpen } from "lucide-react";
-import { products, getProduct, howItWorks, fmtUSD, STORE_URL } from "@/lib/products";
+import { ArrowLeft, ArrowRight, CheckCircle2, CalendarCheck, BookOpen, Package, Tablet } from "lucide-react";
+import { products, getProduct, howItWorks, fmtUSD, STORE_URL, TABLET_USD } from "@/lib/products";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import {
   FloatPlanet,
@@ -57,7 +57,7 @@ export default function ProductDetail({ slug }) {
                 alt={p.name}
                 width={p.imageW}
                 height={p.imageH}
-                priority
+                preload
                 sizes="(min-width: 1024px) 480px, 90vw"
                 className="w-full h-full object-contain drop-shadow-[0_16px_28px_rgba(2,52,90,0.18)] kid-float"
               />
@@ -78,26 +78,21 @@ export default function ProductDetail({ slug }) {
                 {p.tagline}
               </p>
 
-              {/* Variant pricing */}
+              {/* Pricing */}
               <div
-                className="rounded-2xl p-5 border-2 space-y-3"
+                className="rounded-2xl p-5 border-2 flex items-center justify-between gap-4"
                 style={{ background: `${p.color}10`, borderColor: `${p.color}40` }}
               >
-                <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                  Pick your {p.optionLabel} edition
-                </p>
-                <div className="grid grid-cols-2 gap-3">
-                  {p.variants.map((v) => (
-                    <div key={v.label} className="rounded-xl bg-white px-4 py-3 border border-gray-100">
-                      <p className="font-display font-bold text-secondary">{v.label}</p>
-                      <p className="font-display font-bold text-xl" style={{ color: p.color }}>
-                        {fmtUSD(v.priceUSD)}
-                      </p>
-                    </div>
-                  ))}
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
+                    From
+                  </p>
+                  <p className="font-display font-black text-3xl leading-none mt-1" style={{ color: p.color }}>
+                    {fmtUSD(p.priceUSD)}
+                  </p>
                 </div>
-                <p className="text-xs font-semibold text-gray-400">
-                  Spotty holds your own tablet — a tablet is not included.
+                <p className="text-xs font-semibold text-gray-500 max-w-[46%] text-right">
+                  Tablet not included, add one for {fmtUSD(TABLET_USD)}.
                 </p>
               </div>
 
@@ -167,6 +162,53 @@ export default function ProductDetail({ slug }) {
         </div>
       </section>
 
+      {/* ── Inside the package ── */}
+      {p.package?.length > 0 && (
+        <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10 space-y-3">
+              <SectionKicker className="text-primary">What&apos;s in the box</SectionKicker>
+              <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
+                Inside the{" "}
+                <span className="doodle-underline" style={{ color: p.color }}>package</span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {p.package.map((item, i) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: i * 0.07 }}
+                  className="flex items-start gap-4 rounded-2xl bg-white p-5 border-2 shadow-[0_5px_0_rgba(0,0,0,0.05)]"
+                  style={{ borderColor: `${p.color}22` }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: `${p.color}1f` }}
+                  >
+                    <Package className="w-5 h-5" style={{ color: p.color }} strokeWidth={2.2} />
+                  </div>
+                  <div>
+                    <p className="font-display font-bold text-secondary leading-tight">{item.name}</p>
+                    <p className="text-gray-500 text-sm font-semibold mt-0.5 leading-snug">{item.detail}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Tablet callout — clearly not part of the kit */}
+            <div className="mt-5 flex items-center gap-3 rounded-2xl bg-amber-50 border-2 border-amber-200 px-5 py-4">
+              <Tablet className="w-6 h-6 text-amber-500 shrink-0" strokeWidth={2.2} />
+              <p className="text-sm font-semibold text-amber-800">
+                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one at checkout for {fmtUSD(TABLET_USD)}.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── What's included (series titles) ── */}
       {p.included?.length > 0 && (
         <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}>
@@ -174,8 +216,8 @@ export default function ProductDetail({ slug }) {
             <div className="text-center mb-10 space-y-3">
               <SectionKicker className="text-primary">8 Books · 130 Experiments</SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
-                What&apos;s in the{" "}
-                <span className="doodle-underline" style={{ color: p.color }}>kit</span>
+                The full science{" "}
+                <span className="doodle-underline" style={{ color: p.color }}>series</span>
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

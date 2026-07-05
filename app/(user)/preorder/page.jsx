@@ -7,11 +7,9 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   User, Building2, Landmark, ChevronRight, ChevronLeft, CheckCircle2,
-  Loader2, ArrowLeft, ArrowRight, Minus, Plus, Tablet,
+  Loader2, ArrowLeft, ArrowRight, Minus, Plus, Package as PackageIcon, Tablet,
 } from "lucide-react";
-import { products, getProduct, fmtUSD } from "@/lib/products";
-
-const TABLET_USD = 75;
+import { products, getProduct, fmtUSD, TABLET_USD } from "@/lib/products";
 const INDIVIDUAL_MAX_QTY = 10;
 const SCHOOL_MIN_QTY = 5;
 
@@ -70,7 +68,6 @@ function PreorderForm() {
 
   const [form, setForm] = useState({
     product_slug: initialProduct?.slug ?? "",
-    variant_label: initialProduct?.variants[0]?.label ?? "",
     quantity: 1,
     tablet_count: 0,
     user_type: "",
@@ -98,24 +95,20 @@ function PreorderForm() {
   };
 
   const selectProduct = (slug) => {
-    const p = getProduct(slug);
-    setForm((f) => ({ ...f, product_slug: slug, variant_label: p?.variants[0]?.label ?? "" }));
+    setForm((f) => ({ ...f, product_slug: slug }));
     setErrors((e) => ({ ...e, product_slug: "" }));
   };
 
   const product = getProduct(form.product_slug);
-  const variant = product?.variants.find((v) => v.label === form.variant_label) || null;
   const qty = parseInt(form.quantity, 10) || 0;
   const tablets = parseInt(form.tablet_count, 10) || 0;
-  const subtotal = (variant?.priceUSD ?? 0) * qty;
-  const total = subtotal + tablets * TABLET_USD;
+  const total = (product?.priceUSD ?? 0) * qty + tablets * TABLET_USD;
   const isSchoolOrg = ["school", "institution"].includes(form.user_type);
 
   const validate = () => {
     const e = {};
     if (step === 1) {
       if (!form.product_slug) e.product_slug = "Please choose a book.";
-      if (!form.variant_label) e.variant_label = "Please choose an edition.";
       if (qty < 1) e.quantity = "Choose at least 1.";
     }
     if (step === 2) {
@@ -246,7 +239,7 @@ function PreorderForm() {
               <div className="space-y-6">
                 <div>
                   <h2 className="font-display text-xl font-bold text-secondary mb-1">Choose your books</h2>
-                  <p className="text-gray-500 text-sm">Pick a title, then your Spotty edition.</p>
+                  <p className="text-gray-500 text-sm">Pick a kit and quantity.</p>
                 </div>
 
                 {/* Product picker */}
@@ -271,27 +264,16 @@ function PreorderForm() {
                 </div>
                 <FieldError msg={errors.product_slug} />
 
-                {/* Variant + quantity */}
+                {/* Quantity + tablet add-on + total */}
                 {product && (
                   <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-5">
-                    <div>
-                      <Label required>{product.optionLabel} edition</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        {product.variants.map((v) => {
-                          const active = form.variant_label === v.label;
-                          return (
-                            <button
-                              key={v.label}
-                              type="button"
-                              onClick={() => set("variant_label", v.label)}
-                              className={`flex items-center justify-between px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${active ? "border-primary bg-primary/5 text-primary" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
-                            >
-                              <span>{v.label}</span>
-                              <span>{fmtUSD(v.priceUSD)}</span>
-                            </button>
-                          );
-                        })}
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-grass/10 flex items-center justify-center shrink-0">
+                        <PackageIcon className="w-5 h-5 text-grass" strokeWidth={2} />
                       </div>
+                      <p className="text-sm text-gray-500 font-semibold">
+                        Each kit includes Spotty, a marker set and the AR Pedia app. A tablet is not included.
+                      </p>
                     </div>
 
                     <div>
@@ -308,7 +290,7 @@ function PreorderForm() {
                         </div>
                         <div className="flex-1">
                           <p className="font-bold text-secondary text-sm">Add a tablet? <span className="text-gray-400 font-semibold">(+{fmtUSD(TABLET_USD)} each)</span></p>
-                          <p className="text-xs text-gray-500 mb-2">Spotty holds your tablet — a tablet isn&apos;t included.</p>
+                          <p className="text-xs text-gray-500 mb-2">Spotty holds your tablet, a tablet isn&apos;t included.</p>
                           <Stepper value={tablets} min={0} onChange={(n) => set("tablet_count", n)} />
                         </div>
                       </div>
@@ -449,7 +431,7 @@ function PreorderForm() {
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4 text-sm">
                   <Row label="Book" value={product?.name} />
-                  <Row label="Edition" value={`${product?.optionLabel} ${form.variant_label}`} />
+                  <Row label="Kit" value={product?.name} />
                   <Row label="Quantity" value={qty} />
                   {tablets > 0 && <Row label="Tablets" value={`${tablets} × ${fmtUSD(TABLET_USD)}`} />}
                   <Row label="Name" value={form.full_name} />
