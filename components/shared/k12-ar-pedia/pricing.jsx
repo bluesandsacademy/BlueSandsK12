@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { products, fmtUSD, STORE_URL } from "@/lib/products";
+import { products, buyUrl } from "@/lib/products";
+import Price from "@/components/common/price";
 import SectionKicker from "./section-kicker";
 
 const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
-const buyHref = STORE_URL || DEMO_URL;
 
 export default function K12PricingSection() {
   return (
@@ -74,7 +74,7 @@ export default function K12PricingSection() {
               {/* From price */}
               <div className="mb-5">
                 <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">From</p>
-                <p className="font-display font-bold text-2xl" style={{ color: p.color }}>{fmtUSD(p.priceUSD)}</p>
+                <p className="font-display font-bold text-2xl" style={{ color: p.color }}><Price usd={p.priceUSD} /></p>
               </div>
 
               {/* CTAs */}
@@ -86,7 +86,7 @@ export default function K12PricingSection() {
                   Details
                 </Link>
                 <a
-                  href={buyHref}
+                  href={buyUrl(p) || DEMO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-1.5 rounded-xl px-5 py-3 font-display font-bold text-white shadow-[0_5px_0_rgba(0,0,0,0.18)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(0,0,0,0.18)] transition-all"

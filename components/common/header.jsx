@@ -15,6 +15,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { img } from "@/lib/cloudinary";
+import CurrencySwitcher from "@/components/common/currency-switcher";
 
 const navLinks = [
   { name: "Home", href: "/", Icon: House },
@@ -93,7 +94,8 @@ export default function Header() {
         </ul>
 
         {/* Desktop CTA */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex items-center gap-3">
+          <CurrencySwitcher />
           <Link
             href="/preorder"
             className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-coral text-white text-sm font-display font-bold rounded-full shadow-[0_5px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_2px_0_#d63a3f] transition-all"
@@ -133,6 +135,9 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
+            <div className="flex justify-center pt-3">
+              <CurrencySwitcher />
+            </div>
             <Link
               href="/preorder"
               onClick={closeMenu}

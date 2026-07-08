@@ -6,8 +6,8 @@ import Image from "next/image";
 import { XCircle, CheckCircle2, BookX, Tablet, ArrowRight } from "lucide-react";
 import SectionKicker from "./section-kicker";
 
-const BORED = "/bored.JPG";
-const ENGAGED = "/happy.jpg";
+const BORED = "/blacks/bored.jpeg";
+const ENGAGED = "/blacks/happy.jpeg";
 
 const columns = [
   {
@@ -75,7 +75,11 @@ function CompareCard({ col, index }) {
       {/* Top chip */}
       <div className="absolute top-4 left-4 flex items-center gap-2">
         <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md">
-          <col.Icon className="w-5 h-5" style={{ color: col.accent }} strokeWidth={2.5} />
+          <col.Icon
+            className="w-5 h-5"
+            style={{ color: col.accent }}
+            strokeWidth={2.5}
+          />
         </div>
         <span
           className="px-3 py-1.5 rounded-full text-white text-xs font-extrabold shadow-sm"

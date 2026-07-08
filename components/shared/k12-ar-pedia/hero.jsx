@@ -68,6 +68,16 @@ function ArPediaExtras() {
 const slides = [
   {
     id: "ar-pedia",
+    images: [
+      {
+        src: "/real-products/arpedia-spotty.png",
+        alt: "An ARpedia AR book with a 3D shark leaping off the page above the Spotty tablet holder",
+      },
+      {
+        src: "/real-products/arpedia-books.webp",
+        alt: "The ARpedia AR book collection with the Spotty holder",
+      },
+    ],
     kicker: "Magic Learning for Ages 5–11",
     heading: (
       <>
@@ -75,14 +85,20 @@ const slides = [
         <span className="text-primary doodle-underline">AR Books</span>
       </>
     ),
-    body: "Point the tablet at any book and watch planets, animals and experiments pop to life right in front of you.",
+    body: "Bring STEM to life through AR-powered books that turn static pages into interactive 3D experiences",
     primaryCta: { label: "Preorder Now", Icon: Rocket },
     secondaryCta: { label: "See the Magic", Icon: Wand2 },
     Extras: ArPediaExtras,
   },
   {
     id: "africa-innovators",
-    kicker: "The Future of STEM Learning in Africa is Virtual and Real",
+    images: [
+      {
+        src: "/real-products/arpedia-kit.webp",
+        alt: "The ARpedia kit — Spotty stand, tablet and AR books",
+      },
+    ],
+    kicker: "The Future of STEM Learning is Virtual Reality",
     heading: (
       <>
         Empowering Africa&apos;s Next Generation of
@@ -96,92 +112,107 @@ const slides = [
   },
   {
     id: "africa-vr-ar",
-    kicker: "The Future of STEM Learning in Africa is Virtual and Real",
+    images: [
+      {
+        src: "/real-products/ar-science-lab.webp",
+        alt: "The AR Science Lab kit with an AR molecule model and science books",
+      },
+    ],
+    kicker: "The Future of STEM Learning in Africa is Augumented Reality",
     heading: (
       <>
         Immersive VR & AR Labs for{" "}
-        <span className="text-primary doodle-underline">
-          Secondary & Tertiary Schools
+        <span className="text-primary">
+          Secondary &amp;{" "}
+          <span className="doodle-underline whitespace-nowrap">
+            Tertiary Schools
+          </span>
         </span>
       </>
     ),
-    body: "Engaging STEM courses on any tablet or PC, learn anywhere, anytime.",
+    body: "Students can see, touch, and explore complex concepts in a way that makes learning clearer, faster, and genuinely exciting—bridging imagination with real understanding.",
     primaryCta: { label: "Pre-Order", Icon: Rocket },
     secondaryCta: { label: "Book a Demo", Icon: CalendarCheck },
   },
 ];
 
-/* A bright, friendly "AR magic" scene — real photos of children learning,
-   framed playfully with a planet + rocket bursting up and floating sparkles. */
-function ArMagicScene() {
+/* A real ARpedia product shot, floating with a soft drop-shadow. */
+function ProductImage({ src, alt, preload = false }) {
   return (
-    <div className="relative mx-auto w-full max-w-md aspect-square">
-      {/* Big soft sun blob behind */}
-      <div className="absolute inset-6 bg-sunshine/40 blob-1 blur-[2px]" />
-      <div className="absolute inset-10 bg-sunshine/70 blob-2" />
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      preload={preload}
+      sizes="(min-width: 1024px) 460px, 85vw"
+      className="object-contain drop-shadow-[0_22px_34px_rgba(2,52,90,0.28)]"
+    />
+  );
+}
 
-      {/* Bursting planet — overflows above the photo */}
-      <FloatPlanet className="absolute -top-6 left-6 z-30" size={110} />
-      {/* Bursting rocket */}
+/* Per-slide product showcase — the slide's real product image(s) float over a
+   playful backdrop (sun blob + planet + rocket + sparkles that persist while
+   the product swaps with the slide). */
+function ProductScene({ slide }) {
+  const [main, secondary] = slide.images;
+  const isFirst = slide.id === slides[0].id;
+
+  return (
+    <div className="relative mx-auto w-full max-w-xl aspect-square">
+      {/* Soft sun blobs behind everything */}
+      <div className="absolute inset-8 bg-sunshine/40 blob-1 blur-[2px]" />
+      <div className="absolute inset-14 bg-sunshine/70 blob-2" />
+
+      {/* Playful floats (behind the product, peeking around its edges) */}
+      <FloatPlanet className="absolute -top-6 left-2 z-10" size={96} />
       <motion.div
         animate={{ y: [0, -14, 0], rotate: [0, 6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-2 right-8 z-30 w-16 h-16 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
+        className="absolute -top-2 right-6 z-10 w-14 h-14 rounded-2xl bg-coral flex items-center justify-center shadow-lg -rotate-12"
       >
-        <Rocket className="w-9 h-9 text-white" strokeWidth={2} />
+        <Rocket className="w-8 h-8 text-white" strokeWidth={2} />
       </motion.div>
+      <FloatSparkle className="absolute bottom-16 -left-2 z-10" size={34} color="#FF5A5F" />
+      <FloatSparkle className="absolute bottom-24 right-0 z-10" size={28} color="#3DD68C" />
 
-      {/* Sparkles */}
-      <FloatSparkle
-        className="absolute top-2 left-1/2 z-30"
-        size={40}
-        color="#ffffff"
-      />
-      <FloatSparkle
-        className="absolute bottom-16 -left-2 z-30"
-        size={34}
-        color="#FF5A5F"
-      />
-      <FloatSparkle
-        className="absolute bottom-24 right-0 z-30"
-        size={28}
-        color="#3DD68C"
-      />
-
-      {/* Main photo — a child exploring a lesson */}
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-x-6 bottom-4 top-14 z-10"
-      >
-        <div className="relative h-full w-full rounded-[2.2rem] overflow-hidden border-[8px] border-white shadow-[0_24px_60px_rgba(2,52,90,0.28)]">
-          <Image
-            src="/hero2.jpg"
-            alt="A child exploring a STEM lesson with Blue Sands K12 AR Pedia"
-            fill
-            preload
-            sizes="(min-width: 1024px) 450px, 90vw"
-            className="object-cover"
-          />
-        </div>
-      </motion.div>
-
-      {/* Smaller overlapping photo — a classroom moment */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-3 -right-1 z-20 w-40 sm:w-48"
-      >
-        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border-[6px] border-white shadow-[0_16px_40px_rgba(2,52,90,0.25)]">
-          <Image
-            src="/hero1.jpg"
-            alt="Children learning together in an AR-powered classroom"
-            fill
-            sizes="192px"
-            className="object-cover"
-          />
-        </div>
-      </motion.div>
+      {/* Per-slide product image(s) */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={slide.id}
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0 z-20"
+        >
+          {secondary ? (
+            <>
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -inset-x-2 top-0 bottom-10"
+              >
+                <ProductImage src={main.src} alt={main.alt} preload={isFirst} />
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-2 -right-3 w-48 sm:w-56 aspect-square z-10"
+              >
+                <ProductImage src={secondary.src} alt={secondary.alt} />
+              </motion.div>
+            </>
+          ) : (
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -inset-2"
+            >
+              <ProductImage src={main.src} alt={main.alt} preload={isFirst} />
+            </motion.div>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -312,14 +343,14 @@ export default function K12HeroSection() {
             </AnimatePresence>
           </div>
 
-          {/* Right — AR magic scene (persists across slides) */}
+          {/* Right — product showcase (swaps per slide) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <ArMagicScene />
+            <ProductScene slide={activeSlide} />
           </motion.div>
         </div>
 

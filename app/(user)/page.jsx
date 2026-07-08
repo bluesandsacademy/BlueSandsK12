@@ -1,4 +1,5 @@
 import K12HeroSection from "@/components/shared/k12-ar-pedia/hero";
+import AboutSection from "@/components/shared/k12-ar-pedia/about";
 import SocialProofTicker from "@/components/shared/k12-ar-pedia/social-proof-ticker";
 import CountdownFloat from "@/components/shared/k12-ar-pedia/countdown-float";
 import ChallengeSection from "@/components/shared/k12-ar-pedia/challenge";
@@ -24,16 +25,20 @@ export default function K12ArPediaPage() {
     <div className="overflow-x-hidden">
       <K12HeroSection />
       <SocialProofTicker />
+      <AboutSection />
+
       <ChallengeSection />
       <MetricsSection />
       <DesignedForChildrenSection />
-      <FeaturesSection />
-      <ComparisonSection />
-      <EcosystemSection />
       <AudiencesSection />
+
+      {/* <FeaturesSection /> */}
+      <ComparisonSection />
       <K12PricingSection />
-      <FinalCtaSection />
-      <StickyCta />
+      {/* <FinalCtaSection /> */}
+
+      {/* <StickyCta /> */}
+      <EcosystemSection />
     </div>
   );
 }
