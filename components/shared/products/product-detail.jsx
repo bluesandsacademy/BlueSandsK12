@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, CheckCircle2, CalendarCheck, BookOpen, Package, Tablet } from "lucide-react";
-import { products, getProduct, howItWorks, buyUrl, TABLET_USD } from "@/lib/products";
+import { products, getProduct, howItWorks, buyUrl, TABLET_NGN } from "@/lib/products";
 import AppStores from "@/components/shared/products/app-stores";
 import Price from "@/components/common/price";
+import CurrencyNote from "@/components/common/currency-note";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import {
   FloatPlanet,
@@ -90,13 +91,16 @@ export default function ProductDetail({ slug }) {
                     From
                   </p>
                   <p className="font-display font-black text-3xl leading-none mt-1" style={{ color: p.color }}>
-                    <Price usd={p.priceUSD} />
+                    <Price ngn={p.priceNGN} />
                   </p>
                 </div>
                 <p className="text-xs font-semibold text-gray-500 max-w-[46%] text-right">
-                  Tablet not included, add one for <Price usd={TABLET_USD} />.
+                  Tablet not included, add one for <Price ngn={TABLET_NGN} />.
                 </p>
               </div>
+
+              {/* Currency control beside the price, not only in the header */}
+              <CurrencyNote align="left" />
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
@@ -207,7 +211,7 @@ export default function ProductDetail({ slug }) {
             <div className="mt-5 flex items-center gap-3 rounded-2xl bg-amber-50 border-2 border-amber-200 px-5 py-4">
               <Tablet className="w-6 h-6 text-amber-500 shrink-0" strokeWidth={2.2} />
               <p className="text-sm font-semibold text-amber-800">
-                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one at checkout for <Price usd={TABLET_USD} />.
+                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one at checkout for <Price ngn={TABLET_NGN} />.
               </p>
             </div>
           </div>

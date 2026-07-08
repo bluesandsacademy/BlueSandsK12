@@ -1,6 +1,7 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
 import { img } from "@/lib/cloudinary";
+import { legalLinks } from "@/lib/legal";
 
 // Brand glyphs as inline SVGs — lucide-react dropped its brand icon set.
 const Instagram = (props) => (
@@ -19,13 +20,8 @@ const Twitter = (props) => (
   </svg>
 );
 
-const quickLinks = [
-  { name: "Privacy Policy", href: "/products" },
-  { name: "Refund Policy", href: "/preorder" },
-  { name: "Shipping Policy", href: "/partnership" },
-  { name: "Terms of service", href: "/track" },
-  { name: "Contact", href: "/contact" },
-];
+// The legal pack, ordered by lib/legal.js, plus Contact.
+const quickLinks = [...legalLinks, { name: "Contact", href: "/contact" }];
 
 const socials = [
   {

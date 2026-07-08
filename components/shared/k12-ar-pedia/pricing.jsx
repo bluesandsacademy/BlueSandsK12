@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { products, buyUrl } from "@/lib/products";
 import Price from "@/components/common/price";
+import CurrencyNote from "@/components/common/currency-note";
 import SectionKicker from "./section-kicker";
 
 const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
@@ -36,9 +37,12 @@ export default function K12PricingSection() {
             <span className="text-primary doodle-underline">AR Books</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-xl font-semibold">
-            One complete kit per title. Prices in USD.
+            One complete kit per title.
           </p>
         </motion.div>
+
+        {/* Currency control sits with the prices, not only in the header */}
+        <CurrencyNote className="mb-8 sm:mb-10" />
 
         {/* Product pricing cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
@@ -74,7 +78,7 @@ export default function K12PricingSection() {
               {/* From price */}
               <div className="mb-5">
                 <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">From</p>
-                <p className="font-display font-bold text-2xl" style={{ color: p.color }}><Price usd={p.priceUSD} /></p>
+                <p className="font-display font-bold text-2xl" style={{ color: p.color }}><Price ngn={p.priceNGN} /></p>
               </div>
 
               {/* CTAs */}
@@ -92,7 +96,7 @@ export default function K12PricingSection() {
                   className="inline-flex items-center justify-center gap-1.5 rounded-xl px-5 py-3 font-display font-bold text-white shadow-[0_5px_0_rgba(0,0,0,0.18)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(0,0,0,0.18)] transition-all"
                   style={{ background: p.color }}
                 >
-                  Get it
+                  Pre-Order Now
                   <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
                 </a>
               </div>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ChevronDown, CalendarCheck } from "lucide-react";
 import { products, howItWorks } from "@/lib/products";
 import Price from "@/components/common/price";
+import CurrencyNote from "@/components/common/currency-note";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import { FloatSparkle } from "@/components/shared/k12-ar-pedia/science-floats";
 import AppStores from "@/components/shared/products/app-stores";
@@ -80,7 +81,7 @@ function ProductCard({ p, index }) {
                 className="font-display font-bold text-2xl leading-none mt-0.5"
                 style={{ color: p.color }}
               >
-                <Price usd={p.priceUSD} />
+                <Price ngn={p.priceNGN} />
               </p>
               <p className="text-xs font-bold text-gray-400 mt-1">
                 {p.ageRange}
@@ -181,6 +182,9 @@ export default function ShopContent() {
         style={{ background: "#FFFBF0" }}
       >
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Currency control sits with the prices, not only in the header */}
+          <CurrencyNote className="mb-8 sm:mb-10" />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {products.map((p, i) => (
               <ProductCard key={p.slug} p={p} index={i} />
