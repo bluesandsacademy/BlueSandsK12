@@ -9,7 +9,8 @@ import {
   User, Building2, Landmark, ChevronRight, ChevronLeft, CheckCircle2,
   Loader2, ArrowLeft, ArrowRight, Minus, Plus, Package as PackageIcon, Tablet,
 } from "lucide-react";
-import { products, getProduct, fmtUSD, TABLET_USD } from "@/lib/products";
+import { products, getProduct, TABLET_USD } from "@/lib/products";
+import Price from "@/components/common/price";
 const INDIVIDUAL_MAX_QTY = 10;
 const SCHOOL_MIN_QTY = 5;
 
@@ -257,7 +258,7 @@ function PreorderForm() {
                           <Image src={p.image} alt={p.name} width={p.imageW} height={p.imageH} sizes="160px" className="w-full h-full object-contain" />
                         </div>
                         <p className="font-display font-bold text-secondary text-sm leading-tight">{p.name}</p>
-                        <p className="text-xs font-bold text-gray-400 mt-0.5">{p.ageRange} · from {fmtUSD(p.priceUSD)}</p>
+                        <p className="text-xs font-bold text-gray-400 mt-0.5">{p.ageRange} · from <Price usd={p.priceUSD} /></p>
                       </button>
                     );
                   })}
@@ -289,7 +290,7 @@ function PreorderForm() {
                           <Tablet className="w-5 h-5 text-grape" strokeWidth={2} />
                         </div>
                         <div className="flex-1">
-                          <p className="font-bold text-secondary text-sm">Add a tablet? <span className="text-gray-400 font-semibold">(+{fmtUSD(TABLET_USD)} each)</span></p>
+                          <p className="font-bold text-secondary text-sm">Add a tablet? <span className="text-gray-400 font-semibold">(+<Price usd={TABLET_USD} /> each)</span></p>
                           <p className="text-xs text-gray-500 mb-2">Spotty holds your tablet, a tablet isn&apos;t included.</p>
                           <Stepper value={tablets} min={0} onChange={(n) => set("tablet_count", n)} />
                         </div>
@@ -299,7 +300,7 @@ function PreorderForm() {
                     {/* Running total */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <span className="text-sm font-semibold text-gray-500">Order total</span>
-                      <span className="font-display font-bold text-2xl text-secondary">{fmtUSD(total)}</span>
+                      <span className="font-display font-bold text-2xl text-secondary"><Price usd={total} /></span>
                     </div>
                   </div>
                 )}
@@ -433,13 +434,13 @@ function PreorderForm() {
                   <Row label="Book" value={product?.name} />
                   <Row label="Kit" value={product?.name} />
                   <Row label="Quantity" value={qty} />
-                  {tablets > 0 && <Row label="Tablets" value={`${tablets} × ${fmtUSD(TABLET_USD)}`} />}
+                  {tablets > 0 && <Row label="Tablets" value={<>{tablets} × <Price usd={TABLET_USD} /></>} />}
                   <Row label="Name" value={form.full_name} />
                   <Row label="Contact" value={form.email} />
                   <Row label="Deliver to" value={[form.city, form.state, "Nigeria"].filter(Boolean).join(", ")} />
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <span className="font-bold text-secondary">Total</span>
-                    <span className="font-display font-bold text-2xl text-secondary">{fmtUSD(total)}</span>
+                    <span className="font-display font-bold text-2xl text-secondary"><Price usd={total} /></span>
                   </div>
                 </div>
 

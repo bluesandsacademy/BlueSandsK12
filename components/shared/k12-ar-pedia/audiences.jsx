@@ -22,31 +22,31 @@ const audiences = [
   {
     name: "Households",
     tagline: "Better learning at home",
-    desc: "Help children learn through interactive 3D experiences that make studying more enjoyable, improve understanding, and encourage learning beyond the classroom.",
+    desc: "Learn at home with interactive 3D experiences that make studying fun and easier to understand. ",
     image: householdsImg,
   },
   {
     name: "Schools",
     tagline: "Interactive, immersive classrooms",
-    desc: "Transform lessons into engaging experiences, improve student participation, support the Nigerian curriculum, and equip teachers with innovative teaching tools.",
+    desc: "Turn lessons into immersive, engaging classrooms that boost participation and support the Nigerian curriculum. ",
     image: schoolsImg,
   },
   {
     name: "Government",
     tagline: "Scale quality education nationwide",
-    desc: "Accelerate digital education, strengthen STEM learning, improve access to quality education, and prepare learners with skills for the digital economy.",
+    desc: "Scale digital education nationwide, improve STEM access, and build future-ready digital skills. ",
     image: governmentImg,
   },
   {
     name: "NGOs",
     tagline: "Measurable educational impact",
-    desc: "Deliver scalable education programmes and improve learning outcomes in underserved communities, creating measurable impact across schools and regions while advancing SDGs 4, 9, 10 and 17.",
+    desc: "Deliver scalable, measurable education impact in underserved communities aligned with SDGs 4, 9, 10 & 17. ).",
     image: ngosImg,
   },
   {
     name: "CSR Projects",
     tagline: "Sustainable community investment",
-    desc: "Invest in sustainable education initiatives that empower students, support schools, and create lasting social impact while demonstrating meaningful corporate responsibility.",
+    desc: "Invest in sustainable education initiatives that create real community impact and long-term value.",
     image: csrImg,
   },
 ];
@@ -68,16 +68,17 @@ export default function AudiencesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-12 lg:mb-14"
+          className="text-center max-w-5xl mx-auto mb-12 lg:mb-14"
         >
           <SectionKicker>Who it&apos;s for</SectionKicker>
           <h2 className="mt-3 font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
-            Built for everyone in{" "}
-            <span className="text-primary doodle-underline">education</span>
+            One Platform. One Ecosystem. One Device.
+            <br /> Endless Educational Impact Across Nigeria and Africa.
+            {/* <span className="text-primary doodle-underline">education</span> */}
           </h2>
-          <p className="mt-4 text-gray-600 text-lg font-semibold">
+          {/* <p className="mt-4 text-gray-600 text-lg font-semibold">
             One platform, real value for every part of the learning ecosystem.
-          </p>
+          </p> */}
         </motion.div>
 
         {/* Tall photo cards */}

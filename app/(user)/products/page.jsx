@@ -1,5 +1,6 @@
 import ShopContent from "@/components/shared/products/shop-content";
 import AudiencesSection from "@/components/shared/k12-ar-pedia/audiences";
+import SchoolsCta from "@/components/shared/products/schools-cta";
 import JsonLd from "@/components/common/json-ld";
 import { productListSchema, breadcrumbSchema } from "@/lib/seo";
 
@@ -31,6 +32,7 @@ export default function ProductsPage() {
       />
       <ShopContent />
       <AudiencesSection />
+      <SchoolsCta />
     </div>
   );
 }
