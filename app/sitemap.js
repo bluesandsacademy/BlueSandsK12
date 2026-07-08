@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/seo";
 import { products } from "@/lib/products";
+import { legalDocs } from "@/lib/legal";
 
 export default function sitemap() {
   const now = new Date();
@@ -10,6 +11,7 @@ export default function sitemap() {
     { url: `${SITE_URL}/preorder`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/partnership`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/apply`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/social-impact`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/track`, changeFrequency: "yearly", priority: 0.3 },
   ];
@@ -20,7 +22,13 @@ export default function sitemap() {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...productRoutes].map((r) => ({
+  const legalRoutes = legalDocs.map((d) => ({
+    url: `${SITE_URL}/legal/${d.slug}`,
+    changeFrequency: "yearly",
+    priority: 0.3,
+  }));
+
+  return [...staticRoutes, ...productRoutes, ...legalRoutes].map((r) => ({
     ...r,
     lastModified: now,
   }));

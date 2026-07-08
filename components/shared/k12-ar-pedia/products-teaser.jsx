@@ -83,7 +83,7 @@ export default function ProductsTeaserSection() {
                   </p>
                   <div className="flex items-center justify-between pt-2 mt-1 border-t-2 border-gray-100">
                     <span className="font-display font-bold text-lg" style={{ color: p.color }}>
-                      from <Price usd={p.priceUSD} />
+                      from <Price ngn={p.priceNGN} />
                     </span>
                     <span className="inline-flex items-center gap-1 text-primary text-sm font-bold group-hover:translate-x-0.5 transition-transform">
                       View <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

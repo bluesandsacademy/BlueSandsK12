@@ -1,23 +1,25 @@
 "use client";
 
 import { useCurrency } from "./currency-provider";
+import { FALLBACK_USD_NGN } from "@/lib/exchange-rate";
 
-// USD authored price → string in the visitor's selected currency.
-export function formatPrice(usd, currency, rate) {
-  const n = Number(usd) || 0;
-  if (currency === "NGN") {
-    const ngn = Math.round((n * rate) / 100) * 100; // round to nearest ₦100
-    return `₦${ngn.toLocaleString("en-NG")}`;
+// NGN authored price → string in the visitor's selected currency.
+// Naira is exact (it is what Paystack charges); dollars are a live estimate.
+export function formatPrice(ngn, currency, rate) {
+  const n = Number(ngn) || 0;
+  if (currency === "USD") {
+    const usd = Math.round(n / (Number(rate) || FALLBACK_USD_NGN));
+    return `≈$${usd.toLocaleString("en-US")}`;
   }
-  return `$${n.toLocaleString("en-US")}`;
+  return `₦${n.toLocaleString("en-NG")}`;
 }
 
-/* Renders a USD-authored price in the active currency (NGN or USD). */
-export default function Price({ usd, className }) {
+/* Renders an NGN-authored price in the active currency (NGN or USD). */
+export default function Price({ ngn, className }) {
   const { currency, rate } = useCurrency();
   return (
     <span className={className} suppressHydrationWarning>
-      {formatPrice(usd, currency, rate)}
+      {formatPrice(ngn, currency, rate)}
     </span>
   );
 }

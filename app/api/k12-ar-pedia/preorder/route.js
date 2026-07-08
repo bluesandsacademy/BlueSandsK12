@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { getProduct, STORE_URL, TABLET_USD } from "@/lib/products";
+import { getProduct, STORE_URL, TABLET_NGN } from "@/lib/products";
+import { getUsdToNgn } from "@/lib/exchange-rate";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -72,11 +73,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "You must accept the Terms & Conditions." }, { status: 400 });
 
     const sanitizedNeeds = (additional_needs || []).filter((n) => VALID_NEEDS.includes(n));
-    const amountUSD = product.priceUSD * qty + tablets * TABLET_USD;
+    // Prices are authored in NGN. `k12_preorders.amount_usd` predates that, so
+    // convert at the live rate to keep the column's meaning honest.
+    // TODO: add an `amount_ngn` column and store the exact charged figure.
+    const amountNGN = product.priceNGN * qty + tablets * TABLET_NGN;
+    const { rate } = await getUsdToNgn();
+    const amountUSD = Math.round(amountNGN / rate);
 
     // ── Save the preorder lead ────────────────────────────────────────────────
     // Kits no longer have editions, so variant_label (kept in the schema) is a
-    // constant. The tablet is an optional add-on, priced at TABLET_USD each.
+    // constant. The tablet is an optional add-on, priced at TABLET_NGN each.
     const { data, error } = await supabaseAdmin
       .from("k12_preorders")
       .insert({
