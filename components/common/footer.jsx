@@ -39,7 +39,9 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="relative bg-secondary text-white overflow-hidden">
+    // `id` is the hook WhatsAppFab observes so it can retract instead of
+    // covering the footer's links and social icons.
+    <footer id="site-footer" className="relative bg-secondary text-white overflow-hidden">
       {/* Playful wave top edge */}
       <div className="absolute top-0 left-0 right-0 leading-none pointer-events-none">
         <svg
