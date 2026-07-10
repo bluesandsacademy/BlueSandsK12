@@ -18,6 +18,7 @@ const WhatsAppGlyph = (props) => (
 export default function WhatsAppFab() {
   const [open, setOpen] = useState(false);
   const [lifted, setLifted] = useState(false);
+  const [atFooter, setAtFooter] = useState(false);
 
   // On mobile the sticky CTA bar slides up after ~520px of scroll (see
   // StickyCta). Lift the button above it only while that bar is showing,
@@ -29,11 +30,38 @@ export default function WhatsAppFab() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // The footer carries its own contact links and social icons, and a fixed
+  // button parked on top of them hides content the user scrolled down to reach.
+  // Retract the button while any part of the footer is on screen.
+  useEffect(() => {
+    const footer = document.getElementById("site-footer");
+    if (!footer) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setAtFooter(entry.isIntersecting);
+        // Collapse the chat card as the button retracts, else it hangs detached.
+        if (entry.isIntersecting) setOpen(false);
+      },
+      { rootMargin: "0px 0px -8px 0px" }
+    );
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div
-      className={`fixed right-4 lg:right-6 lg:bottom-6 z-40 print:hidden transition-[bottom] duration-300 ${
+      className={`fixed right-4 lg:right-6 lg:bottom-6 z-40 print:hidden transition-[bottom,opacity,transform] duration-300 ${
         lifted ? "bottom-24" : "bottom-6"
+      } ${
+        atFooter
+          ? "opacity-0 translate-y-24 pointer-events-none"
+          : "opacity-100 translate-y-0"
       }`}
+      // `inert` (not aria-hidden) so the retracted button also drops out of the
+      // tab order, rather than being invisible but still focusable. The
+      // pointer-events guard covers Safari below 15.5, which ignores `inert`.
+      inert={atFooter}
     >
       {/* Popup card */}
       {open && (
@@ -78,8 +106,8 @@ export default function WhatsAppFab() {
       {/* Floating button */}
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Join Community
-      "
+        aria-label={open ? "Close WhatsApp chat" : "Join our WhatsApp community"}
+        aria-expanded={open}
         className="flex items-center gap-2.5 rounded-full bg-[#25D366] text-white pl-3.5 pr-4 py-3 shadow-xl hover:bg-[#1fb558] hover:shadow-2xl transition-all"
       >
         <WhatsAppGlyph className="w-6 h-6 shrink-0" />
