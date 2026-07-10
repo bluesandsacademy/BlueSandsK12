@@ -23,9 +23,11 @@ export default function ImpactClosing() {
             Where a child is born should never decide what they can{" "}
             <span className="text-sunshine">learn.</span>
           </h2>
-          <p className="relative mx-auto max-w-xl mt-5 text-white/85 font-semibold text-base sm:text-lg">
+          <p className="relative mx-auto max-w-2xl mt-5 text-white/85 font-semibold text-base sm:text-lg">
             Help us bring immersive learning to every region of Nigeria, North
-            and South.
+            and South. Whether you are funding one classroom or scaling across
+            states, we will build the programme with you and show you the impact,
+            school by school.
           </p>
 
           <div className="relative mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center">
