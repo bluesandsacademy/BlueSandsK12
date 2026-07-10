@@ -23,6 +23,33 @@ import SectionKicker from "./section-kicker";
 const CALENDLY_URL = "https://calendly.com/bluesandstemlabs/30min";
 const AUTOPLAY_MS = 6500;
 
+/* "Available on" store badges — informational only, not links. */
+function StoreBadges() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 justify-center lg:justify-start">
+      <span className="text-sm font-bold text-secondary/60">Available on</span>
+      <div className="flex items-center gap-3">
+        <Image
+          src="/badges/app-store.svg"
+          alt="Available on the App Store"
+          width={132}
+          height={44}
+          unoptimized
+          className="h-11 w-auto"
+        />
+        <Image
+          src="/badges/google-play.png"
+          alt="Available on Google Play"
+          width={148}
+          height={44}
+          unoptimized
+          className="h-11 w-auto"
+        />
+      </div>
+    </div>
+  );
+}
+
 const builtFor = [
   { label: "Schools", Icon: School },
   { label: "STEM Academies", Icon: FlaskConical },
@@ -284,6 +311,9 @@ function SlideCopy({ slide }) {
 
       {/* CTAs */}
       <SlideCtas primaryCta={primaryCta} secondaryCta={secondaryCta} />
+
+      {/* App availability — shown on every slide */}
+      <StoreBadges />
 
       {Extras && <Extras />}
     </motion.div>

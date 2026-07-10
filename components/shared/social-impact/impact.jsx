@@ -57,8 +57,10 @@ export default function ImpactNumbers() {
           ))}
         </div>
 
-        <p className="mt-4 text-xs text-gray-400 font-semibold">
-          Figures shown are targets and ambitions, not yet-verified results.
+        <p className="mt-6 max-w-3xl text-gray-600 text-base sm:text-lg font-semibold leading-relaxed">
+          Today, more than 20,000 students learn on Blue Sands platforms across
+          over 100 schools in 6 countries. The figures above show where we are
+          headed next, and partners are how we get there.
         </p>
 
         {/* Publishable goal */}
@@ -74,11 +76,17 @@ export default function ImpactNumbers() {
             <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-2xl bg-sunshine/20 shrink-0">
               <Target className="w-8 h-8 text-sunshine" strokeWidth={2.2} />
             </div>
-            <p className="font-display font-bold text-white text-lg sm:text-2xl leading-snug">
-              Our goal: reach{" "}
-              <span className="text-sunshine">5 million learners</span> with
-              immersive, curriculum-aligned learning by 2029.
-            </p>
+            <div>
+              <p className="font-display font-bold text-white text-lg sm:text-2xl leading-snug">
+                Our goal: reach{" "}
+                <span className="text-sunshine">5 million learners</span> with
+                immersive, curriculum-aligned learning by 2029.
+              </p>
+              <p className="mt-3 text-white/85 font-semibold text-sm sm:text-base leading-snug">
+                Every sponsored deployment is reported back to you: schools
+                reached, pupils onboarded, teachers trained.
+              </p>
+            </div>
           </div>
         </motion.div>
       </div>

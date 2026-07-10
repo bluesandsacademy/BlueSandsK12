@@ -1,9 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { UserRoundX, MapPinned, UsersRound } from "lucide-react";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import CountUp from "./count-up";
+// Official UN Sustainable Development Goal icons (public assets, unaltered).
+import sdg4 from "@/public/sdg/sdg-04.jpg";
+import sdg9 from "@/public/sdg/sdg-09.jpg";
+import sdg10 from "@/public/sdg/sdg-10.jpg";
+import sdg17 from "@/public/sdg/sdg-17.jpg";
 
 const stats = [
   {
@@ -23,12 +29,13 @@ const stats = [
   },
 ];
 
-// UN Sustainable Development Goals referenced here, in their official colours.
+// UN Sustainable Development Goals referenced here (official icons include the
+// goal number and name in the artwork).
 const sdgs = [
-  { n: 4, name: "Quality Education", color: "#C5192D" },
-  { n: 9, name: "Innovation", color: "#FD6925" },
-  { n: 10, name: "Reduced Inequalities", color: "#DD1367" },
-  { n: 17, name: "Partnerships for the Goals", color: "#19486A" },
+  { n: 4, img: sdg4, name: "Quality Education" },
+  { n: 9, img: sdg9, name: "Industry, Innovation and Infrastructure" },
+  { n: 10, img: sdg10, name: "Reduced Inequalities" },
+  { n: 17, img: sdg17, name: "Partnerships for the Goals" },
 ];
 
 export default function ImpactChallenge() {
@@ -52,11 +59,12 @@ export default function ImpactChallenge() {
             <span className="text-primary doodle-underline">solvable</span>
           </h2>
           <p className="mt-4 text-gray-600 text-lg font-semibold leading-relaxed">
-            Nigeria has 47M+ pupils, yet access and quality are sharply uneven:
-            the North carries most of the country&apos;s out-of-school children,
-            while the South faces rising fees and crowded classrooms. AR Pedia
-            makes high-quality, engaging learning reachable on both sides of
-            that divide.
+            Nigeria has over 47 million pupils, yet access and quality are
+            sharply uneven. The North carries most of the country&apos;s
+            out-of-school children, while the South faces rising fees and crowded
+            classrooms. AR Pedia makes high-quality, engaging learning reachable
+            on both sides of that divide, and gives partners a direct, trackable
+            way to help close it.
           </p>
         </motion.div>
 
@@ -92,20 +100,16 @@ export default function ImpactChallenge() {
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-secondary/60">
             Aligned to global goals
           </p>
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
-            {sdgs.map(({ n, name, color }) => (
-              <div
+          <div className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-5">
+            {sdgs.map(({ n, img, name }) => (
+              <Image
                 key={n}
-                className="inline-flex items-center gap-3 rounded-2xl bg-white border-2 border-secondary/5 py-2 pl-2 pr-4 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <span
-                  className="flex items-center justify-center w-10 h-10 rounded-xl text-white font-display font-black text-lg leading-none"
-                  style={{ background: color }}
-                >
-                  {n}
-                </span>
-                <span className="text-sm font-bold text-secondary">{name}</span>
-              </div>
+                src={img}
+                alt={`Sustainable Development Goal ${n}: ${name}`}
+                width={144}
+                height={144}
+                className="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-2xl shadow-sm"
+              />
             ))}
           </div>
         </div>

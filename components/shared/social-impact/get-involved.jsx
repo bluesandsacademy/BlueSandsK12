@@ -8,7 +8,7 @@ import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 const ways = [
   {
     audience: "Schools & educators",
-    desc: "Bring AR Pedia to your classrooms.",
+    desc: "Bring AR Pedia to your classrooms and give every pupil a working science lab.",
     cta: "Bring AR Pedia to your school",
     href: "/preorder",
     Icon: School,
@@ -16,7 +16,7 @@ const ways = [
   },
   {
     audience: "Corporates & CSR",
-    desc: "Sponsor deployments in underserved communities.",
+    desc: "Sponsor AR Pedia in underserved communities. Your programme carries your name, reaches named schools and real pupils, aligns with the SDGs, and comes with impact reports your board can see. Start with one classroom or take on an entire LGA.",
     cta: "Sponsor a school",
     href: "/contact",
     Icon: Building2,
@@ -24,7 +24,7 @@ const ways = [
   },
   {
     audience: "Government & development partners",
-    desc: "Reach learners at scale.",
+    desc: "Deploy curriculum-aligned learning at state scale, through SUBEBs and existing structures, with the data to prove what is working.",
     cta: "Explore a partnership",
     href: "/partnership",
     Icon: Landmark,
@@ -32,7 +32,7 @@ const ways = [
   },
   {
     audience: "Supporters & donors",
-    desc: "Fund AR Pedia for a child or a classroom.",
+    desc: "Fund AR Pedia for a child, a classroom, or a whole school, and follow exactly where your support lands.",
     cta: "Support our mission",
     href: "/contact",
     Icon: HeartHandshake,

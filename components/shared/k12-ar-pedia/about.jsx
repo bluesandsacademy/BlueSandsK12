@@ -70,9 +70,9 @@ export default function AboutSection() {
         >
           <SectionKicker>About Blue Sands K12 AR Pedia</SectionKicker>
           <h2 className="mt-3 font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
-            A VR/AR STEM education{" "}
-            <span className="text-primary doodle-underline">ecosystem</span>{" "}
-            built for African classrooms
+            A VR/AR STEM Education{" "}
+            <span className="text-primary doodle-underline">Ecosystem</span>{" "}
+            built for African Classrooms
           </h2>
           <p className="mt-5 text-gray-600 text-lg font-semibold leading-relaxed">
             Blue Sands K12 powers the full STEM education ecosystem, from

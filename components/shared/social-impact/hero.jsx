@@ -35,8 +35,10 @@ export default function ImpactHero() {
           </h1>
           <p className="mt-6 mx-auto max-w-2xl text-lg sm:text-xl text-gray-600 font-semibold leading-snug">
             AR Pedia brings immersive, curriculum-aligned learning to children
-            across Nigeria, closing the gap between where a child is born and
-            what they can become.
+            across Nigeria, so that where a child is born no longer decides what
+            they can become. For corporates, foundations, and development
+            partners, it is a practical, measurable way to put CSR budgets to
+            work in real classrooms.
           </p>
 
           <div className="mt-9 flex flex-col sm:flex-row items-center gap-4 justify-center">
