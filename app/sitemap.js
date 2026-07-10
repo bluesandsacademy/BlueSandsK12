@@ -9,6 +9,7 @@ export default function sitemap() {
     { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/products`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/preorder`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/webinar`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/partnership`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/apply`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/social-impact`, changeFrequency: "monthly", priority: 0.7 },
