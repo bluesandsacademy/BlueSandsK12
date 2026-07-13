@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Send, Users, Plus, Upload, Trash2, Loader2, X, Check, AlertCircle,
-  UserMinus, Mail, FileText, Download, Calendar, Clock,
+  UserMinus, Mail, FileText, Download, Calendar, Clock, Info, HelpCircle,
 } from "lucide-react";
 import { parseContacts } from "@/lib/email-list";
-import { scheduledAtFor } from "@/lib/campaign-schedule";
+import { scheduledAtFor, tomorrowStartWAT } from "@/lib/campaign-schedule";
 
 // A full run of the campaign sends one email per contact for each email in the
 // sequence. Surfaced so the admin sees the projected volume against their plan.
-const SEQUENCE_LENGTH = 30;
+const SEQUENCE_LENGTH = 24;
 const MONTHLY_SEND_CAP = 50000; // Resend Pro ($20) allowance
 const IMPORT_CHUNK = 250;
 
@@ -246,6 +246,83 @@ function fmtWhen(iso) {
   });
 }
 
+const GUIDE_STEPS = [
+  { Icon: Users, title: "Build your list", body: "Import your schools under a contact list. Scheduling stays locked until the list has contacts in it." },
+  { Icon: Calendar, title: "Set the demo date", body: "Every send time is worked out backwards from this date, so changing it shifts the whole schedule. Scheduling always begins tomorrow, so today's emails are left for you to send by hand." },
+  { Icon: Mail, title: "Preview it (optional)", body: "Use Send test on any row to email just that one to yourself. It goes to the address you choose and never touches your list." },
+  { Icon: Send, title: "Schedule once", body: "Click Schedule. Each upcoming email is handed to Resend as a scheduled send. This is the only manual step." },
+  { Icon: Clock, title: "It sends itself", body: "Resend delivers every email at its listed time, even if this page is closed and the site is offline. Nothing else to do." },
+];
+
+function GuidePanel({ onClose }) {
+  return (
+    <div className="mx-5 sm:mx-6 my-4 rounded-2xl border border-primary/15 bg-primary/[0.04] overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10">
+        <p className="font-bold text-secondary flex items-center gap-2" style={{ fontFamily: "var(--font-jarkata)" }}>
+          <HelpCircle className="w-4 h-4 text-primary" /> How the campaign sends
+        </p>
+        <button onClick={onClose} aria-label="Close guide" className="text-gray-400 hover:text-gray-600">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      <ol className="px-5 py-4 space-y-4">
+        {GUIDE_STEPS.map(({ Icon, title, body }, i) => (
+          <li key={title} className="flex gap-3.5">
+            <div className="relative shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-white border border-primary/15 flex items-center justify-center">
+                <Icon className="w-4 h-4 text-primary" />
+              </div>
+              <span className="absolute -top-1.5 -left-1.5 w-4 h-4 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center tabular-nums">{i + 1}</span>
+            </div>
+            <div className="min-w-0 pt-0.5">
+              <p className="font-bold text-secondary text-sm">{title}</p>
+              <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div className="px-5 py-3 bg-primary/[0.06] border-t border-primary/10">
+        <p className="text-xs text-gray-600 leading-relaxed">
+          <strong className="text-secondary">To change or cancel a scheduled email:</strong> use Check status to see what Resend has queued. Editing the copy here does not affect emails that are already scheduled, you would remove and reschedule them.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// An info icon that reveals a short guide on hover, focus, or tap. Positioned to
+// stay inside the panel card: `dir="down"` for controls near the top, `dir="up"`
+// for the footer; `align` keeps it off the card's right edge.
+function Hint({ text, dir = "down", align = "center", label = "More information" }) {
+  const [open, setOpen] = useState(false);
+  const vpos = dir === "up" ? "bottom-full mb-2" : "top-full mt-2";
+  const hpos = align === "right" ? "right-0" : align === "left" ? "left-0" : "left-1/2 -translate-x-1/2";
+  return (
+    <span className="relative inline-flex align-middle">
+      <button
+        type="button"
+        aria-label={label}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onClick={(e) => { e.preventDefault(); setOpen((o) => !o); }}
+        className="text-gray-300 hover:text-primary focus:text-primary focus:outline-none rounded-full"
+      >
+        <Info className="w-3.5 h-3.5" />
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          className={`absolute z-50 ${vpos} ${hpos} w-64 rounded-xl bg-secondary text-white text-[12px] leading-relaxed font-normal normal-case tracking-normal px-3.5 py-3 shadow-xl`}
+        >
+          {text}
+        </span>
+      )}
+    </span>
+  );
+}
+
 function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail }) {
   const [audienceId, setAudienceId] = useState(audiences[0]?.id || "");
   const [eventDate, setEventDate] = useState(defaultEventDate);
@@ -255,19 +332,42 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
   const [testFor, setTestFor] = useState(null); // email being test-sent
   const [broadcasts, setBroadcasts] = useState(null);
   const [loadingBroadcasts, setLoadingBroadcasts] = useState(false);
-  // Captured once at mount so "past due" is a stable, render-pure comparison.
+  const [showGuide, setShowGuide] = useState(false);
+  // Contact count for the selected list, tagged with its id so a stale count
+  // never shows against a different list (which also avoids resetting state
+  // synchronously inside the effect).
+  const [countFor, setCountFor] = useState({ id: null, total: null });
+  // Captured once at mount so the timeline comparisons are stable and render-pure.
   const [now] = useState(() => Date.now());
+  const [cutoff] = useState(() => tomorrowStartWAT().getTime()); // scheduling starts tomorrow
 
   // Keep the selected list valid if the audience list changes underneath us.
   const selected = audiences.find((a) => a.id === audienceId) || audiences[0];
   const effectiveAudienceId = selected?.id || "";
 
+  // Load the selected list's contact count so we can warn before scheduling
+  // (Resend rejects scheduling to an empty audience).
+  useEffect(() => {
+    if (!effectiveAudienceId) return;
+    let ignore = false;
+    fetch(`/api/admin/campaign/audiences/${effectiveAudienceId}`)
+      .then((r) => r.json())
+      .then((b) => { if (!ignore && b.data) setCountFor({ id: effectiveAudienceId, total: b.data.total }); })
+      .catch(() => {});
+    return () => { ignore = true; };
+  }, [effectiveAudienceId]);
+  const audienceCount = countFor.id === effectiveAudienceId ? countFor.total : null;
+  const isEmpty = audienceCount === 0;
+
   const rows = (sequence || []).map((e) => {
     const scheduledAt = scheduledAtFor(e, eventDate);
-    return { ...e, scheduledAt, pastDue: new Date(scheduledAt).getTime() <= now };
+    const t = new Date(scheduledAt).getTime();
+    // "past" already gone, "today" not auto-scheduled (send by hand), "scheduled" tomorrow onward.
+    const state = t < now ? "past" : t < cutoff ? "today" : "scheduled";
+    return { ...e, scheduledAt, state };
   });
-  const futureCount = rows.filter((r) => !r.pastDue).length;
-  const pastCount = rows.length - futureCount;
+  const futureCount = rows.filter((r) => r.state === "scheduled").length;
+  const skippedCount = rows.length - futureCount;
 
   const schedule = async () => {
     if (!effectiveAudienceId) return;
@@ -316,17 +416,38 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-100">
-        <h2 className="font-black text-secondary text-base flex items-center gap-2" style={{ fontFamily: "var(--font-jarkata)" }}>
-          <Send className="w-4 h-4 text-primary" /> The email sequence
-        </h2>
-        <p className="text-xs text-gray-400 mt-0.5">{sequence.length} emails, scheduled automatically around the demo date.</p>
+      <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-100 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="font-black text-secondary text-base flex items-center gap-2" style={{ fontFamily: "var(--font-jarkata)" }}>
+            <Send className="w-4 h-4 text-primary" /> The email sequence
+          </h2>
+          <p className="text-xs text-gray-400 mt-0.5">{sequence.length} emails. Schedule once, Resend delivers each one automatically at its time.</p>
+        </div>
+        <button
+          onClick={() => setShowGuide((v) => !v)}
+          aria-expanded={showGuide}
+          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold transition-colors ${
+            showGuide ? "bg-primary text-white" : "bg-primary/5 text-primary hover:bg-primary/10"
+          }`}
+        >
+          <HelpCircle className="w-4 h-4" /> Guide
+        </button>
       </div>
+
+      {showGuide && <GuidePanel onClose={() => setShowGuide(false)} />}
 
       {/* Controls */}
       <div className="px-5 py-4 sm:px-6 grid gap-4 sm:grid-cols-2 border-b border-gray-50">
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Send to list</label>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            Send to list
+            <Hint
+              dir="down"
+              align="left"
+              label="About the send list"
+              text="Every email goes to all contacts in this list. Import your schools first, scheduling is blocked while a list is empty. Anyone who unsubscribes is dropped by Resend automatically."
+            />
+          </label>
           <select
             value={effectiveAudienceId}
             onChange={(e) => setAudienceId(e.target.value)}
@@ -334,10 +455,23 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
           >
             {audiences.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
           </select>
+          <p className={`text-xs mt-1.5 ${isEmpty ? "text-rose-600 font-semibold" : "text-gray-400"}`}>
+            {audienceCount === null
+              ? "Checking contacts…"
+              : isEmpty
+                ? "No contacts yet, import some before scheduling."
+                : `${audienceCount} contact${audienceCount !== 1 ? "s" : ""} in this list`}
+          </p>
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" /> Demo date (the sequence counts back from this)
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5" /> Demo date
+            <Hint
+              dir="down"
+              align="right"
+              label="About the demo date"
+              text="The day of the live demo. The whole sequence is timed backwards from here, so changing it shifts every send time. Scheduling always begins tomorrow, today's emails are left for you to send manually."
+            />
           </label>
           <input
             type="date"
@@ -361,7 +495,7 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
           </thead>
           <tbody className="divide-y divide-gray-50">
             {rows.map((r) => (
-              <tr key={r.key} className={r.pastDue ? "opacity-45" : ""}>
+              <tr key={r.key} className={r.state !== "scheduled" ? "opacity-45" : ""}>
                 <td className="px-4 py-2.5 text-gray-400 tabular-nums">{r.n}</td>
                 <td className="px-4 py-2.5">
                   <p className="font-semibold text-secondary leading-tight">{r.subject}</p>
@@ -371,10 +505,17 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
                   <span className="inline-flex items-center gap-1 text-xs text-gray-500">
                     <Clock className="w-3.5 h-3.5" /> {fmtWhen(r.scheduledAt)}
                   </span>
-                  {r.pastDue && <span className="block text-[11px] text-amber-600 font-semibold mt-0.5">past, will skip</span>}
+                  {r.state === "past" && <span className="block text-[11px] text-gray-400 font-semibold mt-0.5">past, will skip</span>}
+                  {r.state === "today" && <span className="block text-[11px] text-amber-600 font-semibold mt-0.5">today, send manually</span>}
                 </td>
                 <td className="px-4 py-2.5 text-right">
-                  <button onClick={() => setTestFor(r)} className="text-xs font-bold text-primary hover:underline whitespace-nowrap">Send test</button>
+                  <button
+                    onClick={() => setTestFor(r)}
+                    title="Send just this one email to an address you choose, right now, without touching the list. Use it to preview before scheduling."
+                    className="text-xs font-bold text-primary hover:underline whitespace-nowrap"
+                  >
+                    Send test
+                  </button>
                 </td>
               </tr>
             ))}
@@ -389,7 +530,7 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
             <p className="font-bold text-grass flex items-center gap-1.5"><Check className="w-4 h-4" /> Sequence scheduled</p>
             <p className="text-gray-600 text-xs mt-1">
               {(scheduleResult.summary.scheduled || 0)} scheduled
-              {scheduleResult.summary.skipped_past ? `, ${scheduleResult.summary.skipped_past} skipped as past` : ""}
+              {scheduleResult.summary.skipped ? `, ${scheduleResult.summary.skipped} left for today or earlier (send manually)` : ""}
               {scheduleResult.summary.failed ? `, ${scheduleResult.summary.failed} failed` : ""}.
             </p>
             {scheduleResult.summary.failed > 0 && (
@@ -406,19 +547,23 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="text-xs text-gray-400">
-            {futureCount} of {rows.length} will be scheduled{pastCount > 0 ? `, ${pastCount} already past` : ""}.
+            {futureCount} of {rows.length} will be scheduled from tomorrow{skippedCount > 0 ? `, ${skippedCount} today or earlier (send those manually)` : ""}.
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={loadBroadcasts}
               disabled={loadingBroadcasts}
+              title="Shows every broadcast in Resend and whether it is a draft, scheduled, or already sent."
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300 disabled:opacity-60"
             >
               {loadingBroadcasts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />} Check status
             </button>
             <button
               onClick={schedule}
-              disabled={scheduling || futureCount === 0 || !effectiveAudienceId}
+              disabled={scheduling || futureCount === 0 || !effectiveAudienceId || isEmpty}
+              title={isEmpty
+                ? "This list has no contacts yet. Import contacts before scheduling."
+                : "Creates a scheduled send in Resend for each upcoming email. After this, delivery is automatic, even if this site is offline. To change or cancel one, remove it in Resend."}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60 shadow-lg shadow-primary/20"
             >
               {scheduling ? <><Loader2 className="w-4 h-4 animate-spin" /> Scheduling…</> : <><Send className="w-4 h-4" /> Schedule {futureCount} email{futureCount !== 1 ? "s" : ""}</>}
