@@ -249,7 +249,7 @@ function fmtWhen(iso) {
 const GUIDE_STEPS = [
   { Icon: Users, title: "Build your list", body: "Import your schools under a contact list. Scheduling stays locked until the list has contacts in it." },
   { Icon: Calendar, title: "Set the demo date", body: "Every send time is worked out backwards from this date, so changing it shifts the whole schedule. Scheduling always begins tomorrow, so today's emails are left for you to send by hand." },
-  { Icon: Mail, title: "Preview it (optional)", body: "Use Send test on any row to email just that one to yourself. It goes to the address you choose and never touches your list." },
+  { Icon: Mail, title: "Preview or send by hand", body: "Use Test on any row to email just that one to yourself. For emails already past their time (today or earlier), use Send now to send them to the whole list right away." },
   { Icon: Send, title: "Schedule once", body: "Click Schedule. Each upcoming email is handed to Resend as a scheduled send. This is the only manual step." },
   { Icon: Clock, title: "It sends itself", body: "Resend delivers every email at its listed time, even if this page is closed and the site is offline. Nothing else to do." },
 ];
@@ -333,6 +333,8 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
   const [broadcasts, setBroadcasts] = useState(null);
   const [loadingBroadcasts, setLoadingBroadcasts] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [sendingNow, setSendingNow] = useState("");   // key currently sending
+  const [sentNow, setSentNow] = useState(() => new Set()); // keys sent this session
   // Contact count for the selected list, tagged with its id so a stale count
   // never shows against a different list (which also avoids resetting state
   // synchronously inside the effect).
@@ -391,6 +393,30 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
       setErr("Network error while scheduling.");
     } finally {
       setScheduling(false);
+    }
+  };
+
+  const sendNow = async (row) => {
+    if (!effectiveAudienceId) return;
+    if (isEmpty) { alert("This list has no contacts yet. Import contacts before sending."); return; }
+    if (!confirm(
+      `Send email #${row.n} "${row.subject}" to all ${audienceCount} contact${audienceCount !== 1 ? "s" : ""} in "${selected.name}" right now? This can't be undone.`
+    )) return;
+    setSendingNow(row.key);
+    setErr("");
+    try {
+      const res = await fetch("/api/admin/campaign/send-now", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audienceId: effectiveAudienceId, emailKey: row.key, eventDate }),
+      });
+      const body = await res.json();
+      if (!res.ok) { alert(body.error || "Could not send the email."); return; }
+      setSentNow((prev) => new Set(prev).add(row.key));
+    } catch {
+      alert("Network error while sending.");
+    } finally {
+      setSendingNow("");
     }
   };
 
@@ -490,7 +516,7 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
               <th className="px-4 py-2.5 font-bold">#</th>
               <th className="px-4 py-2.5 font-bold">Subject</th>
               <th className="px-4 py-2.5 font-bold whitespace-nowrap">Sends</th>
-              <th className="px-4 py-2.5 font-bold text-right">Test</th>
+              <th className="px-4 py-2.5 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -508,14 +534,30 @@ function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail
                   {r.state === "past" && <span className="block text-[11px] text-gray-400 font-semibold mt-0.5">past, will skip</span>}
                   {r.state === "today" && <span className="block text-[11px] text-amber-600 font-semibold mt-0.5">today, send manually</span>}
                 </td>
-                <td className="px-4 py-2.5 text-right">
-                  <button
-                    onClick={() => setTestFor(r)}
-                    title="Send just this one email to an address you choose, right now, without touching the list. Use it to preview before scheduling."
-                    className="text-xs font-bold text-primary hover:underline whitespace-nowrap"
-                  >
-                    Send test
-                  </button>
+                <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                  {sentNow.has(r.key) ? (
+                    <span className="text-[11px] font-bold text-grass inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Sent to list</span>
+                  ) : (
+                    <div className="inline-flex items-center gap-3 justify-end">
+                      {r.state !== "scheduled" && (
+                        <button
+                          onClick={() => sendNow(r)}
+                          disabled={sendingNow === r.key || isEmpty}
+                          title="Send this email to the whole list right now. Use this for the emails you missed before scheduling."
+                          className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline disabled:opacity-50"
+                        >
+                          {sendingNow === r.key ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…</> : <><Send className="w-3.5 h-3.5" /> Send now</>}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setTestFor(r)}
+                        title="Send just this one email to an address you choose, right now, without touching the list. Use it to preview."
+                        className="text-xs font-semibold text-gray-400 hover:text-primary hover:underline"
+                      >
+                        Test
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
