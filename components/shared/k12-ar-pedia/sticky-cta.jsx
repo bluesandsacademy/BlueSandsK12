@@ -51,10 +51,10 @@ export default function StickyCta() {
                 Request Demo
               </a>
               <Link
-                href="/preorder"
+                href="/products"
                 className="px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-md whitespace-nowrap"
               >
-                Preorder Now
+                Shop Kits
               </Link>
             </div>
           </div>

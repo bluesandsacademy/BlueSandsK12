@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { CalendarCheck, Rocket, Users } from "lucide-react";
+import { CalendarCheck, ShoppingBag, Users } from "lucide-react";
 import SectionKicker from "./section-kicker";
 // Static imports so Next generates a blur-up placeholder + intrinsic size.
 import householdsImg from "@/public/audiences/households.png";
@@ -133,11 +133,11 @@ export default function AudiencesSection() {
             Book a Demo
           </a>
           <Link
-            href="/preorder"
+            href="/products"
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg border-2 border-secondary/10 shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all"
           >
-            <Rocket className="w-6 h-6 text-coral" strokeWidth={2.5} />
-            Pre-Order
+            <ShoppingBag className="w-6 h-6 text-coral" strokeWidth={2.5} />
+            Shop Kits
           </Link>
           <a
             href={WA_LINK}

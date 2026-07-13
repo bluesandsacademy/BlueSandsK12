@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CheckCircle2, CalendarCheck, MessageCircle } from "lucide-react";
+import { CheckCircle2, CalendarCheck, FileText } from "lucide-react";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 import { FloatPlanet } from "@/components/shared/k12-ar-pedia/science-floats";
 
@@ -56,22 +56,22 @@ export default function SchoolsCta() {
               ))}
             </ul>
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Link
+                href="/preorder"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
+              >
+                <FileText className="w-5 h-5" strokeWidth={2.5} />
+                Request a Quote
+              </Link>
               <a
                 href={DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-8 py-4 text-white font-display font-bold text-lg border-2 border-white/20 hover:bg-white/20 transition-all"
               >
                 <CalendarCheck className="w-5 h-5" strokeWidth={2.5} />
                 Book a Demo
               </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-8 py-4 text-white font-display font-bold text-lg border-2 border-white/20 hover:bg-white/20 transition-all"
-              >
-                <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
-                Talk to Us
-              </Link>
             </div>
           </div>
         </motion.div>

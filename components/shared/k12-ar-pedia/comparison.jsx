@@ -158,7 +158,7 @@ export default function ComparisonSection() {
           className="text-center mt-12"
         >
           <Link
-            href="/preorder"
+            href="/products"
             className="inline-flex items-center gap-2 rounded-2xl bg-coral px-9 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
           >
             Bring AR to Your Classroom

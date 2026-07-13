@@ -207,11 +207,11 @@ export default function ProductDetail({ slug }) {
               ))}
             </div>
 
-            {/* Tablet callout — clearly not part of the kit */}
+            {/* Tablet callout — not part of the kit; add it in the store cart */}
             <div className="mt-5 flex items-center gap-3 rounded-2xl bg-amber-50 border-2 border-amber-200 px-5 py-4">
               <Tablet className="w-6 h-6 text-amber-500 shrink-0" strokeWidth={2.2} />
               <p className="text-sm font-semibold text-amber-800">
-                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one at checkout for <Price ngn={TABLET_NGN} />.
+                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one to your cart in the store for <Price ngn={TABLET_NGN} />.
               </p>
             </div>
           </div>
