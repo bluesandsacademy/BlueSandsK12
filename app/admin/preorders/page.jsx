@@ -2,7 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import Link from "next/link";
 import PreordersClient from "@/components/admin/preorders-client";
 
-export const metadata = { title: "Preorders — Admin" };
+export const metadata = { title: "Quote Requests — Admin" };
 
 export default async function PreordersPage({ searchParams }) {
   const sp            = await searchParams;
@@ -15,7 +15,7 @@ export default async function PreordersPage({ searchParams }) {
 
   let query = supabaseAdmin
     .from("k12_preorders")
-    .select("id,full_name,email,phone,selected_plan,device_count,payment_option,order_status,payment_status,created_at", { count: "exact" })
+    .select("id,full_name,email,phone,school_org_name,product_slug,device_count,order_status,payment_status,created_at", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Send, Users, Plus, Upload, Trash2, Loader2, X, Check, AlertCircle,
-  UserMinus, Mail, FileText,
+  UserMinus, Mail, FileText, Download, Calendar, Clock,
 } from "lucide-react";
 import { parseContacts } from "@/lib/email-list";
+import { scheduledAtFor } from "@/lib/campaign-schedule";
 
 // A full run of the campaign sends one email per contact for each email in the
 // sequence. Surfaced so the admin sees the projected volume against their plan.
@@ -13,7 +14,7 @@ const SEQUENCE_LENGTH = 30;
 const MONTHLY_SEND_CAP = 50000; // Resend Pro ($20) allowance
 const IMPORT_CHUNK = 250;
 
-export default function CampaignClient({ initial, loadError }) {
+export default function CampaignClient({ initial, loadError, sequence, defaultEventDate, defaultTestEmail }) {
   const [audiences, setAudiences] = useState(initial || []);
   const [error, setError] = useState(loadError || "");
   const [creating, setCreating] = useState(false);
@@ -58,11 +59,24 @@ export default function CampaignClient({ initial, loadError }) {
   };
 
   const removeList = async (audience) => {
+    // Resend requires every account to keep at least one contact list, so the
+    // only remaining one can't be deleted. Explain that instead of letting the
+    // API return a cryptic error.
+    if (audiences.length <= 1) {
+      alert(
+        `"${audience.name}" is your only contact list, and Resend keeps at least one per account, so it can't be deleted.\n\n` +
+        `Create another list first, then you can remove this one.`
+      );
+      return;
+    }
     if (!confirm(`Delete the list "${audience.name}" and all its contacts? This can't be undone.`)) return;
     const res = await fetch(`/api/admin/campaign/audiences/${audience.id}`, { method: "DELETE" });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      alert(body.error || "Could not delete the list.");
+      const msg = /last audience/i.test(body.error || "")
+        ? "Resend keeps at least one contact list per account, so this one can't be deleted. Create another list first."
+        : body.error || "Could not delete the list.";
+      alert(msg);
       return;
     }
     setAudiences((list) => list.filter((a) => a.id !== audience.id));
@@ -172,6 +186,9 @@ export default function CampaignClient({ initial, loadError }) {
         </div>
       )}
 
+      {/* The 30-email sequence + sending controls */}
+      <CampaignPanel audiences={audiences} sequence={sequence} defaultEventDate={defaultEventDate} defaultTestEmail={defaultTestEmail} />
+
       {creating && (
         <Modal title="New Contact List" onClose={() => setCreating(false)}>
           <div className="space-y-4">
@@ -205,42 +222,373 @@ export default function CampaignClient({ initial, loadError }) {
       )}
 
       {detail && (
-        <ContactsModal detail={detail} onClose={() => setDetail(null)} />
+        <ContactsModal
+          detail={detail}
+          onClose={() => setDetail(null)}
+          onCleared={() => loadCount(detail.audience)}
+        />
       )}
     </div>
   );
 }
 
+const BROADCAST_TONE = {
+  sent: "bg-grass/10 text-grass",
+  queued: "bg-blue-50 text-blue-600",
+  draft: "bg-gray-100 text-gray-500",
+};
+
+function fmtWhen(iso) {
+  return new Date(iso).toLocaleString("en-GB", {
+    weekday: "short", day: "numeric", month: "short",
+    hour: "numeric", minute: "2-digit", hour12: true,
+    timeZone: "Africa/Lagos",
+  });
+}
+
+function CampaignPanel({ audiences, sequence, defaultEventDate, defaultTestEmail }) {
+  const [audienceId, setAudienceId] = useState(audiences[0]?.id || "");
+  const [eventDate, setEventDate] = useState(defaultEventDate);
+  const [scheduling, setScheduling] = useState(false);
+  const [scheduleResult, setScheduleResult] = useState(null);
+  const [err, setErr] = useState("");
+  const [testFor, setTestFor] = useState(null); // email being test-sent
+  const [broadcasts, setBroadcasts] = useState(null);
+  const [loadingBroadcasts, setLoadingBroadcasts] = useState(false);
+  // Captured once at mount so "past due" is a stable, render-pure comparison.
+  const [now] = useState(() => Date.now());
+
+  // Keep the selected list valid if the audience list changes underneath us.
+  const selected = audiences.find((a) => a.id === audienceId) || audiences[0];
+  const effectiveAudienceId = selected?.id || "";
+
+  const rows = (sequence || []).map((e) => {
+    const scheduledAt = scheduledAtFor(e, eventDate);
+    return { ...e, scheduledAt, pastDue: new Date(scheduledAt).getTime() <= now };
+  });
+  const futureCount = rows.filter((r) => !r.pastDue).length;
+  const pastCount = rows.length - futureCount;
+
+  const schedule = async () => {
+    if (!effectiveAudienceId) return;
+    if (!confirm(
+      `Schedule ${futureCount} email${futureCount !== 1 ? "s" : ""} to "${selected.name}"? ` +
+      `Each goes out automatically at its listed time. This creates live scheduled sends in Resend.`
+    )) return;
+    setScheduling(true);
+    setErr("");
+    setScheduleResult(null);
+    try {
+      const res = await fetch("/api/admin/campaign/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audienceId: effectiveAudienceId, eventDate }),
+      });
+      const body = await res.json();
+      if (!res.ok) { setErr(body.error || "Could not schedule the campaign."); return; }
+      setScheduleResult(body.data);
+    } catch {
+      setErr("Network error while scheduling.");
+    } finally {
+      setScheduling(false);
+    }
+  };
+
+  const loadBroadcasts = async () => {
+    setLoadingBroadcasts(true);
+    try {
+      const res = await fetch("/api/admin/campaign/broadcasts");
+      const body = await res.json();
+      if (res.ok) setBroadcasts(body.data || []);
+    } finally {
+      setLoadingBroadcasts(false);
+    }
+  };
+
+  if (!audiences.length) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="font-black text-secondary" style={{ fontFamily: "var(--font-jarkata)" }}>The email sequence</h2>
+        <p className="text-sm text-gray-400 mt-1">Create a contact list and import your schools first, then you can schedule the 30-email campaign here.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-100">
+        <h2 className="font-black text-secondary text-base flex items-center gap-2" style={{ fontFamily: "var(--font-jarkata)" }}>
+          <Send className="w-4 h-4 text-primary" /> The email sequence
+        </h2>
+        <p className="text-xs text-gray-400 mt-0.5">{sequence.length} emails, scheduled automatically around the demo date.</p>
+      </div>
+
+      {/* Controls */}
+      <div className="px-5 py-4 sm:px-6 grid gap-4 sm:grid-cols-2 border-b border-gray-50">
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Send to list</label>
+          <select
+            value={effectiveAudienceId}
+            onChange={(e) => setAudienceId(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-sm bg-white"
+          >
+            {audiences.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5" /> Demo date (the sequence counts back from this)
+          </label>
+          <input
+            type="date"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-sm"
+          />
+        </div>
+      </div>
+
+      {/* Sequence table */}
+      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-gray-50/95 backdrop-blur">
+            <tr className="text-left text-gray-400 text-[11px] uppercase tracking-wider">
+              <th className="px-4 py-2.5 font-bold">#</th>
+              <th className="px-4 py-2.5 font-bold">Subject</th>
+              <th className="px-4 py-2.5 font-bold whitespace-nowrap">Sends</th>
+              <th className="px-4 py-2.5 font-bold text-right">Test</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {rows.map((r) => (
+              <tr key={r.key} className={r.pastDue ? "opacity-45" : ""}>
+                <td className="px-4 py-2.5 text-gray-400 tabular-nums">{r.n}</td>
+                <td className="px-4 py-2.5">
+                  <p className="font-semibold text-secondary leading-tight">{r.subject}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{r.angle}</p>
+                </td>
+                <td className="px-4 py-2.5 whitespace-nowrap">
+                  <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                    <Clock className="w-3.5 h-3.5" /> {fmtWhen(r.scheduledAt)}
+                  </span>
+                  {r.pastDue && <span className="block text-[11px] text-amber-600 font-semibold mt-0.5">past, will skip</span>}
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <button onClick={() => setTestFor(r)} className="text-xs font-bold text-primary hover:underline whitespace-nowrap">Send test</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer actions */}
+      <div className="px-5 py-4 sm:px-6 border-t border-gray-100 space-y-3">
+        {scheduleResult && (
+          <div className="rounded-xl bg-grass/5 border border-grass/20 px-4 py-3 text-sm">
+            <p className="font-bold text-grass flex items-center gap-1.5"><Check className="w-4 h-4" /> Sequence scheduled</p>
+            <p className="text-gray-600 text-xs mt-1">
+              {(scheduleResult.summary.scheduled || 0)} scheduled
+              {scheduleResult.summary.skipped_past ? `, ${scheduleResult.summary.skipped_past} skipped as past` : ""}
+              {scheduleResult.summary.failed ? `, ${scheduleResult.summary.failed} failed` : ""}.
+            </p>
+            {scheduleResult.summary.failed > 0 && (
+              <ul className="mt-1.5 text-xs text-rose-600 list-disc pl-4">
+                {scheduleResult.results.filter((r) => r.status === "failed").map((r) => (
+                  <li key={r.key}>#{r.n}: {r.error}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {err && <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3">{err}</p>}
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-gray-400">
+            {futureCount} of {rows.length} will be scheduled{pastCount > 0 ? `, ${pastCount} already past` : ""}.
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadBroadcasts}
+              disabled={loadingBroadcasts}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300 disabled:opacity-60"
+            >
+              {loadingBroadcasts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />} Check status
+            </button>
+            <button
+              onClick={schedule}
+              disabled={scheduling || futureCount === 0 || !effectiveAudienceId}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60 shadow-lg shadow-primary/20"
+            >
+              {scheduling ? <><Loader2 className="w-4 h-4 animate-spin" /> Scheduling…</> : <><Send className="w-4 h-4" /> Schedule {futureCount} email{futureCount !== 1 ? "s" : ""}</>}
+            </button>
+          </div>
+        </div>
+
+        {broadcasts && (
+          <div className="rounded-xl border border-gray-100 divide-y divide-gray-50 max-h-56 overflow-y-auto">
+            {broadcasts.length === 0 ? (
+              <p className="px-4 py-3 text-sm text-gray-400">No broadcasts in Resend yet.</p>
+            ) : broadcasts.map((b) => (
+              <div key={b.id} className="flex items-center justify-between gap-3 px-4 py-2 text-sm">
+                <span className="text-secondary truncate">{b.name || "(untitled)"}</span>
+                <span className="flex items-center gap-2 shrink-0">
+                  {b.scheduled_at && <span className="text-xs text-gray-400">{fmtWhen(b.scheduled_at)}</span>}
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${BROADCAST_TONE[b.status] || "bg-gray-100 text-gray-500"}`}>{b.status}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {testFor && (
+        <TestModal email={testFor} eventDate={eventDate} defaultTestEmail={defaultTestEmail} onClose={() => setTestFor(null)} />
+      )}
+    </div>
+  );
+}
+
+function TestModal({ email, eventDate, defaultTestEmail, onClose }) {
+  const [to, setTo] = useState(defaultTestEmail || "");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState("");
+
+  const send = async () => {
+    setSending(true);
+    setErr("");
+    try {
+      const res = await fetch("/api/admin/campaign/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, emailKey: email.key, eventDate }),
+      });
+      const body = await res.json();
+      if (!res.ok) { setErr(body.error || "Could not send the test."); return; }
+      setSent(true);
+    } catch {
+      setErr("Network error. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <Modal title="Send a test" onClose={onClose}>
+      {sent ? (
+        <div className="space-y-4">
+          <p className="flex items-center gap-2 text-grass font-bold"><Check className="w-5 h-5" /> Test sent to {to}</p>
+          <p className="text-sm text-gray-500">Check the inbox (and spam) for email #{email.n}.</p>
+          <div className="flex justify-end"><button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90">Done</button></div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email #{email.n}</p>
+            <p className="text-sm font-semibold text-secondary mt-1">{email.subject}</p>
+          </div>
+          <Field label="Send test to" hint="a real inbox you can open">
+            <input
+              autoFocus type="email" value={to}
+              onChange={(e) => setTo(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && to && send()}
+              placeholder="you@bluesandsk12.com"
+              className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-sm"
+            />
+          </Field>
+          {err && <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3">{err}</p>}
+          <div className="flex justify-end gap-2 pt-1">
+            <button onClick={onClose} className="px-5 py-2.5 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300">Cancel</button>
+            <button onClick={send} disabled={sending || !to} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
+              {sending ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : <><Mail className="w-4 h-4" /> Send test</>}
+            </button>
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
+const COLUMN_ROLE_LABELS = { email: "Email", name: "School / name", phone: "Phone", address: "Address", contacted: "Previously contacted" };
+
 function ImportModal({ audience, onClose, onDone }) {
   const [text, setText] = useState("");
+  const [fileData, setFileData] = useState(null); // { contacts:[{email,name,phone,address,contacted}], columns, stats }
   const [importing, setImporting] = useState(false);
   const [progress, setProgress] = useState(null); // { done, total }
   const [result, setResult] = useState(null);      // { added, skipped, failed }
   const [err, setErr] = useState("");
+  const [fileLoading, setFileLoading] = useState(false);
 
   const parsed = parseContacts(text);
-  const validCount = parsed.valid.length;
-  const projectedSends = validCount * SEQUENCE_LENGTH;
+
+  // The contacts we'll actually send, normalised to Resend's shape. A harvested
+  // spreadsheet uses the whole school name as the greeting name (first_name);
+  // typed input keeps its first/last split.
+  const contacts = fileData
+    ? fileData.contacts.map((c) => ({ email: c.email, firstName: c.name || "", lastName: "" }))
+    : parsed.valid;
+
+  const count = contacts.length;
+  const projectedSends = count * SEQUENCE_LENGTH;
   const overCap = projectedSends > MONTHLY_SEND_CAP;
 
   const onFile = async (file) => {
     if (!file) return;
-    const content = await file.text();
-    setText((prev) => (prev ? `${prev}\n${content}` : content));
+    setErr("");
+    // Spreadsheets and CSVs are harvested by column on the server; a plain .txt
+    // is treated as freeform paste.
+    const structured = /\.(xlsx|xls|csv)$/i.test(file.name);
+    setFileLoading(true);
+    try {
+      if (structured) {
+        const body = new FormData();
+        body.append("file", file);
+        const res = await fetch("/api/admin/campaign/parse-file", { method: "POST", body });
+        const data = await res.json();
+        if (!res.ok) { setErr(data.error || "Could not read that file."); return; }
+        if (!data.data.contacts.length) { setErr("No email addresses were found in that file."); return; }
+        setText("");
+        setFileData(data.data);
+      } else {
+        const content = await file.text();
+        if (content?.trim()) setText((prev) => (prev ? `${prev}\n${content}` : content));
+      }
+    } catch {
+      setErr("Could not read that file.");
+    } finally {
+      setFileLoading(false);
+    }
+  };
+
+  const downloadCsv = () => {
+    const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const header = ["School / name", "Email", "Phone", "Address", "Previously contacted"];
+    const lines = [header.join(",")].concat(
+      fileData.contacts.map((c) => [c.name, c.email, c.phone, c.address, c.contacted].map(esc).join(","))
+    );
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${audience.name.replace(/[^\w-]+/g, "-")}-contacts.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const runImport = async () => {
-    if (validCount === 0) return;
+    if (count === 0) return;
     setImporting(true);
     setErr("");
     setResult(null);
     const totals = { added: 0, skipped: 0, failed: 0 };
-    const all = parsed.valid;
-    setProgress({ done: 0, total: all.length });
+    setProgress({ done: 0, total: count });
 
     try {
-      for (let i = 0; i < all.length; i += IMPORT_CHUNK) {
-        const chunk = all.slice(i, i + IMPORT_CHUNK);
+      for (let i = 0; i < contacts.length; i += IMPORT_CHUNK) {
+        const chunk = contacts.slice(i, i + IMPORT_CHUNK);
         const res = await fetch(`/api/admin/campaign/audiences/${audience.id}/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -251,7 +599,7 @@ function ImportModal({ audience, onClose, onDone }) {
         totals.added += body.data.added;
         totals.skipped += body.data.skipped;
         totals.failed += body.data.failed;
-        setProgress({ done: Math.min(i + IMPORT_CHUNK, all.length), total: all.length });
+        setProgress({ done: Math.min(i + IMPORT_CHUNK, contacts.length), total: count });
       }
       setResult(totals);
       await onDone();
@@ -261,6 +609,14 @@ function ImportModal({ audience, onClose, onDone }) {
       setImporting(false);
     }
   };
+
+  const capNote = count > 0 && (
+    <div className={`text-xs pt-1 ${overCap ? "text-rose-600 font-semibold" : "text-gray-400"}`}>
+      {overCap
+        ? `Sending all ${SEQUENCE_LENGTH} emails to ${count} contacts is ${projectedSends.toLocaleString()} sends, over your ${MONTHLY_SEND_CAP.toLocaleString()}/month plan.`
+        : `Full ${SEQUENCE_LENGTH}-email run ≈ ${projectedSends.toLocaleString()} sends (plan allows ${MONTHLY_SEND_CAP.toLocaleString()}/month).`}
+    </div>
+  );
 
   return (
     <Modal title={`Import into "${audience.name}"`} onClose={importing ? undefined : onClose}>
@@ -279,10 +635,81 @@ function ImportModal({ audience, onClose, onDone }) {
             <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90">Done</button>
           </div>
         </div>
+      ) : fileData ? (
+        // --- Harvested spreadsheet: show the organized data before importing ---
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 font-semibold text-secondary">
+              <Check className="w-4 h-4 text-grass" /> {fileData.stats.imported} contact{fileData.stats.imported !== 1 ? "s" : ""} harvested
+            </div>
+            <button onClick={() => { setFileData(null); setErr(""); }} className="text-xs font-semibold text-gray-400 hover:text-primary hover:underline">
+              Use a different file or paste
+            </button>
+          </div>
+
+          {fileData.columns && (
+            <div className="flex flex-wrap gap-1.5">
+              {Object.entries(fileData.columns).map(([role, label]) => (
+                <span key={role} className="inline-flex items-center gap-1 rounded-lg bg-primary/5 text-primary text-[11px] font-semibold px-2 py-1">
+                  {COLUMN_ROLE_LABELS[role] || role} <span className="text-primary/50">←</span> {label}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="max-h-64 overflow-auto rounded-xl border border-gray-100">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-gray-50">
+                <tr className="text-left text-gray-400 text-[11px] uppercase tracking-wider">
+                  <th className="px-3 py-2 font-bold">School / name</th>
+                  <th className="px-3 py-2 font-bold">Email</th>
+                  {fileData.columns?.phone && <th className="px-3 py-2 font-bold">Phone</th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {fileData.contacts.slice(0, 100).map((c) => (
+                  <tr key={c.email}>
+                    <td className="px-3 py-2 text-secondary">{c.name || <span className="text-gray-300">—</span>}</td>
+                    <td className="px-3 py-2 text-gray-600 font-mono text-xs">{c.email}</td>
+                    {fileData.columns?.phone && <td className="px-3 py-2 text-gray-500 text-xs">{c.phone || "—"}</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {fileData.contacts.length > 100 && (
+            <p className="text-xs text-gray-400 -mt-2">Showing the first 100 of {fileData.contacts.length}. All will be imported.</p>
+          )}
+
+          <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3 text-xs text-gray-500 space-y-1">
+            {(fileData.stats.duplicates > 0 || fileData.stats.invalidEmail > 0 || fileData.stats.noEmail > 0) && (
+              <p>
+                Skipped: {fileData.stats.duplicates} duplicate{fileData.stats.duplicates !== 1 ? "s" : ""}, {fileData.stats.invalidEmail} invalid email{fileData.stats.invalidEmail !== 1 ? "s" : ""}, {fileData.stats.noEmail} row{fileData.stats.noEmail !== 1 ? "s" : ""} with no email.
+              </p>
+            )}
+            <p>Only the email and school name are sent to Resend. Phone and address are harvested for your records.</p>
+            {capNote}
+          </div>
+
+          <button onClick={downloadCsv} className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+            <Download className="w-4 h-4" /> Download the cleaned list as CSV
+          </button>
+
+          {progress && importing && <Progress progress={progress} />}
+          {err && <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3">{err}</p>}
+
+          <div className="flex justify-end gap-2 pt-1">
+            <button onClick={onClose} disabled={importing} className="px-5 py-2.5 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300 disabled:opacity-60">Cancel</button>
+            <button onClick={runImport} disabled={importing || count === 0} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
+              {importing ? <><Loader2 className="w-4 h-4 animate-spin" /> Importing…</> : `Import ${count} contact${count !== 1 ? "s" : ""}`}
+            </button>
+          </div>
+        </div>
       ) : (
+        // --- Paste / freeform ---
         <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            Paste emails (one per line), or upload a CSV / text file. Names are optional:
+            Paste emails (one per line), or upload an Excel, CSV or text file. Names are optional:
             <span className="text-gray-400"> bare emails, Name &lt;email&gt;, or email, first, last all work.</span>
           </p>
 
@@ -294,21 +721,22 @@ function ImportModal({ audience, onClose, onDone }) {
             className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-sm font-mono resize-y"
           />
 
-          <label className="inline-flex items-center gap-2 text-sm font-semibold text-primary cursor-pointer hover:underline">
-            <FileText className="w-4 h-4" />
-            Upload a CSV or .txt file
+          <label className={`inline-flex items-center gap-2 text-sm font-semibold cursor-pointer hover:underline ${fileLoading ? "text-gray-400 pointer-events-none" : "text-primary"}`}>
+            {fileLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+            {fileLoading ? "Reading file…" : "Upload an Excel, CSV or .txt file"}
             <input
               type="file"
-              accept=".csv,.txt,text/csv,text/plain"
+              accept=".xlsx,.xls,.csv,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/plain"
               className="hidden"
-              onChange={(e) => onFile(e.target.files?.[0])}
+              disabled={fileLoading}
+              onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }}
             />
           </label>
 
           {text.trim() && (
             <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3 text-sm space-y-1.5">
               <div className="flex items-center gap-2 font-semibold text-secondary">
-                <Check className="w-4 h-4 text-grass" /> {validCount} valid email{validCount !== 1 ? "s" : ""}
+                <Check className="w-4 h-4 text-grass" /> {count} valid email{count !== 1 ? "s" : ""}
               </div>
               {parsed.duplicates > 0 && (
                 <div className="text-gray-500 text-xs">{parsed.duplicates} duplicate{parsed.duplicates !== 1 ? "s" : ""} removed</div>
@@ -318,31 +746,17 @@ function ImportModal({ audience, onClose, onDone }) {
                   <AlertCircle className="w-3.5 h-3.5" /> {parsed.invalid.length} line{parsed.invalid.length !== 1 ? "s" : ""} skipped (not a valid email)
                 </div>
               )}
-              {validCount > 0 && (
-                <div className={`text-xs pt-1 ${overCap ? "text-rose-600 font-semibold" : "text-gray-400"}`}>
-                  {overCap
-                    ? `Sending all ${SEQUENCE_LENGTH} emails to ${validCount} contacts is ${projectedSends.toLocaleString()} sends, over your ${MONTHLY_SEND_CAP.toLocaleString()}/month plan.`
-                    : `Full ${SEQUENCE_LENGTH}-email run ≈ ${projectedSends.toLocaleString()} sends (plan allows ${MONTHLY_SEND_CAP.toLocaleString()}/month).`}
-                </div>
-              )}
+              {capNote}
             </div>
           )}
 
-          {progress && importing && (
-            <div className="space-y-1.5">
-              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                <div className="h-full bg-primary transition-all" style={{ width: `${Math.round((progress.done / progress.total) * 100)}%` }} />
-              </div>
-              <p className="text-xs text-gray-400 text-center">Adding {progress.done} of {progress.total}…</p>
-            </div>
-          )}
-
+          {progress && importing && <Progress progress={progress} />}
           {err && <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3">{err}</p>}
 
           <div className="flex justify-end gap-2 pt-1">
             <button onClick={onClose} disabled={importing} className="px-5 py-2.5 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-600 hover:border-gray-300 disabled:opacity-60">Cancel</button>
-            <button onClick={runImport} disabled={importing || validCount === 0} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
-              {importing ? <><Loader2 className="w-4 h-4 animate-spin" /> Importing…</> : `Import ${validCount || ""} contact${validCount !== 1 ? "s" : ""}`}
+            <button onClick={runImport} disabled={importing || count === 0} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
+              {importing ? <><Loader2 className="w-4 h-4 animate-spin" /> Importing…</> : `Import ${count || ""} contact${count !== 1 ? "s" : ""}`}
             </button>
           </div>
         </div>
@@ -351,14 +765,126 @@ function ImportModal({ audience, onClose, onDone }) {
   );
 }
 
-function ContactsModal({ detail, onClose }) {
-  const { audience, data } = detail;
+// Because contacts are processed in rate-limited chunks (and a list under ~250
+// is a single chunk), real `done` updates arrive rarely, so a raw bar would sit
+// at 0 then jump. Instead we ease a time-based estimate that moves quickly at
+// the start and decelerates near the end, held below 100% until the work truly
+// finishes, while any real chunk completion pulls the bar forward.
+function Progress({ progress, verb = "Adding", active = true, estMsPerItem = 500 }) {
+  const total = progress?.total || 0;
+  const done = progress?.done || 0;
+  const [start] = useState(() => Date.now()); // captured once at mount
+  const barRef = useRef(null);
+  const phaseRef = useRef(null);
+  const pctRef = useRef(null);
+
+  const reduce =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  // Animate imperatively (no React state) so the frequent updates never trigger
+  // re-renders; the DOM bar and label are the "external system" the effect syncs.
+  useEffect(() => {
+    const estDuration = Math.max(1000, total * estMsPerItem);
+    const paint = () => {
+      const elapsed = Date.now() - start;
+      const t = Math.min(elapsed / estDuration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);          // fast start, slow finish
+      const realFraction = total ? done / total : 0;  // real progress wins if ahead
+      const target = Math.max(eased * 0.9, realFraction);
+      const p = Math.round((active ? Math.min(target, 0.97) : 1) * 100);
+      if (barRef.current) barRef.current.style.width = `${p}%`;
+      if (phaseRef.current) {
+        phaseRef.current.textContent = !active
+          ? "Done"
+          : p < 25 ? "Getting started…"
+          : p < 65 ? `${verb.toLowerCase()} your contacts…`
+          : p < 90 ? "Almost there…"
+          : "Wrapping up…";
+      }
+      if (pctRef.current) pctRef.current.textContent = `${p}%`;
+    };
+    paint();
+    const id = setInterval(paint, 180);
+    return () => clearInterval(id);
+  }, [done, total, active, estMsPerItem, start, verb]);
+
   return (
-    <Modal title={audience.name} onClose={onClose}>
+    <div className="space-y-1.5">
+      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+        <div
+          ref={barRef}
+          className="h-full bg-primary rounded-full"
+          style={{ width: "4%", transition: reduce ? "none" : "width 0.25s ease-out" }}
+        />
+      </div>
+      <p className="text-xs text-gray-400 text-center capitalize">
+        <span ref={phaseRef}>Getting started…</span>{" "}
+        <span ref={pctRef} className="tabular-nums text-gray-500 font-semibold">4%</span>
+      </p>
+    </div>
+  );
+}
+
+function ContactsModal({ detail, onClose, onCleared }) {
+  const { audience } = detail;
+  const [data, setData] = useState(detail.data);
+  const [clearing, setClearing] = useState(false);
+  const [progress, setProgress] = useState(null);
+  const [err, setErr] = useState("");
+
+  // Follow the parent's fetch (data arrives null, then populated) using the
+  // "adjust state during render" pattern rather than an effect. Local edits
+  // (clearing) survive because they don't change `detail.data`'s identity.
+  const [seenData, setSeenData] = useState(detail.data);
+  if (seenData !== detail.data) {
+    setSeenData(detail.data);
+    setData(detail.data);
+  }
+
+  const clearAll = async () => {
+    if (!data?.contacts?.length) return;
+    if (!confirm(
+      `Remove all ${data.total} contact${data.total !== 1 ? "s" : ""} from "${audience.name}"? ` +
+      `The list stays, the contacts are deleted. This can't be undone.`
+    )) return;
+
+    setClearing(true);
+    setErr("");
+    const targets = data.contacts.map((c) => ({ id: c.id, email: c.email }));
+    setProgress({ done: 0, total: targets.length });
+    let failed = 0;
+    try {
+      for (let i = 0; i < targets.length; i += IMPORT_CHUNK) {
+        const chunk = targets.slice(i, i + IMPORT_CHUNK);
+        const res = await fetch(`/api/admin/campaign/audiences/${audience.id}/clear`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contacts: chunk }),
+        });
+        const body = await res.json();
+        if (!res.ok) { setErr(body.error || "Could not clear the list."); break; }
+        failed += body.data.failed;
+        setProgress({ done: Math.min(i + IMPORT_CHUNK, targets.length), total: targets.length });
+      }
+      setData({ contacts: [], total: 0, subscribed: 0, unsubscribed: 0 });
+      if (failed > 0) setErr(`${failed} contact${failed !== 1 ? "s" : ""} could not be removed. Reopen the list and try again.`);
+      onCleared?.();
+    } catch {
+      setErr("Network error while clearing.");
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  return (
+    <Modal title={audience.name} onClose={clearing ? undefined : onClose}>
       {data === null ? (
         <div className="py-10 text-center text-gray-400"><Loader2 className="w-6 h-6 animate-spin mx-auto" /></div>
       ) : data.contacts.length === 0 ? (
-        <p className="py-8 text-center text-gray-400 text-sm">This list has no contacts yet. Use Import to add some.</p>
+        <p className="py-8 text-center text-gray-400 text-sm">
+          {err ? err : "This list has no contacts yet. Use Import to add some."}
+        </p>
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-2 text-center">
@@ -378,6 +904,19 @@ function ContactsModal({ detail, onClose }) {
                 {c.unsubscribed && <span className="text-xs text-gray-400 shrink-0 inline-flex items-center gap-1"><UserMinus className="w-3.5 h-3.5" /> opted out</span>}
               </div>
             ))}
+          </div>
+
+          {progress && clearing && <Progress progress={progress} verb="Removing" />}
+          {err && <p className="text-sm text-rose-500 bg-rose-50 rounded-xl px-4 py-3">{err}</p>}
+
+          <div className="flex justify-end pt-1 border-t border-gray-50">
+            <button
+              onClick={clearAll}
+              disabled={clearing}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-rose-200 text-sm font-bold text-rose-600 hover:bg-rose-50 disabled:opacity-60 mt-3"
+            >
+              {clearing ? <><Loader2 className="w-4 h-4 animate-spin" /> Removing…</> : <><Trash2 className="w-4 h-4" /> Remove all contacts</>}
+            </button>
           </div>
         </div>
       )}

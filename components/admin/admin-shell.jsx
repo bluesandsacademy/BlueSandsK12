@@ -6,18 +6,18 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import {
-  LayoutDashboard, ShoppingBag, Store, Users2, FileText,
+  LayoutDashboard, ShoppingBag, Store, Users2, Newspaper,
   Ticket, Send, LogOut, Menu, X, ChevronRight,
 } from "lucide-react";
 
 const NAV = [
-  { href: "/admin",              label: "Dashboard",      Icon: LayoutDashboard },
-  { href: "/admin/store-orders", label: "Store Orders",   Icon: Store },
-  { href: "/admin/preorders",    label: "Preorders",      Icon: ShoppingBag },
-  { href: "/admin/applications", label: "Applications",   Icon: Users2 },
-  { href: "/admin/promo-codes",  label: "Promo Codes",    Icon: Ticket },
-  { href: "/admin/campaign",     label: "Email Campaign", Icon: Send },
-  { href: "/admin/blog",         label: "Blog",           Icon: FileText },
+  { href: "/admin",              label: "Dashboard",         Icon: LayoutDashboard },
+  { href: "/admin/store-orders", label: "Store Orders",      Icon: Store },
+  { href: "/admin/preorders",    label: "Quote Requests",    Icon: ShoppingBag },
+  { href: "/admin/applications", label: "Applications",      Icon: Users2 },
+  { href: "/admin/promo-codes",  label: "Promo Codes",       Icon: Ticket },
+  { href: "/admin/campaign",     label: "Email Campaign",    Icon: Send },
+  { href: "/admin/news",         label: "News & Insights",   Icon: Newspaper },
 ];
 
 export default function AdminShell({ children }) {

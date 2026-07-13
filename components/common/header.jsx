@@ -12,7 +12,6 @@ import {
   Handshake,
   HeartHandshake,
   Mail,
-  Rocket,
 } from "lucide-react";
 import { img } from "@/lib/cloudinary";
 import CurrencySwitcher from "@/components/common/currency-switcher";
@@ -97,11 +96,11 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-3">
           <CurrencySwitcher />
           <Link
-            href="/preorder"
+            href="/products"
             className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-coral text-white text-sm font-display font-bold rounded-full shadow-[0_5px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_2px_0_#d63a3f] transition-all"
           >
-            <Rocket className="w-4 h-4" strokeWidth={2.5} />
-            Preorder Now
+            <ShoppingBag className="w-4 h-4" strokeWidth={2.5} />
+            Shop Kits
           </Link>
         </div>
 
@@ -139,12 +138,12 @@ export default function Header() {
               <CurrencySwitcher />
             </div>
             <Link
-              href="/preorder"
+              href="/products"
               onClick={closeMenu}
               className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-coral text-white text-center font-display font-bold rounded-xl shadow-[0_5px_0_#d63a3f]"
             >
-              <Rocket className="w-5 h-5" strokeWidth={2.5} />
-              Preorder Now
+              <ShoppingBag className="w-5 h-5" strokeWidth={2.5} />
+              Shop Kits
             </Link>
           </nav>
         </div>

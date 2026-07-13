@@ -20,7 +20,7 @@ function money(amount, currency) {
   return `${currency || ""} ${n}`.trim();
 }
 
-export default function StoreOrdersClient({ initial }) {
+export default function StoreOrdersClient({ initial, syncError }) {
   const [orders, setOrders] = useState(initial);
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
@@ -58,9 +58,15 @@ export default function StoreOrdersClient({ initial }) {
           Store Orders
         </h1>
         <p className="text-gray-400 text-sm mt-0.5">
-          Paid orders from your Paystack storefront — {orders.length} total
+          Paid orders from your Paystack storefront, synced live — {orders.length} total
         </p>
       </div>
+
+      {syncError && (
+        <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+          Couldn&apos;t sync with Paystack just now ({syncError}). Showing the last saved orders.
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">

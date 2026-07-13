@@ -6,13 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  User, Building2, Landmark, ChevronRight, ChevronLeft, CheckCircle2,
-  Loader2, ArrowLeft, ArrowRight, Minus, Plus, Package as PackageIcon, Tablet,
+  Building2, Landmark, Store, ChevronRight, ChevronLeft, CheckCircle2,
+  Loader2, ArrowLeft, ArrowRight, Minus, Plus, GraduationCap,
 } from "lucide-react";
-import { products, getProduct, TABLET_NGN } from "@/lib/products";
+import { products, getProduct } from "@/lib/products";
 import Price from "@/components/common/price";
-const INDIVIDUAL_MAX_QTY = 10;
-const SCHOOL_MIN_QTY = 5;
+
+// Bulk & school orders are quoted, not card-checked-out. Individuals buy single
+// kits directly in the shop; this form starts at a bulk quantity.
+const MIN_QTY = 5;
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -23,14 +25,22 @@ const NIGERIAN_STATES = [
 ];
 
 const USER_TYPES = [
-  { id: "individual", label: "Parent / Individual", Icon: User },
   { id: "school", label: "School", Icon: Building2 },
   { id: "institution", label: "Government / NGO / Private Sector", Icon: Landmark },
+  { id: "distributor", label: "Distributor / Reseller", Icon: Store },
+];
+
+// Structured extras a school or organisation often needs alongside the kits.
+const SUPPORT_NEEDS = [
+  { id: "teacher_training", label: "Teacher training" },
+  { id: "school_demo", label: "On-site demo" },
+  { id: "installation_support", label: "Setup & installation support" },
+  { id: "lms_access", label: "LMS / analytics access" },
 ];
 
 const SECTIONS = [
-  { label: "Your Order", step: 1 },
-  { label: "Your Details", step: 2 },
+  { label: "What You Need", step: 1 },
+  { label: "Organisation", step: 2 },
   { label: "Delivery", step: 3 },
   { label: "Review", step: 4 },
 ];
@@ -57,7 +67,7 @@ function FieldError({ msg }) {
   return <p className="mt-1 text-xs text-rose-500 font-medium">{msg}</p>;
 }
 
-function PreorderForm() {
+function QuoteForm() {
   const searchParams = useSearchParams();
   const productParam = searchParams.get("product");
   const initialProduct = getProduct(productParam);
@@ -69,8 +79,7 @@ function PreorderForm() {
 
   const [form, setForm] = useState({
     product_slug: initialProduct?.slug ?? "",
-    quantity: 1,
-    tablet_count: 0,
+    quantity: MIN_QTY,
     user_type: "",
     full_name: "",
     school_org_name: "",
@@ -80,9 +89,7 @@ function PreorderForm() {
     state: "",
     lga: "",
     city: "",
-    postal_code: "",
     address_line1: "",
-    address_line2: "",
     landmark: "",
     additional_needs: [],
     student_count: "",
@@ -95,37 +102,36 @@ function PreorderForm() {
     setErrors((e) => ({ ...e, [field]: "" }));
   };
 
-  const selectProduct = (slug) => {
-    setForm((f) => ({ ...f, product_slug: slug }));
-    setErrors((e) => ({ ...e, product_slug: "" }));
+  const toggleNeed = (id) => {
+    setForm((f) => ({
+      ...f,
+      additional_needs: f.additional_needs.includes(id)
+        ? f.additional_needs.filter((n) => n !== id)
+        : [...f.additional_needs, id],
+    }));
   };
 
   const product = getProduct(form.product_slug);
   const qty = parseInt(form.quantity, 10) || 0;
-  const tablets = parseInt(form.tablet_count, 10) || 0;
-  const total = (product?.priceNGN ?? 0) * qty + tablets * TABLET_NGN;
-  const isSchoolOrg = ["school", "institution"].includes(form.user_type);
+  const indicativeTotal = (product?.priceNGN ?? 0) * qty;
 
   const validate = () => {
     const e = {};
     if (step === 1) {
-      if (!form.product_slug) e.product_slug = "Please choose a book.";
-      if (qty < 1) e.quantity = "Choose at least 1.";
+      if (!form.product_slug) e.product_slug = "Please choose a kit.";
+      if (qty < MIN_QTY) e.quantity = `Bulk orders start at ${MIN_QTY} sets.`;
     }
     if (step === 2) {
       if (!form.user_type) e.user_type = "Please tell us who you are.";
-      if (!form.full_name.trim()) e.full_name = "Full name is required.";
-      if (isSchoolOrg && !form.school_org_name.trim()) e.school_org_name = "Organisation name is required.";
+      if (!form.school_org_name.trim()) e.school_org_name = "Organisation name is required.";
+      if (!form.full_name.trim()) e.full_name = "Contact name is required.";
       if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "A valid email is required.";
       if (!form.phone.trim()) e.phone = "Phone number is required.";
       if (!form.whatsapp.trim()) e.whatsapp = "WhatsApp number is required.";
-      if (isSchoolOrg && qty < SCHOOL_MIN_QTY) e.user_type = `Schools preorder a minimum of ${SCHOOL_MIN_QTY} sets — adjust your quantity in step 1.`;
-      if (!isSchoolOrg && qty > INDIVIDUAL_MAX_QTY) e.user_type = `Individuals can order up to ${INDIVIDUAL_MAX_QTY} sets. Apply as a distributor for more.`;
     }
     if (step === 3) {
       if (!form.state) e.state = "Please select a state.";
       if (!form.city.trim()) e.city = "City / town is required.";
-      if (!form.address_line1.trim()) e.address_line1 = "Street address is required.";
     }
     if (step === 4) {
       if (!form.agreed_to_contact) e.agreed_to_contact = "Please accept the terms to continue.";
@@ -149,12 +155,7 @@ function PreorderForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed.");
-      // Hand off to the Paystack store to complete payment, if configured.
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
-      } else {
-        setStatus("success");
-      }
+      setStatus("success");
     } catch (err) {
       setErrMsg(err.message);
       setStatus("error");
@@ -172,10 +173,11 @@ function PreorderForm() {
           <div className="w-20 h-20 rounded-full bg-grass/15 flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-grass" strokeWidth={1.75} />
           </div>
-          <h2 className="font-display text-2xl font-bold text-secondary mb-3">Preorder Received!</h2>
+          <h2 className="font-display text-2xl font-bold text-secondary mb-3">Request Received</h2>
           <p className="text-gray-500 text-sm leading-relaxed mb-8">
-            Thank you, {form.full_name.split(" ")[0]}! We&apos;ve logged your preorder and our
-            team will email you your secure checkout link to complete payment.
+            Thank you, {form.full_name.split(" ")[0]}. We&apos;ve received your request
+            for {form.school_org_name || "your organisation"}. Our team will email you a
+            tailored quote and invoice within 1 to 2 business days.
           </p>
           <Link
             href="/"
@@ -197,9 +199,20 @@ function PreorderForm() {
           <Link href="/products" className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm font-medium mb-6 transition-colors w-fit">
             <ArrowLeft className="w-4 h-4" /> Back to Shop
           </Link>
-          <h1 className="font-display font-bold text-white text-3xl sm:text-4xl mb-2">Preorder Your AR Books</h1>
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 mb-4">
+            <GraduationCap className="w-4 h-4 text-sunshine" strokeWidth={2.2} />
+            <span className="text-xs font-bold uppercase tracking-[0.12em] text-white/80">School &amp; Bulk Orders</span>
+          </div>
+          <h1 className="font-display font-bold text-white text-3xl sm:text-4xl mb-2">Request a Quote</h1>
           <p className="text-white/70 text-sm sm:text-base">
-            Tell us what you&apos;d like and where to send it — you&apos;ll complete payment securely on the next step.
+            For schools, organisations and distributors ordering {MIN_QTY} sets or more. Tell us
+            what you need and our team will send a tailored quote and invoice.
+          </p>
+          <p className="text-white/50 text-xs sm:text-sm mt-3">
+            Just want a single kit?{" "}
+            <Link href="/products" className="text-sunshine font-semibold hover:underline">
+              Buy directly in the shop
+            </Link>.
           </p>
         </div>
       </div>
@@ -235,12 +248,12 @@ function PreorderForm() {
             exit={{ opacity: 0, x: -24 }}
             transition={{ duration: 0.25 }}
           >
-            {/* STEP 1 — Order */}
+            {/* STEP 1 — What you need */}
             {step === 1 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Choose your books</h2>
-                  <p className="text-gray-500 text-sm">Pick a kit and quantity.</p>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">What you need</h2>
+                  <p className="text-gray-500 text-sm">Pick the main kit and roughly how many sets.</p>
                 </div>
 
                 {/* Product picker */}
@@ -251,7 +264,7 @@ function PreorderForm() {
                       <button
                         key={p.slug}
                         type="button"
-                        onClick={() => selectProduct(p.slug)}
+                        onClick={() => set("product_slug", p.slug)}
                         className={`text-left rounded-2xl border-2 p-3 transition-all ${active ? "border-primary bg-primary/5" : "border-gray-200 hover:border-gray-300 bg-white"}`}
                       >
                         <div className="aspect-square flex items-center justify-center mb-2">
@@ -265,58 +278,60 @@ function PreorderForm() {
                 </div>
                 <FieldError msg={errors.product_slug} />
 
-                {/* Quantity + tablet add-on + total */}
                 {product && (
                   <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-5">
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-grass/10 flex items-center justify-center shrink-0">
-                        <PackageIcon className="w-5 h-5 text-grass" strokeWidth={2} />
-                      </div>
-                      <p className="text-sm text-gray-500 font-semibold">
-                        Each kit includes Spotty, a marker set and the AR Pedia app. A tablet is not included.
-                      </p>
-                    </div>
-
                     <div>
-                      <Label required>Quantity</Label>
-                      <Stepper value={qty} min={1} onChange={(n) => set("quantity", n)} />
+                      <Label required>Approximate quantity (sets)</Label>
+                      <Stepper value={qty} min={MIN_QTY} step={5} onChange={(n) => set("quantity", n)} />
                       <FieldError msg={errors.quantity} />
                     </div>
 
-                    {/* Tablet add-on */}
+                    {/* Support needs */}
                     <div className="pt-4 border-t border-gray-100">
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-grape/10 flex items-center justify-center shrink-0">
-                          <Tablet className="w-5 h-5 text-grape" strokeWidth={2} />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-bold text-secondary text-sm">Add a tablet? <span className="text-gray-400 font-semibold">(+<Price ngn={TABLET_NGN} /> each)</span></p>
-                          <p className="text-xs text-gray-500 mb-2">Spotty holds your tablet, a tablet isn&apos;t included.</p>
-                          <Stepper value={tablets} min={0} onChange={(n) => set("tablet_count", n)} />
-                        </div>
+                      <Label>Anything else you need? (optional)</Label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {SUPPORT_NEEDS.map(({ id, label }) => {
+                          const on = form.additional_needs.includes(id);
+                          return (
+                            <button
+                              key={id}
+                              type="button"
+                              onClick={() => toggleNeed(id)}
+                              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 text-sm font-semibold text-left transition-all ${on ? "border-primary bg-primary/5 text-primary" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}
+                            >
+                              <span className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${on ? "bg-primary text-white" : "border-2 border-gray-300"}`}>
+                                {on && <CheckCircle2 className="w-3 h-3" />}
+                              </span>
+                              {label}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
 
-                    {/* Running total */}
+                    {/* Indicative total — bulk pricing comes in the quote */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <span className="text-sm font-semibold text-gray-500">Order total</span>
-                      <span className="font-display font-bold text-2xl text-secondary"><Price ngn={total} /></span>
+                      <div>
+                        <span className="text-sm font-semibold text-gray-500">Indicative total</span>
+                        <p className="text-xs text-gray-400">Before bulk pricing. Final figure is in your quote.</p>
+                      </div>
+                      <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} /></span>
                     </div>
                   </div>
                 )}
               </div>
             )}
 
-            {/* STEP 2 — Details */}
+            {/* STEP 2 — Organisation */}
             {step === 2 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Your details</h2>
-                  <p className="text-gray-500 text-sm">So we know who&apos;s preordering.</p>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Your organisation</h2>
+                  <p className="text-gray-500 text-sm">So we know who the quote is for.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
                   <div>
-                    <Label required>I am a…</Label>
+                    <Label required>We are a…</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {USER_TYPES.map(({ id, label, Icon }) => (
                         <button
@@ -333,17 +348,15 @@ function PreorderForm() {
                     <FieldError msg={errors.user_type} />
                   </div>
                   <div>
-                    <Label required>Full Name</Label>
+                    <Label required>Organisation Name</Label>
+                    <Input placeholder="e.g. Bright Stars Academy" value={form.school_org_name} onChange={(e) => set("school_org_name", e.target.value)} />
+                    <FieldError msg={errors.school_org_name} />
+                  </div>
+                  <div>
+                    <Label required>Contact Name</Label>
                     <Input placeholder="e.g. Adesola Martins" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} />
                     <FieldError msg={errors.full_name} />
                   </div>
-                  {isSchoolOrg && (
-                    <div>
-                      <Label required>Organisation Name</Label>
-                      <Input placeholder="e.g. Bright Stars Academy" value={form.school_org_name} onChange={(e) => set("school_org_name", e.target.value)} />
-                      <FieldError msg={errors.school_org_name} />
-                    </div>
-                  )}
                   <div>
                     <Label required>Email Address</Label>
                     <Input type="email" placeholder="you@example.com" value={form.email} onChange={(e) => set("email", e.target.value)} />
@@ -361,18 +374,16 @@ function PreorderForm() {
                       <FieldError msg={errors.whatsapp} />
                     </div>
                   </div>
-                  {isSchoolOrg && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      <div>
-                        <Label>Students (approx.)</Label>
-                        <Input type="number" placeholder="e.g. 200" value={form.student_count} onChange={(e) => set("student_count", e.target.value)} />
-                      </div>
-                      <div>
-                        <Label>Teachers (approx.)</Label>
-                        <Input type="number" placeholder="e.g. 15" value={form.teacher_count} onChange={(e) => set("teacher_count", e.target.value)} />
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <Label>Students (approx.)</Label>
+                      <Input type="number" placeholder="e.g. 200" value={form.student_count} onChange={(e) => set("student_count", e.target.value)} />
                     </div>
-                  )}
+                    <div>
+                      <Label>Teachers (approx.)</Label>
+                      <Input type="number" placeholder="e.g. 15" value={form.teacher_count} onChange={(e) => set("teacher_count", e.target.value)} />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -382,7 +393,7 @@ function PreorderForm() {
               <div className="space-y-6">
                 <div>
                   <h2 className="font-display text-xl font-bold text-secondary mb-1">Delivery location</h2>
-                  <p className="text-gray-500 text-sm">Where should we send your books?</p>
+                  <p className="text-gray-500 text-sm">Helps us quote logistics. A full address isn&apos;t required yet.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -405,9 +416,8 @@ function PreorderForm() {
                     </div>
                   </div>
                   <div>
-                    <Label required>Street Address</Label>
+                    <Label>Street Address (optional)</Label>
                     <Input placeholder="House number and street" value={form.address_line1} onChange={(e) => set("address_line1", e.target.value)} />
-                    <FieldError msg={errors.address_line1} />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
@@ -427,20 +437,25 @@ function PreorderForm() {
             {step === 4 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Review your preorder</h2>
-                  <p className="text-gray-500 text-sm">Confirm, then continue to secure payment.</p>
+                  <h2 className="font-display text-xl font-bold text-secondary mb-1">Review your request</h2>
+                  <p className="text-gray-500 text-sm">Confirm, then we&apos;ll prepare your quote.</p>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4 text-sm">
-                  <Row label="Book" value={product?.name} />
                   <Row label="Kit" value={product?.name} />
-                  <Row label="Quantity" value={qty} />
-                  {tablets > 0 && <Row label="Tablets" value={<>{tablets} × <Price ngn={TABLET_NGN} /></>} />}
-                  <Row label="Name" value={form.full_name} />
-                  <Row label="Contact" value={form.email} />
+                  <Row label="Quantity" value={`${qty} sets`} />
+                  {form.additional_needs.length > 0 && (
+                    <Row label="Extras" value={form.additional_needs.map((id) => SUPPORT_NEEDS.find((n) => n.id === id)?.label).filter(Boolean).join(", ")} />
+                  )}
+                  <Row label="Organisation" value={form.school_org_name} />
+                  <Row label="Contact" value={form.full_name} />
+                  <Row label="Email" value={form.email} />
                   <Row label="Deliver to" value={[form.city, form.state, "Nigeria"].filter(Boolean).join(", ")} />
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <span className="font-bold text-secondary">Total</span>
-                    <span className="font-display font-bold text-2xl text-secondary"><Price ngn={total} /></span>
+                    <div>
+                      <span className="font-bold text-secondary">Indicative total</span>
+                      <p className="text-xs text-gray-400">Before bulk pricing</p>
+                    </div>
+                    <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} /></span>
                   </div>
                 </div>
 
@@ -452,7 +467,8 @@ function PreorderForm() {
                     className="w-4 h-4 mt-0.5 accent-primary shrink-0"
                   />
                   <span className="text-sm text-gray-600 leading-relaxed">
-                    I agree to be contacted about my preorder and accept the Terms &amp; Conditions.
+                    I agree to be contacted about this request and accept the{" "}
+                    <Link href="/legal/terms-of-sale" className="text-primary font-semibold hover:underline" target="_blank">Terms &amp; Conditions</Link>.
                   </span>
                 </label>
                 <FieldError msg={errors.agreed_to_contact} />
@@ -480,9 +496,9 @@ function PreorderForm() {
           ) : (
             <button type="button" onClick={submit} disabled={status === "loading"} className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-coral text-white text-sm font-bold hover:bg-coral/90 transition-colors shadow-lg shadow-coral/30 disabled:opacity-60">
               {status === "loading" ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>
+                <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
               ) : (
-                <>Continue to Payment <ArrowRight className="w-4 h-4" /></>
+                <>Request a Quote <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
           )}
@@ -492,14 +508,14 @@ function PreorderForm() {
   );
 }
 
-function Stepper({ value, min, onChange }) {
+function Stepper({ value, min, step = 1, onChange }) {
   return (
     <div className="inline-flex items-center rounded-xl border-2 border-gray-200 overflow-hidden">
-      <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="px-3 py-2.5 text-gray-500 hover:bg-gray-50" aria-label="Decrease">
+      <button type="button" onClick={() => onChange(Math.max(min, value - step))} className="px-3 py-2.5 text-gray-500 hover:bg-gray-50" aria-label="Decrease">
         <Minus className="w-4 h-4" />
       </button>
       <span className="w-12 text-center font-bold text-secondary tabular-nums">{value}</span>
-      <button type="button" onClick={() => onChange(value + 1)} className="px-3 py-2.5 text-gray-500 hover:bg-gray-50" aria-label="Increase">
+      <button type="button" onClick={() => onChange(value + step)} className="px-3 py-2.5 text-gray-500 hover:bg-gray-50" aria-label="Increase">
         <Plus className="w-4 h-4" />
       </button>
     </div>
@@ -518,7 +534,7 @@ function Row({ label, value }) {
 export default function PreorderPage() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-cream" />}>
-      <PreorderForm />
+      <QuoteForm />
     </Suspense>
   );
 }

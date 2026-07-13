@@ -7,6 +7,7 @@ import Image from "next/image";
 import {
   Wand2,
   Rocket,
+  ShoppingBag,
   School,
   FlaskConical,
   BookOpen,
@@ -113,7 +114,7 @@ const slides = [
       </>
     ),
     body: "Bring STEM to life through AR-powered books that turn static pages into interactive 3D experiences",
-    primaryCta: { label: "Preorder Now", Icon: Rocket },
+    primaryCta: { label: "Shop Kits", Icon: ShoppingBag },
     secondaryCta: { label: "See the Magic", Icon: Wand2 },
     Extras: ArPediaExtras,
   },
@@ -134,7 +135,7 @@ const slides = [
     ),
 
     body: "World-class virtual labs that bridge the digital divide, unlocking STEM potential from Lagos to Cape Town.",
-    primaryCta: { label: "Pre-Order", Icon: Rocket },
+    primaryCta: { label: "Shop Kits", Icon: ShoppingBag },
     secondaryCta: { label: "Book a Demo", Icon: CalendarCheck },
   },
   {
@@ -157,8 +158,8 @@ const slides = [
         </span>
       </>
     ),
-    body: "Students can see, touch, and explore complex concepts in a way that makes learning clearer, faster, and genuinely exciting—bridging imagination with real understanding.",
-    primaryCta: { label: "Pre-Order", Icon: Rocket },
+    body: "Students can see, touch, and explore complex concepts in a way that makes learning clearer, faster, and genuinely exciting, bridging imagination with real understanding.",
+    primaryCta: { label: "Shop Kits", Icon: ShoppingBag },
     secondaryCta: { label: "Book a Demo", Icon: CalendarCheck },
   },
 ];
@@ -253,7 +254,7 @@ function SlideCtas({ primaryCta, secondaryCta }) {
   return (
     <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
       <Link
-        href="/preorder"
+        href="/products"
         className="group inline-flex items-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
       >
         <PrimaryIcon className="w-6 h-6" strokeWidth={2.5} />

@@ -133,7 +133,7 @@ export default function CountdownFloat() {
 
               {/* CTA */}
               <Link
-                href="/preorder"
+                href="/products"
                 className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl text-base font-display font-bold text-white text-center bg-coral shadow-[0_6px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_3px_0_#d63a3f] transition-all"
               >
                 Reserve My Slot

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Rocket, CalendarCheck } from "lucide-react";
+import { ShoppingBag, CalendarCheck } from "lucide-react";
 import { FloatPlanet, FloatSparkle } from "./science-floats";
 import SectionKicker from "./section-kicker";
 
@@ -51,11 +51,11 @@ export default function FinalCtaSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
-            href="/preorder"
+            href="/products"
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all w-full sm:w-auto"
           >
-            <Rocket className="w-6 h-6" strokeWidth={2.5} />
-            Preorder Now
+            <ShoppingBag className="w-6 h-6" strokeWidth={2.5} />
+            Shop Kits
           </Link>
           <a
             href="https://calendly.com/bluesandstemlabs/30min"

@@ -21,8 +21,6 @@ const PAYMENT_STYLES = {
   fully_paid:   { bg: "bg-emerald-50", text: "text-emerald-700" },
 };
 
-const PLAN_LABELS = { family: "Family Pack", school: "School Pack" };
-
 function StatusPill({ value, map }) {
   const s = map[value] || { bg: "bg-gray-100", text: "text-gray-500", dot: "bg-gray-300" };
   return (
@@ -59,8 +57,8 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-black text-secondary" style={{ fontFamily: "var(--font-jarkata)" }}>Preorders</h1>
-        <p className="text-gray-400 text-sm mt-0.5">{total} total order{total !== 1 ? "s" : ""}</p>
+        <h1 className="text-2xl font-black text-secondary" style={{ fontFamily: "var(--font-jarkata)" }}>Quote Requests</h1>
+        <p className="text-gray-400 text-sm mt-0.5">School &amp; bulk enquiries — {total} total request{total !== 1 ? "s" : ""}</p>
       </div>
 
       {/* Filters */}
@@ -145,11 +143,11 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
               </div>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Plan</p>
-                  <p className="font-semibold text-secondary">{PLAN_LABELS[order.selected_plan] || order.selected_plan || "—"}</p>
+                  <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Org</p>
+                  <p className="font-semibold text-secondary truncate">{order.school_org_name || "—"}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Devices</p>
+                  <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Sets</p>
                   <p className="font-bold text-secondary">{order.device_count}</p>
                 </div>
                 <div>
@@ -167,11 +165,10 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50/80 text-left border-b border-gray-100">
-              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Customer</th>
-              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
-              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Qty</th>
-              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Payment Opt.</th>
-              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Order Status</th>
+              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Contact</th>
+              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Organisation</th>
+              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Sets</th>
+              <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
               <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Payment</th>
               <th className="px-6 py-3.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
               <th className="px-6 py-3.5"></th>
@@ -184,9 +181,8 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
                   <p className="font-semibold text-secondary">{order.full_name}</p>
                   <p className="text-xs text-gray-400">{order.email}</p>
                 </td>
-                <td className="px-6 py-4 text-gray-500 text-xs">{PLAN_LABELS[order.selected_plan] || order.selected_plan || "—"}</td>
+                <td className="px-6 py-4 text-gray-600 text-sm font-semibold">{order.school_org_name || "—"}</td>
                 <td className="px-6 py-4 font-bold text-secondary">{order.device_count}</td>
-                <td className="px-6 py-4 text-gray-500 text-xs capitalize">{order.payment_option}</td>
                 <td className="px-6 py-4"><StatusPill value={order.order_status}  map={STATUS_STYLES}  /></td>
                 <td className="px-6 py-4"><StatusPill value={order.payment_status} map={PAYMENT_STYLES} /></td>
                 <td className="px-6 py-4 text-gray-400 whitespace-nowrap text-xs">
@@ -204,7 +200,7 @@ export default function PreordersClient({ initialOrders, total, page, limit, fil
             ))}
             {!initialOrders.length && (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-gray-400 text-sm">No orders found.</td>
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400 text-sm">No requests found.</td>
               </tr>
             )}
           </tbody>
