@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { Video, CalendarDays, ArrowRight } from "lucide-react";
 import { WEBINAR, isWebinarUpcoming } from "@/lib/webinar";
 
 // Sits directly above the hero so a first-time visitor sees the webinar before
-// anything else. Renders nothing once the webinar has passed.
+// anything else. Registration is handled by Luma, so the CTA leaves the site.
+// Renders nothing once the webinar has passed.
 export default function WebinarBanner() {
   if (!isWebinarUpcoming()) return null;
 
@@ -34,13 +34,15 @@ export default function WebinarBanner() {
             )}
           </span>
 
-          <Link
-            href="/webinar"
+          <a
+            href={WEBINAR.lumaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group inline-flex items-center gap-1.5 rounded-full bg-coral px-4 py-1.5 text-[13px] font-display font-bold text-white shrink-0 whitespace-nowrap hover:bg-[#ff6f73] transition-colors"
           >
             Reserve Your Seat
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
-          </Link>
+          </a>
         </div>
       </div>
     </section>
