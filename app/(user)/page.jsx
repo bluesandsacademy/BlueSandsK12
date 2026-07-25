@@ -1,4 +1,3 @@
-import WebinarBanner from "@/components/shared/k12-ar-pedia/webinar-banner";
 import K12HeroSection from "@/components/shared/k12-ar-pedia/hero";
 import AboutSection from "@/components/shared/k12-ar-pedia/about";
 import SocialProofTicker from "@/components/shared/k12-ar-pedia/social-proof-ticker";
@@ -24,7 +23,6 @@ export const metadata = {
 export default function K12ArPediaPage() {
   return (
     <div className="overflow-x-hidden">
-      <WebinarBanner />
       <K12HeroSection />
       <SocialProofTicker />
       <AboutSection />

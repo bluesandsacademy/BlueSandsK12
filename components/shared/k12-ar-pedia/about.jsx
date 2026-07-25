@@ -75,11 +75,12 @@ export default function AboutSection() {
             built for African Classrooms
           </h2>
           <p className="mt-5 text-gray-600 text-lg font-semibold leading-relaxed">
-            Blue Sands K12 powers the full STEM education ecosystem, from
-            virtual labs and interactive learning to assessments and analytics,
-            using AI and immersive AR/VR technology to help students, educators,
-            and institutions deliver hands-on, future-ready science, technology,
-            engineering, and mathematics education anywhere in the world.
+            Blue Sands K12 provides African primary and secondary schools
+            teachers & students with curriculum-aligned STEAM contents, AR
+            powered text books, virtual science laboratories via a smart tablet
+            enabling hands-on STEAM learning that improves teaching-learning
+            engagement, practical skills, and academic performance regardless of
+            location or laboratory access using AR,VR and AI technology.
           </p>
         </motion.div>
 
