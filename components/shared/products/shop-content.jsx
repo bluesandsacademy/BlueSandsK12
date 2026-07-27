@@ -81,7 +81,7 @@ function ProductCard({ p, index }) {
                 className="font-display font-bold text-2xl leading-none mt-0.5"
                 style={{ color: p.color }}
               >
-                <Price ngn={p.priceNGN} />
+                <Price ngn={p.priceNGN} usd={p.priceUSD} />
               </p>
               <p className="text-xs font-bold text-gray-400 mt-1">
                 {p.ageRange}

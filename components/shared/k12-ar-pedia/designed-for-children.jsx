@@ -1,9 +1,35 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Blocks, GraduationCap } from "lucide-react";
+import {
+  Blocks,
+  GraduationCap,
+  Package,
+  Smartphone,
+  MonitorSmartphone,
+  Award,
+  BookOpen,
+  Tablet,
+  Camera,
+  Trophy,
+  Medal,
+} from "lucide-react";
 import { FloatAtom, FloatPlanet } from "./science-floats";
 import SectionKicker from "./section-kicker";
+
+/* Everything a school receives in the Blue Sands K12 bundle. Each icon
+   depicts the item it labels: a phone for the app, a tablet for the tablet,
+   a camera for the camera, and so on. */
+const packageItems = [
+  { label: "Mobile App", Icon: Smartphone },
+  { label: "Blue Sands AI Web LMS & App", Icon: MonitorSmartphone },
+  { label: "Teacher Certification & Onboarding", Icon: Award },
+  { label: "AR Interactive Books", Icon: BookOpen },
+  { label: "Smart Tablet", Icon: Tablet },
+  { label: "Spotty Camera", Icon: Camera },
+  { label: "STEAM Competitions", Icon: Trophy },
+  { label: "Leaderboard & Badges", Icon: Medal },
+];
 
 /* Two mirrored audiences, one product. The warm amber panel is for the
    younger cohort; the cool blue panel for teens. Kept as data + a single
@@ -107,6 +133,56 @@ function AudiencePanel({ audience, index }) {
   );
 }
 
+function PackageCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      className="relative overflow-hidden rounded-[2rem] border-2 border-white/10 bg-secondary text-white px-6 sm:px-10 py-9 shadow-2xl"
+    >
+      {/* Brand glows */}
+      <div className="absolute -top-24 -right-16 w-80 h-80 bg-primary/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-16 w-80 h-80 bg-coral/20 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Header */}
+      <div className="relative flex flex-col items-center text-center gap-2 mb-8">
+        <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10">
+          <Package className="w-7 h-7" strokeWidth={2.2} />
+        </span>
+        <span className="mt-3 inline-flex px-4 py-1.5 rounded-full bg-white/10 text-white text-sm font-bold uppercase tracking-wide">
+          Complete Bundle
+        </span>
+        <h3 className="font-display font-bold leading-tight text-3xl sm:text-4xl">
+          Blue Sands K12 Package
+        </h3>
+        <p className="text-white/70 text-base sm:text-lg font-semibold max-w-xl">
+          Everything a school gets in one bundle, ready from the first day of
+          onboarding.
+        </p>
+      </div>
+
+      {/* What's included */}
+      <div className="relative grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        {packageItems.map(({ label, Icon }) => (
+          <div
+            key={label}
+            className="flex items-center gap-3 rounded-2xl bg-white/5 border border-white/10 px-4 py-3.5"
+          >
+            <span className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/20 text-sky-300">
+              <Icon className="w-5 h-5" strokeWidth={2.2} />
+            </span>
+            <span className="text-left text-sm font-bold leading-snug text-white/90">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function DesignedForChildrenSection() {
   return (
     <section
@@ -137,8 +213,8 @@ export default function DesignedForChildrenSection() {
             <span className="text-amber-600 doodle-underline">Every Age</span>
           </h2>
           <p className="text-gray-700 text-lg sm:text-xl font-semibold">
-            One platform, two purpose-built experiences, from first discoveries
-            to exam-ready STEM.
+            Two purpose-built experiences for every age, and one complete
+            package that puts it all in your school's hands.
           </p>
         </motion.div>
 
@@ -151,6 +227,11 @@ export default function DesignedForChildrenSection() {
               index={index}
             />
           ))}
+        </div>
+
+        {/* The package: what every school actually gets */}
+        <div className="mt-6 sm:mt-8 max-w-5xl mx-auto">
+          <PackageCard />
         </div>
       </div>
     </section>

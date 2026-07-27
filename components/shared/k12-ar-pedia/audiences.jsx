@@ -72,7 +72,7 @@ export default function AudiencesSection() {
         >
           <SectionKicker>Who it&apos;s for</SectionKicker>
           <h2 className="mt-3 font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
-            One Platform. One Ecosystem. One Device.
+            One Device. One Platform. One Ecosystem.
             <br /> Endless Educational Impact Across Nigeria and Africa.
             {/* <span className="text-primary doodle-underline">education</span> */}
           </h2>

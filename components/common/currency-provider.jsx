@@ -5,7 +5,7 @@ import { FALLBACK_USD_NGN } from "@/lib/exchange-rate";
 
 const CurrencyContext = createContext(null);
 const STORAGE_KEY = "bls-currency";
-const DEFAULT_CURRENCY = "NGN"; // payments settle in Naira
+const DEFAULT_CURRENCY = "USD"; // prices lead in USD; payments still settle in Naira at checkout
 
 export function CurrencyProvider({ initialRate = FALLBACK_USD_NGN, children }) {
   const [currency, setCurrencyState] = useState(DEFAULT_CURRENCY);

@@ -114,6 +114,7 @@ function QuoteForm() {
   const product = getProduct(form.product_slug);
   const qty = parseInt(form.quantity, 10) || 0;
   const indicativeTotal = (product?.priceNGN ?? 0) * qty;
+  const indicativeTotalUSD = (product?.priceUSD ?? 0) * qty;
 
   const validate = () => {
     const e = {};
@@ -271,7 +272,7 @@ function QuoteForm() {
                           <Image src={p.image} alt={p.name} width={p.imageW} height={p.imageH} sizes="160px" className="w-full h-full object-contain" />
                         </div>
                         <p className="font-display font-bold text-secondary text-sm leading-tight">{p.name}</p>
-                        <p className="text-xs font-bold text-gray-400 mt-0.5">{p.ageRange} · from <Price ngn={p.priceNGN} /></p>
+                        <p className="text-xs font-bold text-gray-400 mt-0.5">{p.ageRange} · from <Price ngn={p.priceNGN} usd={p.priceUSD} /></p>
                       </button>
                     );
                   })}
@@ -315,7 +316,7 @@ function QuoteForm() {
                         <span className="text-sm font-semibold text-gray-500">Indicative total</span>
                         <p className="text-xs text-gray-400">Before bulk pricing. Final figure is in your quote.</p>
                       </div>
-                      <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} /></span>
+                      <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} usd={indicativeTotalUSD} /></span>
                     </div>
                   </div>
                 )}
@@ -455,7 +456,7 @@ function QuoteForm() {
                       <span className="font-bold text-secondary">Indicative total</span>
                       <p className="text-xs text-gray-400">Before bulk pricing</p>
                     </div>
-                    <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} /></span>
+                    <span className="font-display font-bold text-2xl text-secondary"><Price ngn={indicativeTotal} usd={indicativeTotalUSD} /></span>
                   </div>
                 </div>
 

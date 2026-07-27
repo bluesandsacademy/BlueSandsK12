@@ -78,7 +78,7 @@ export default function K12PricingSection() {
               {/* From price */}
               <div className="mb-5">
                 <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">From</p>
-                <p className="font-display font-bold text-2xl" style={{ color: p.color }}><Price ngn={p.priceNGN} /></p>
+                <p className="font-display font-bold text-2xl" style={{ color: p.color }}><Price ngn={p.priceNGN} usd={p.priceUSD} /></p>
               </div>
 
               {/* CTAs */}
