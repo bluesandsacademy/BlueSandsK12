@@ -8,8 +8,9 @@ import CurrencySwitcher from "./currency-switcher";
  * grid, rather than only in the header where it scrolls out of view. Shares
  * state with the header switcher through CurrencyProvider.
  *
- * Payments settle in Naira, so the dollar figure is an estimate. Say so here
- * instead of leaving the visitor to discover it at Paystack's checkout.
+ * The dollar price is a fixed headline number, but payments settle in Naira,
+ * so the exact charge tracks the day's rate. Say so here instead of leaving
+ * the visitor to discover it at Paystack's checkout.
  */
 export default function CurrencyNote({ align = "center", className = "" }) {
   const { currency } = useCurrency();
@@ -28,7 +29,7 @@ export default function CurrencyNote({ align = "center", className = "" }) {
         suppressHydrationWarning
       >
         {currency === "USD"
-          ? "Estimate only. You will be charged in Naira at checkout."
+          ? "Charged in Naira at checkout, at the day's exchange rate."
           : " "}
       </p>
     </div>

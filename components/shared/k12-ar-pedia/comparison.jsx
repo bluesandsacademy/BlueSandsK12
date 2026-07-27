@@ -3,11 +3,32 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { XCircle, CheckCircle2, BookX, Tablet, ArrowRight } from "lucide-react";
+import {
+  XCircle,
+  CheckCircle2,
+  BookX,
+  Tablet,
+  ArrowRight,
+  ClipboardCheck,
+  School,
+  Presentation,
+  DoorOpen,
+} from "lucide-react";
 import SectionKicker from "./section-kicker";
 
 const BORED = "/blacks/bored.jpeg";
 const ENGAGED = "/blacks/happy.jpeg";
+const RESULT = "/blacks/results.png";
+
+// What the shift adds up to. Each icon draws its subject: a marked report
+// for grades, a school building for reputation, a lesson board for teaching,
+// an open door for opportunity.
+const outcomes = [
+  { label: "Better Grades", Icon: ClipboardCheck },
+  { label: "Better School Reputation", Icon: School },
+  { label: "Better Teacher Outcomes", Icon: Presentation },
+  { label: "Better Student Opportunities", Icon: DoorOpen },
+];
 
 const columns = [
   {
@@ -15,6 +36,9 @@ const columns = [
     eyebrow: "Traditional Reading",
     title: "Bored Children",
     img: BORED,
+    // Landscape photo in a tall card, so only the horizontal focal point
+    // shows. The bored girl sits on the right; center the crop on her.
+    pos: "70% center",
     Icon: BookX,
     accent: "#dc2626",
     scrimRGB: "94,12,12",
@@ -27,9 +51,10 @@ const columns = [
   },
   {
     side: "after",
-    eyebrow: "K12 AR Pedia",
+    eyebrow: "BlueSands K12",
     title: "Engaged Learners",
     img: ENGAGED,
+    pos: "center",
     Icon: Tablet,
     accent: "#10b981",
     scrimRGB: "2,40,70",
@@ -51,7 +76,7 @@ function CompareCard({ col, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6, delay: index * 0.12 }}
-      className="group relative rounded-[1.8rem] overflow-hidden border-4 shadow-[0_12px_0_rgba(0,0,0,0.06)] min-h-[520px] sm:min-h-[580px] lg:min-h-[640px]"
+      className="group relative w-full h-full rounded-[1.8rem] overflow-hidden border-4 shadow-[0_12px_0_rgba(0,0,0,0.06)] min-h-[580px] sm:min-h-[640px] lg:min-h-[720px]"
       style={{ borderColor: col.accent }}
     >
       {/* Full-bleed photo — the image is the card */}
@@ -61,7 +86,10 @@ function CompareCard({ col, index }) {
         fill
         sizes="(min-width: 1024px) 50vw, 100vw"
         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-        style={{ filter: isAfter ? "none" : "grayscale(0.4)" }}
+        style={{
+          objectPosition: col.pos,
+          filter: isAfter ? "none" : "grayscale(0.25)",
+        }}
       />
 
       {/* Gradient scrim — keeps the overlaid copy legible over the photo */}
@@ -115,13 +143,81 @@ function CompareCard({ col, index }) {
   );
 }
 
+function ResultBand() {
+  const accent = "#f59e0b";
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 36 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6 }}
+      className="relative w-full h-full rounded-[1.8rem] overflow-hidden border-4 shadow-[0_12px_0_rgba(0,0,0,0.06)] min-h-[580px] sm:min-h-[640px] lg:min-h-[720px]"
+      style={{ borderColor: accent }}
+    >
+      {/* Full-bleed photo — swap in the thriving-classroom image */}
+      <Image
+        src={RESULT}
+        alt="Students thriving with AR-powered learning"
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
+
+      {/* Gradient scrim keeps the overlaid copy legible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(2,40,70,0.96) 0%, rgba(2,40,70,0.78) 42%, rgba(2,40,70,0.35) 72%, rgba(2,40,70,0.12) 100%)",
+        }}
+      />
+
+      {/* Top chip */}
+      <div className="absolute top-4 left-4">
+        <span
+          className="px-4 py-1.5 rounded-full text-white text-xs font-extrabold shadow-sm uppercase tracking-wide"
+          style={{ background: accent }}
+        >
+          The Result
+        </span>
+      </div>
+
+      {/* Outcomes overlaid on the photo */}
+      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
+        <h3 className="font-display font-bold text-white text-3xl sm:text-4xl drop-shadow-lg mb-5">
+          It all adds up to more.
+        </h3>
+        <div className="grid grid-cols-1 gap-3">
+          {outcomes.map(({ label, Icon }) => (
+            <div
+              key={label}
+              className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-3.5"
+            >
+              <span className="shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow">
+                <Icon
+                  className="w-5 h-5"
+                  style={{ color: accent }}
+                  strokeWidth={2.4}
+                />
+              </span>
+              <span className="text-white font-bold text-base sm:text-lg leading-snug drop-shadow">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ComparisonSection() {
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden bg-slate-50">
       <div className="absolute -top-20 -right-20 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-red-200/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -137,15 +233,32 @@ export default function ComparisonSection() {
           </h2>
         </motion.div>
 
-        {/* Two cards with VS badge */}
-        <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-stretch">
-          {columns.map((col, i) => (
-            <CompareCard key={col.side} col={col} index={i} />
-          ))}
+        {/* One line: before VS after = result */}
+        <div className="relative flex flex-col lg:flex-row items-stretch gap-8 lg:gap-4">
+          <div className="flex flex-1">
+            <CompareCard col={columns[0]} index={0} />
+          </div>
 
           {/* VS badge */}
-          <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-16 h-16 rounded-full bg-secondary text-white font-display font-black text-xl items-center justify-center shadow-xl border-4 border-white">
-            VS
+          <div className="flex shrink-0 items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-secondary text-white font-display font-black text-lg leading-none flex items-center justify-center shadow-xl border-4 border-white">
+              VS
+            </div>
+          </div>
+
+          <div className="flex flex-1">
+            <CompareCard col={columns[1]} index={1} />
+          </div>
+
+          {/* Equals badge — the comparison adds up to real outcomes */}
+          <div className="flex shrink-0 items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-secondary text-white font-display font-black text-3xl leading-none flex items-center justify-center shadow-xl border-4 border-white">
+              =
+            </div>
+          </div>
+
+          <div className="flex flex-1">
+            <ResultBand />
           </div>
         </div>
 

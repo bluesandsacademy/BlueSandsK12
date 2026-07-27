@@ -31,15 +31,15 @@ const pillars = [
   },
   {
     step: "03",
-    name: "Assessments",
-    desc: "Measure understanding in real time.",
+    name: "Assessments & Analytics (LMS)",
+    desc: "Measure student understanding in real time with actionable insights that empower teachers and schools.",
     Icon: ClipboardCheck,
     color: "#9B5DE5",
   },
   {
     step: "04",
-    name: "Analytics",
-    desc: "Insights that guide teachers and schools.",
+    name: "Smart Tablets",
+    desc: "Education-ready devices optimized for AR, AI, virtual labs, and immersive STEM learning; online or offline.",
     Icon: LineChart,
     color: "#3DD68C",
   },
@@ -75,11 +75,12 @@ export default function AboutSection() {
             built for African Classrooms
           </h2>
           <p className="mt-5 text-gray-600 text-lg font-semibold leading-relaxed">
-            Blue Sands K12 powers the full STEM education ecosystem, from
-            virtual labs and interactive learning to assessments and analytics,
-            using AI and immersive AR/VR technology to help students, educators,
-            and institutions deliver hands-on, future-ready science, technology,
-            engineering, and mathematics education anywhere in the world.
+            Blue Sands K12 provides African primary and secondary schools
+            teachers & students with curriculum-aligned STEAM contents, AR
+            powered text books, virtual science laboratories via a smart tablet
+            enabling hands-on STEAM learning that improves teaching-learning
+            engagement, practical skills, and academic performance regardless of
+            location or laboratory access using AR,VR and AI technology.
           </p>
         </motion.div>
 
