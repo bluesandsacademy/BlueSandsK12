@@ -97,7 +97,7 @@ export default function WhatsAppSection() {
             {/* Big WhatsApp CTA */}
             <div className="space-y-3">
               <a
-                href="https://wa.me/2348139622583?text=Hi%2C%20I%27m%20interested%20in%20the%20Blue%20Sands%20K12%20AR%20Pedia"
+                href="https://wa.me/2347034194669?text=Hi%2C%20I%27m%20interested%20in%20the%20Blue%20Sands%20K12%20AR%20Pedia"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#25D366] text-white font-black rounded-2xl shadow-xl hover:bg-[#1fb558] hover:shadow-2xl transition-all duration-300 text-lg w-full sm:w-auto"

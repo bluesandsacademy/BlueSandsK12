@@ -24,7 +24,7 @@ const PLAN_LABELS = { family: "Smart Family STEM Pack", school: "Smart Classroom
 
 const WA = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   ? `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`
-  : "https://wa.me/2348000000000";
+  : "https://wa.me/2347034194669";
 
 function TrackContent() {
   const searchParams = useSearchParams();

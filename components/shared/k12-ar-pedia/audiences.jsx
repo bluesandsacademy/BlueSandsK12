@@ -13,7 +13,7 @@ import ngosImg from "@/public/audiences/ngos.jpg";
 import csrImg from "@/public/audiences/csr-projects.png";
 
 const CALENDLY_URL = "https://calendly.com/bluesandstemlabs/30min";
-const WA_NUMBER = "2348139622583";
+const WA_NUMBER = "2347034194669";
 const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
   "Hi, I'd like to join the Blue Sands AR Pedia community",
 )}`;
