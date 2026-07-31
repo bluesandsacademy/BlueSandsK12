@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getProduct } from "@/lib/products";
 import { getUsdToNgn } from "@/lib/exchange-rate";
+import { sendPreorderAcknowledgement, sendAdminPreorderAlert } from "@/lib/resend";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -104,6 +105,31 @@ export async function POST(request) {
       .single();
 
     if (error) throw error;
+
+    // Notify the requester and the admin inbox. Email failures must not fail the
+    // submission, so settle all and swallow errors (they are logged in Resend).
+    await Promise.allSettled([
+      sendPreorderAcknowledgement({
+        to:           email.trim().toLowerCase(),
+        customerName: full_name.trim(),
+        orgName:      school_org_name.trim(),
+        productName:  product.name,
+        quantity:     qty,
+        orderId:      data.id,
+      }),
+      sendAdminPreorderAlert({
+        orgName:      school_org_name.trim(),
+        customerName: full_name.trim(),
+        email:        email.trim().toLowerCase(),
+        phone:        phone.trim(),
+        whatsapp:     whatsapp.trim(),
+        productName:  product.name,
+        quantity:     qty,
+        state,
+        city:         city.trim(),
+        orderId:      data.id,
+      }),
+    ]).catch((e) => console.error("[preorder] notification error", e));
 
     return NextResponse.json({ success: true, id: data.id });
   } catch (err) {

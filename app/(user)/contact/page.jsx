@@ -16,6 +16,10 @@ const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2347034194669";
 const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
   "Hi, I'm interested in the Blue Sands K12 AR Pedia",
 )}`;
+const EMAIL = "info@bluesandstemlabs.com";
+const EMAIL_LINK = `mailto:${EMAIL}?subject=${encodeURIComponent(
+  "Blue Sands K12 AR Pedia enquiry",
+)}`;
 
 function Label({ children, required }) {
   return (
@@ -204,6 +208,19 @@ export default function ContactPage() {
               <div>
                 <p className="font-bold text-secondary text-sm">Chat on WhatsApp</p>
                 <p className="text-gray-500 text-sm mt-0.5">Fastest way to reach us — replies in minutes.</p>
+              </div>
+            </a>
+
+            <a
+              href={EMAIL_LINK}
+              className="flex items-start gap-4 p-5 rounded-2xl bg-white border-2 border-coral/25 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-11 h-11 rounded-xl bg-coral flex items-center justify-center shrink-0">
+                <Mail className="w-5 h-5 text-white" strokeWidth={2} />
+              </div>
+              <div>
+                <p className="font-bold text-secondary text-sm">Email Us</p>
+                <p className="text-gray-500 text-sm mt-0.5 break-all">{EMAIL}</p>
               </div>
             </a>
 
