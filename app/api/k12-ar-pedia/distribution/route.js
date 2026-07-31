@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { sendApplicationAcknowledgement, sendAdminApplicationAlert } from "@/lib/resend";
 
 const NIGERIAN_STATES = [
   "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
@@ -72,6 +73,28 @@ export async function POST(request) {
       .single();
 
     if (error) throw error;
+
+    // Notify the applicant and the admin inbox. Email failures must not fail the
+    // submission, so settle all and swallow errors (they are logged in Resend).
+    await Promise.allSettled([
+      sendApplicationAcknowledgement({
+        to:            email.trim().toLowerCase(),
+        applicantName: full_name.trim(),
+      }),
+      sendAdminApplicationAlert({
+        applicantName:         full_name.trim(),
+        email:                 email.trim().toLowerCase(),
+        phone:                 phone.trim(),
+        whatsapp:              whatsapp.trim(),
+        state,
+        occupation,
+        hasSchoolConnections:  Boolean(has_school_connections),
+        networkSize:           has_school_connections ? (school_network_size || null) : null,
+        whyApply:              why_apply.trim(),
+        cvUrl:                 cv_url?.trim() || null,
+        applicationId:         data.id,
+      }),
+    ]).catch((e) => console.error("[distribution] notification error", e));
 
     return NextResponse.json({
       success: true,
