@@ -13,6 +13,7 @@ import {
   School,
   Presentation,
   DoorOpen,
+  TrendingUp,
 } from "lucide-react";
 import SectionKicker from "./section-kicker";
 
@@ -51,7 +52,7 @@ const columns = [
   },
   {
     side: "after",
-    eyebrow: "BlueSands K12",
+    eyebrow: "Blue Sands K12",
     title: "Engaged Learners",
     img: ENGAGED,
     pos: "center",
@@ -172,40 +173,44 @@ function ResultBand() {
         }}
       />
 
-      {/* Top chip */}
-      <div className="absolute top-4 left-4">
+      {/* Top chip — same icon-circle + eyebrow pill as the compare cards */}
+      <div className="absolute top-4 left-4 flex items-center gap-2">
+        <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-md">
+          <TrendingUp
+            className="w-5 h-5"
+            style={{ color: accent }}
+            strokeWidth={2.5}
+          />
+        </div>
         <span
-          className="px-4 py-1.5 rounded-full text-white text-xs font-extrabold shadow-sm uppercase tracking-wide"
+          className="px-3 py-1.5 rounded-full text-white text-xs font-extrabold shadow-sm"
           style={{ background: accent }}
         >
-          The Result
+          The Outcome
         </span>
       </div>
 
-      {/* Outcomes overlaid on the photo */}
-      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
-        <h3 className="font-display font-bold text-white text-3xl sm:text-4xl drop-shadow-lg mb-5">
+      {/* Outcomes — same title + bullet list as the compare cards */}
+      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+        <h3 className="font-display font-bold text-white text-3xl sm:text-4xl drop-shadow-lg mb-4">
           It all adds up to more.
         </h3>
-        <div className="grid grid-cols-1 gap-3">
+        <ul className="space-y-2.5">
           {outcomes.map(({ label, Icon }) => (
-            <div
-              key={label}
-              className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-3.5"
-            >
-              <span className="shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow">
+            <li key={label} className="flex items-start gap-2.5">
+              <span className="shrink-0 mt-0.5 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm">
                 <Icon
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   style={{ color: accent }}
-                  strokeWidth={2.4}
+                  strokeWidth={2.5}
                 />
               </span>
-              <span className="text-white font-bold text-base sm:text-lg leading-snug drop-shadow">
+              <span className="text-sm sm:text-base font-semibold text-white leading-snug drop-shadow">
                 {label}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </motion.div>
   );

@@ -85,7 +85,7 @@ function CreateAdminTab({ secret }) {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <Field label="Email address" type="email" value={form.email} onChange={set("email")} placeholder="admin@bluesandsstem.com" />
+      <Field label="Email address" type="email" value={form.email} onChange={set("email")} placeholder="admin@bluesandstemlabs.com" />
       <Field label="Password" type={showPw ? "text" : "password"} value={form.password} onChange={set("password")} showToggle={showPw} onToggle={() => setShowPw((v) => !v)} />
       <Field label="Confirm Password" type={showPw ? "text" : "password"} value={form.confirm} onChange={set("confirm")} placeholder="Repeat password" />
 

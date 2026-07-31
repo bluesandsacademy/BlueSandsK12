@@ -12,7 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348139622583";
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2347034194669";
 const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
   "Hi, I'm interested in the Blue Sands K12 AR Pedia",
 )}`;
