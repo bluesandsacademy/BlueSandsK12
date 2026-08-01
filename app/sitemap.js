@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/seo";
 import { products } from "@/lib/products";
+import { solutions } from "@/lib/solutions";
 import { legalDocs } from "@/lib/legal";
 
 export default function sitemap() {
@@ -16,7 +17,8 @@ export default function sitemap() {
     { url: `${SITE_URL}/track`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const productRoutes = products.map((p) => ({
+  // Books and school solutions share the /products/<slug> address space.
+  const productRoutes = [...products, ...solutions].map((p) => ({
     url: `${SITE_URL}/products/${p.slug}`,
     changeFrequency: "weekly",
     priority: 0.8,

@@ -39,7 +39,7 @@ const pillars = [
 export default function VisionSection() {
   return (
     <section
-      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden section-y"
       style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFF1F2 100%)" }}
     >
       {/* Playful shapes */}
@@ -47,7 +47,7 @@ export default function VisionSection() {
       <div className="absolute bottom-10 right-12 w-10 h-10 bg-grass/30 rounded-full kid-float pointer-events-none" />
       <FloatSparkle className="absolute top-16 right-1/4 opacity-60" size={36} color="#FF5A5F" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

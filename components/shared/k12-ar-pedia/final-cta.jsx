@@ -20,7 +20,7 @@ export default function FinalCtaSection() {
       <div className="absolute top-1/2 right-20 w-8 h-8 bg-primary/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.8s" }} />
 
       {/* Content */}
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 lg:py-32 text-center">
+      <div className="relative page-frame py-24 sm:py-28 lg:py-32 text-center">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}

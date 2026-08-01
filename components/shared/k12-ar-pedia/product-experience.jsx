@@ -123,7 +123,7 @@ function PortalCard({ Icon, title, tagline, description, imgSrc, color, index })
 export default function ProductExperienceSection() {
   return (
     <section
-      className="relative py-12 sm:py-14 lg:py-16 overflow-hidden"
+      className="relative section-y-tight overflow-hidden"
       style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}
     >
       {/* Playful floating shapes */}
@@ -131,7 +131,7 @@ export default function ProductExperienceSection() {
       <div className="absolute bottom-24 right-12 w-8 h-8 bg-grape/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.8s" }} />
       <FloatSparkle className="absolute top-20 right-1/4 opacity-60" size={32} color="#FFC83D" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

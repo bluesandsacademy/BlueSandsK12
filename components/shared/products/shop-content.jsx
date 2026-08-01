@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, CalendarCheck } from "lucide-react";
+import { ChevronDown, CalendarCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { products, howItWorks } from "@/lib/products";
+import { solutions } from "@/lib/solutions";
 import Price from "@/components/common/price";
 import CurrencyNote from "@/components/common/currency-note";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
@@ -46,8 +47,11 @@ function ProductCard({ p, index }) {
         className="group flex flex-col h-full rounded-4xl bg-white border-4 overflow-hidden shadow-[0_10px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform"
         style={{ borderColor: p.color }}
       >
-        {/* Image — the star, floating on white like the source */}
-        <div className="relative aspect-4/3 flex items-center justify-center p-5">
+        {/* Image: the star, floating on white like the source.
+            `fill`, not width/height: an in-flow image wins over the box's
+            aspect-ratio via min-height:auto, so each card sized to its own
+            cover and the prices below them stopped lining up. */}
+        <div className="relative aspect-4/3">
           <span
             className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full text-xs font-extrabold text-white shadow-sm"
             style={{ background: p.color }}
@@ -57,10 +61,9 @@ function ProductCard({ p, index }) {
           <Image
             src={p.image}
             alt={p.name}
-            width={p.imageW}
-            height={p.imageH}
+            fill
             sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 90vw"
-            className="w-full h-full object-contain drop-shadow-[0_14px_22px_rgba(2,52,90,0.16)] group-hover:scale-[1.04] transition-transform duration-500"
+            className="object-contain p-5 drop-shadow-[0_14px_22px_rgba(2,52,90,0.16)] group-hover:scale-[1.04] transition-transform duration-500"
           />
         </div>
 
@@ -103,60 +106,88 @@ function ProductCard({ p, index }) {
 export default function ShopContent() {
   return (
     <>
-      {/* ── Hero ── */}
+      {/* ── Hero: a router, not a pitch ──
+          Two different people land here. A parent buying one AR book set for a
+          7-year-old, and a head teacher costing a classroom display or a
+          per-student subscription. The old hero spoke only to the parent
+          ("made for curious kids ages 4-13") on a page that now sells both, so
+          the school buyer had to scroll past three book cards to find out they
+          were catered for. The hero's job is to sort them in one glance. */}
       <section className="relative overflow-hidden bg-gradient-to-b from-sky/25 via-cream to-cream">
-        <div className="absolute top-16 left-8 w-10 h-10 bg-coral/30 blob-1 kid-float pointer-events-none" />
-        <FloatSparkle
-          className="absolute top-24 left-1/3 opacity-60"
-          size={28}
-          color="#9B5DE5"
-        />
-
-        <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 lg:py-24">
-          {/* Centered copy */}
+        <div className="relative page-frame pt-14 pb-12 sm:pt-16 lg:pt-20">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto space-y-6 text-center"
+            className="max-w-3xl"
           >
             <SectionKicker className="text-primary">
-              The ARpedia Collection
+              The Blue Sands catalogue
             </SectionKicker>
-
-            <h1 className="font-display font-bold text-secondary leading-[1.06] text-[2.4rem] sm:text-5xl lg:text-[3.4rem]">
-              AR Books That Leap{" "}
-              <span className="text-primary doodle-underline">Off the Page</span>
+            <h1 className="mt-3 font-display font-bold text-secondary leading-[1.04] text-[2.4rem] sm:text-5xl lg:text-[3.4rem]">
+              AR books for home.{" "}
+              <span className="text-primary doodle-underline">
+                Classroom technology
+              </span>{" "}
+              for schools.
             </h1>
-
-            <p className="mx-auto max-w-xl text-lg sm:text-xl text-gray-600 font-semibold leading-snug">
-              Point a tablet at the page and watch animals, planets and
-              experiments come to life. Real STEM learning, made for curious kids
-              ages 4–13.
+            <p className="mt-5 max-w-xl text-lg sm:text-xl text-gray-600 font-semibold leading-snug">
+              Point a tablet at the page and watch a lesson come to life, or fit
+              a whole school with an interactive board and a science lab on every
+              desk.
             </p>
-
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center pt-1">
-              <Link
-                href="#products"
-                className="inline-flex items-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
-              >
-                Browse the Books
-                <ChevronDown className="w-6 h-6" strokeWidth={2.5} />
-              </Link>
-              <a
-                href={DEMO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-secondary font-display font-bold text-lg shadow-[0_8px_0_rgba(2,52,90,0.15)] hover:translate-y-0.5 hover:shadow-[0_5px_0_rgba(2,52,90,0.15)] transition-all border-2 border-secondary/10"
-              >
-                <CalendarCheck
-                  className="w-5 h-5 text-primary"
-                  strokeWidth={2.5}
-                />
-                Book a Demo
-              </a>
-            </div>
           </motion.div>
+
+          {/* The two paths. Deliberately not matching cards: the home route is
+              light and priced, the school route is navy and quoted, so they
+              read as two different kinds of purchase before a word is read. */}
+          <div className="mt-10 grid md:grid-cols-2 gap-5">
+            <motion.a
+              href="#products"
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.12 }}
+              className="group rounded-4xl bg-white border-4 border-coral p-7 shadow-[0_10px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform"
+            >
+              <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
+                For your home
+              </p>
+              <h2 className="mt-2 font-display font-bold text-secondary text-2xl leading-tight">
+                AR book sets, ages 4 to 13
+              </h2>
+              <p className="mt-2 text-gray-500 font-semibold text-sm leading-snug">
+                Three sets, from five picture books to a 130-experiment science
+                lab. Buy one and read it tonight.
+              </p>
+              <span className="mt-5 inline-flex items-center gap-1.5 font-display font-bold text-coral">
+                Browse the books
+                <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
+              </span>
+            </motion.a>
+
+            <motion.a
+              href="#for-schools"
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="group rounded-4xl bg-secondary text-white p-7 shadow-[0_10px_0_rgba(2,52,90,0.25)] hover:-translate-y-1 transition-transform"
+            >
+              <p className="text-[11px] uppercase tracking-wide font-bold text-white/50">
+                For your school
+              </p>
+              <h2 className="mt-2 font-display font-bold text-2xl leading-tight">
+                Classroom technology
+              </h2>
+              <p className="mt-2 text-white/70 font-semibold text-sm leading-snug">
+                An interactive board for the front of the room, and a tablet that
+                puts a science laboratory on every desk.
+              </p>
+              <span className="mt-5 inline-flex items-center gap-1.5 font-display font-bold text-sunshine">
+                See the school range
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" strokeWidth={2.5} />
+              </span>
+            </motion.a>
+          </div>
         </div>
 
         {/* Wave */}
@@ -178,10 +209,10 @@ export default function ShopContent() {
       {/* ── Product grid ── */}
       <section
         id="products"
-        className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+        className="relative pt-8 pb-16 sm:pb-20 lg:pb-24 overflow-hidden"
         style={{ background: "#FFFBF0" }}
       >
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative page-frame">
           {/* Currency control sits with the prices, not only in the header */}
           <CurrencyNote className="mb-8 sm:mb-10" />
 
@@ -193,9 +224,10 @@ export default function ShopContent() {
         </div>
       </section>
 
+
       {/* ── How it works ── */}
       <section
-        className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+        className="relative section-y overflow-hidden"
         style={{
           background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)",
         }}
@@ -205,7 +237,7 @@ export default function ShopContent() {
           size={32}
           color="#FFC83D"
         />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative page-frame">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -260,8 +292,121 @@ export default function ShopContent() {
             })}
           </div>
 
-          {/* Get the app — Android + iOS */}
+          {/* Get the app: Android + iOS */}
           <AppStores className="mt-12 text-center" align="center" />
+        </div>
+      </section>
+
+      {/* ── For schools: the classroom technology, not the book kits ── */}
+      <section
+        id="for-schools"
+        className="relative section-y overflow-hidden"
+        style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}
+      >
+        <div className="relative page-frame">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12 space-y-3 max-w-2xl mx-auto"
+          >
+            <SectionKicker className="text-primary">For schools</SectionKicker>
+            <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
+              Classroom{" "}
+              <span className="text-primary doodle-underline">Technology</span>
+            </h2>
+            <p className="text-gray-600 text-lg font-semibold">
+              Beyond the book kits: an interactive board for the front of the
+              room, and a tablet that gives every student a science laboratory.
+            </p>
+          </motion.div>
+
+          {/* Alternating rows rather than a card grid. A 2-up grid forces one
+              shared image aspect, and these two photos need opposite shapes:
+              the blackboard is a 2.17:1 classroom panorama, the tablet is 1:1.
+              Cropping either to a common box cuts the subject out (the teacher
+              in one, the tablet's own screen in the other). Here each image
+              renders at its natural height and nothing is lost. */}
+          <div className="space-y-14 lg:space-y-20 max-w-6xl mx-auto">
+            {solutions.map((s, i) => (
+              <motion.div
+                key={s.slug}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+              >
+                <Link
+                  href={`/products/${s.slug}`}
+                  className={`group block rounded-4xl bg-white border-4 overflow-hidden shadow-[0_10px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform ${
+                    i % 2 === 1 ? "lg:order-2" : ""
+                  }`}
+                  style={{ borderColor: s.color }}
+                >
+                  <Image
+                    src={s.hero.src}
+                    alt={s.hero.alt}
+                    width={s.hero.w}
+                    height={s.hero.h}
+                    sizes="(min-width: 1024px) 560px, 92vw"
+                    className="w-full h-auto"
+                  />
+                </Link>
+
+                <div className={i % 2 === 1 ? "lg:order-1" : ""}>
+                  <h3 className="font-display font-bold text-secondary text-2xl sm:text-3xl lg:text-4xl leading-tight">
+                    {s.name}
+                  </h3>
+                  <p className="text-gray-600 text-lg font-semibold mt-2 leading-snug">
+                    {s.tagline}
+                  </p>
+
+                  <ul className="mt-5 space-y-2.5">
+                    {s.outcomes.items.slice(0, 3).map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <CheckCircle2
+                          className="w-5 h-5 mt-0.5 shrink-0"
+                          style={{ color: s.color }}
+                          strokeWidth={2.5}
+                        />
+                        <span className="text-gray-600 font-semibold text-sm leading-snug">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="flex flex-wrap items-end gap-x-6 gap-y-4 mt-6">
+                    <div>
+                      <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
+                        {s.price.mode === "subscription"
+                          ? "Per student, per year"
+                          : "Pricing"}
+                      </span>
+                      <p
+                        className="font-display font-bold text-3xl leading-none mt-1"
+                        style={{ color: s.color }}
+                      >
+                        {s.price.mode === "subscription"
+                          ? `$${s.price.usd}`
+                          : "Coming soon"}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/products/${s.slug}`}
+                      className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-white font-display font-bold shadow-[0_6px_0_rgba(0,0,0,0.15)] hover:translate-y-0.5 hover:shadow-[0_3px_0_rgba(0,0,0,0.15)] transition-all"
+                      style={{ background: s.color }}
+                    >
+                      See the Details
+                      <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 

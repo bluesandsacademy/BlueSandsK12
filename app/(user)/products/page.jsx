@@ -1,20 +1,19 @@
 import ShopContent from "@/components/shared/products/shop-content";
-import AudiencesSection from "@/components/shared/k12-ar-pedia/audiences";
 import SchoolsCta from "@/components/shared/products/schools-cta";
 import JsonLd from "@/components/common/json-ld";
 import { productListSchema, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata = {
-  title: "Shop AR Books — ARpedia Collection",
+  title: "Shop AR Books & Classroom Technology",
   description:
-    "Shop the ARpedia collection: Into the Community, Into the Curiosity Q, and the 8-book AR Science Lab Kit. Augmented-reality books that bring STEM to life for kids ages 4–13, read with the Spotty tablet holder.",
+    "Shop the ARpedia collection: Into the Community, Into the Curiosity Q, and the 8-book AR Science Lab Kit. Plus classroom technology for schools: the Smart Blackboard and the Virtual Science Lab Tablet.",
   alternates: { canonical: "/products" },
   openGraph: {
     type: "website",
     url: "/products",
-    title: "Shop AR Books — ARpedia Collection",
+    title: "Shop AR Books & Classroom Technology",
     description:
-      "Augmented-reality books that bring STEM learning to life for children ages 4–13 across Nigeria.",
+      "Augmented-reality books for children ages 4–13, and the classroom technology Nigerian schools use to teach STEM.",
   },
 };
 
@@ -30,8 +29,12 @@ export default function ProductsPage() {
           ]),
         ]}
       />
+      {/* One ending, not three. This page used to close with the app-store
+          badges, then AudiencesSection's three buttons, then SchoolsCta's two,
+          putting five competing calls to action and three "Book a Demo" links
+          below the fold. AudiencesSection already runs on the home page, so the
+          shop keeps a single close. */}
       <ShopContent />
-      <AudiencesSection />
       <SchoolsCta />
     </div>
   );

@@ -56,7 +56,7 @@ function ChatBubble({ msg }) {
 export default function WhatsAppSection() {
   return (
     <section
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative section-y overflow-hidden"
       style={{ background: "linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%)" }}
     >
       {/* Background blobs */}
@@ -69,7 +69,7 @@ export default function WhatsAppSection() {
       <div className="absolute bottom-12 right-14 w-8 h-8 rounded-full border-2 border-green-400/30 pointer-events-none" />
       <div className="absolute bottom-24 right-28 w-5 h-5 rounded-full bg-green-500/20 pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left – text & CTA */}

@@ -6,8 +6,8 @@ import { Handshake, Mail } from "lucide-react";
 
 export default function ImpactClosing() {
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 bg-cream">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative section-y bg-cream">
+      <div className="page-frame">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

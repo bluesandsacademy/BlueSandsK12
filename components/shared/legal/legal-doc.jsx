@@ -53,7 +53,7 @@ export default function LegalDoc({ doc }) {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-sky/25 via-cream to-cream">
         <div className="absolute top-16 left-8 w-10 h-10 bg-coral/20 blob-1 pointer-events-none" />
-        <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 lg:py-20">
+        <div className="relative page-frame section-y-tight">
           <div className="max-w-3xl mx-auto text-center space-y-5">
             <SectionKicker className="text-primary">Legal</SectionKicker>
             <h1 className="font-display font-bold text-secondary leading-[1.08] text-[2rem] sm:text-4xl lg:text-[2.9rem]">
@@ -69,7 +69,7 @@ export default function LegalDoc({ doc }) {
 
       {/* ── Document ── */}
       <section className="relative pb-16 sm:pb-20 lg:pb-24" style={{ background: "#FFFBF0" }}>
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="page-frame">
           <div className="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-12 xl:gap-16">
             {/* Contents — sticky on desktop, collapsed above the fold on mobile */}
             <nav aria-label="Contents" className="hidden lg:block">
@@ -99,7 +99,7 @@ export default function LegalDoc({ doc }) {
 
               <div className="mt-10 space-y-10">
                 {doc.sections.map((s, i) => (
-                  <section key={s.title} id={anchor(s.title)} className="scroll-mt-40">
+                  <section key={s.title} id={anchor(s.title)} className="scroll-mt-36">
                     <h2 className="font-display font-bold text-secondary text-xl sm:text-2xl leading-tight">
                       <span className="text-primary tabular-nums mr-2">{i + 1}.</span>
                       {s.title}

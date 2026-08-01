@@ -68,7 +68,7 @@ export default function CountdownSection() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#0D3B5C] py-16 sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-[#0D3B5C] section-y">
       {/* Grid pattern */}
       <div
         className="absolute inset-0 opacity-20 pointer-events-none"
@@ -94,7 +94,7 @@ export default function CountdownSection() {
       <div className="absolute bottom-12 left-16 w-5 h-5 rounded-full border border-white/15 pointer-events-none" />
       <div className="absolute bottom-8 right-12 w-10 h-10 rounded-full border-2 border-white/20 pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

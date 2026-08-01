@@ -218,11 +218,11 @@ function ResultBand() {
 
 export default function ComparisonSection() {
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden bg-slate-50">
+    <section className="relative section-y overflow-hidden bg-slate-50">
       <div className="absolute -top-20 -right-20 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-red-200/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -31,7 +31,7 @@ const metrics = [
 export default function MetricsSection() {
   return (
     <section
-      className="relative py-14 sm:py-16 lg:py-20 overflow-hidden"
+      className="relative section-y-tight overflow-hidden"
       style={{
         background: "linear-gradient(180deg, #ffffff 0%, #EAF6FF 100%)",
       }}
@@ -48,7 +48,7 @@ export default function MetricsSection() {
         color="#9B5DE5"
       />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}

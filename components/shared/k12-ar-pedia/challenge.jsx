@@ -152,12 +152,12 @@ const supportingStats = [
 
 export default function ChallengeSection() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24 bg-[#F6F8FB]">
+    <section className="relative overflow-hidden section-y bg-[#F6F8FB]">
       {/* Soft background wash */}
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-200/25 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-200/25 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header band */}
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center mb-12 lg:mb-16">
           <motion.div

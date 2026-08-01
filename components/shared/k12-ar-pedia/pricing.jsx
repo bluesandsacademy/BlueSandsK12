@@ -15,14 +15,14 @@ export default function K12PricingSection() {
   return (
     <section
       id="pricing"
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative section-y overflow-hidden"
       style={{ background: "#FFFBF0" }}
     >
       {/* Background blobs */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-64 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-200/25 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

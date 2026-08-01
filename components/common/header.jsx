@@ -27,6 +27,7 @@ const navLinks = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -43,23 +44,36 @@ export default function Header() {
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
+      setScrolled(y > 8);
       // Ignore tiny jitters; always show near the top
       if (Math.abs(y - lastY) > 6) {
         setHidden(y > lastY && y > 80);
         lastY = y;
       }
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
+    /* The header used to sit under a 4px `border-sunshine/50` rule. Against a
+       cream bar and the sky-tinted top of most heroes that put three hues
+       (warm cream, saturated yellow, cool blue) into four pixels, and the rule
+       was the most saturated thing in the header while meaning nothing. It is
+       gone. The boundary is now drawn only once there is content to separate
+       from: at rest the bar merges into the page, and on scroll it earns a
+       hairline and a soft lift. The background stays opaque rather than
+       transparent because /social-impact opens on a navy hero, where navy nav
+       text would disappear. */
     <header
-      className={`sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b-4 border-sunshine/50 transition-transform duration-300 ${
-        hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className={`sticky top-0 z-50 bg-cream/95 backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 border-b ${
+        scrolled
+          ? "border-secondary/10 shadow-[0_6px_20px_-12px_rgba(2,52,90,0.35)]"
+          : "border-transparent"
+      } ${hidden ? "-translate-y-full" : "translate-y-0"}`}
     >
-      <nav className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 h-28 sm:h-32 flex items-center justify-between">
+      <nav className="page-frame h-20 sm:h-24 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
@@ -67,11 +81,11 @@ export default function Header() {
           onClick={closeMenu}
         >
           <Image
-            src="/brand/k12-logo.png"
-            width={640}
-            height={640}
+            src="/brand/k12-logo-light.png"
+            width={768}
+            height={768}
             alt="Blue Sands K12"
-            className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl"
+            className="h-14 w-14 sm:h-16 sm:w-16"
             priority
           />
         </Link>
@@ -108,7 +122,7 @@ export default function Header() {
           onClick={() => setIsMenuOpen((p) => !p)}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMenuOpen}
-          className="md:hidden w-10 h-10 rounded-full bg-white border-2 border-sunshine/50 flex items-center justify-center text-secondary hover:text-primary transition-colors"
+          className="md:hidden w-10 h-10 rounded-full bg-white border-2 border-secondary/12 flex items-center justify-center text-secondary hover:text-primary transition-colors"
         >
           {isMenuOpen ? (
             <X className="h-6 w-6" strokeWidth={2.5} />
@@ -120,7 +134,7 @@ export default function Header() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t-2 border-sunshine/40 bg-cream">
+        <div className="md:hidden border-t border-secondary/10 bg-cream">
           <nav className="px-4 py-4 space-y-1">
             {navLinks.map((link) => (
               <Link

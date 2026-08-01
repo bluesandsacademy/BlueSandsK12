@@ -40,12 +40,12 @@ const sdgs = [
 
 export default function ImpactChallenge() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24 bg-cream">
+    <section className="relative overflow-hidden section-y bg-cream">
       {/* Soft warm + cool washes: the divide */}
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -207,7 +207,7 @@ function PackageCard() {
 export default function DesignedForChildrenSection() {
   return (
     <section
-      className="relative py-16 sm:py-20 overflow-hidden"
+      className="relative section-y overflow-hidden"
       style={{
         background:
           "linear-gradient(150deg, #fef9c3 0%, #fef3c7 38%, #eff6ff 100%)",
@@ -225,7 +225,7 @@ export default function DesignedForChildrenSection() {
         size={80}
       />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Shared header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
