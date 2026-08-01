@@ -277,7 +277,7 @@ export default function DevAdminPage() {
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center">
-                <Image src="/android-chrome-192x192.png" alt="Blue Sands" width={28} height={28} className="object-contain" />
+                <Image src="/brand/k12-mark-white.png" alt="Blue Sands K12" width={28} height={28} className="object-contain" />
               </div>
               <div>
                 <p className="text-white font-black text-base leading-tight">Blue Sands STEM Labs</p>

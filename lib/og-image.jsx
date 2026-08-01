@@ -4,6 +4,7 @@
 // cannot be re-exported — and delegate the actual drawing to this helper.
 import { ImageResponse } from "next/og";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
+import { K12_MARK_DATA_URI } from "@/lib/brand-mark";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_ALT =
@@ -37,13 +38,12 @@ export function renderOgImage() {
             opacity: 0.95,
           }}
         >
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              background: "#FFC83D",
-            }}
+          <img
+            src={K12_MARK_DATA_URI}
+            width={72}
+            height={72}
+            alt=""
+            style={{ display: "block" }}
           />
           {SITE_NAME}
         </div>

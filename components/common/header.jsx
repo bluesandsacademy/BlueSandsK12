@@ -13,7 +13,6 @@ import {
   HeartHandshake,
   Mail,
 } from "lucide-react";
-import { img } from "@/lib/cloudinary";
 import CurrencySwitcher from "@/components/common/currency-switcher";
 
 const navLinks = [
@@ -60,7 +59,7 @@ export default function Header() {
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <nav className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+      <nav className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 h-28 sm:h-32 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
@@ -68,12 +67,12 @@ export default function Header() {
           onClick={closeMenu}
         >
           <Image
-            src={img("/logo.png")}
-            width={140}
-            height={50}
-            alt="Blue Sands STEM Labs"
-            className="h-7 sm:h-9 w-auto"
-            preload
+            src="/brand/k12-logo.png"
+            width={640}
+            height={640}
+            alt="Blue Sands K12"
+            className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl"
+            priority
           />
         </Link>
 
