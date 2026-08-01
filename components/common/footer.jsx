@@ -1,6 +1,5 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
-import { img } from "@/lib/cloudinary";
 import { legalLinks } from "@/lib/legal";
 
 // Brand glyphs as inline SVGs — lucide-react dropped its brand icon set.
@@ -41,7 +40,10 @@ export default function Footer() {
   return (
     // `id` is the hook WhatsAppFab observes so it can retract instead of
     // covering the footer's links and social icons.
-    <footer id="site-footer" className="relative bg-secondary text-white overflow-hidden">
+    <footer
+      id="site-footer"
+      className="relative bg-secondary text-white overflow-hidden"
+    >
       {/* Playful wave top edge */}
       <div className="absolute top-0 left-0 right-0 leading-none pointer-events-none">
         <svg
@@ -62,11 +64,11 @@ export default function Footer() {
         <div className="flex flex-col items-center sm:items-start gap-2">
           <Link href="/" className="inline-flex shrink-0">
             <Image
-              src={img("/logo-white.png")}
-              width={160}
-              height={56}
-              alt="Blue Sands STEM Labs"
-              className="h-10 w-auto"
+              src="/brand/k12-logo-white.png"
+              width={640}
+              height={640}
+              alt="Blue Sands K12"
+              className="h-24 w-24"
             />
           </Link>
           <span className="inline-flex items-center gap-1.5 text-xs text-white/50 font-semibold text-center sm:text-left">

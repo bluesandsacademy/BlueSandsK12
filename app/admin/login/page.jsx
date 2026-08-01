@@ -57,8 +57,8 @@ function LoginForm() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-5 overflow-hidden">
             <Image
-              src="/android-chrome-192x192.png"
-              alt="Blue Sands STEM Labs"
+              src="/brand/k12-mark-white.png"
+              alt="Blue Sands K12"
               width={52}
               height={52}
               className="object-contain"

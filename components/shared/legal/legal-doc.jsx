@@ -99,7 +99,7 @@ export default function LegalDoc({ doc }) {
 
               <div className="mt-10 space-y-10">
                 {doc.sections.map((s, i) => (
-                  <section key={s.title} id={anchor(s.title)} className="scroll-mt-28">
+                  <section key={s.title} id={anchor(s.title)} className="scroll-mt-40">
                     <h2 className="font-display font-bold text-secondary text-xl sm:text-2xl leading-tight">
                       <span className="text-primary tabular-nums mr-2">{i + 1}.</span>
                       {s.title}

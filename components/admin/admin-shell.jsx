@@ -73,8 +73,8 @@ export default function AdminShell({ children }) {
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
               <Image
-                src="/android-chrome-192x192.png"
-                alt="Blue Sands STEM Labs"
+                src="/brand/k12-mark-white.png"
+                alt="Blue Sands K12"
                 width={28}
                 height={28}
                 className="object-contain"
@@ -146,8 +146,8 @@ export default function AdminShell({ children }) {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg overflow-hidden bg-secondary/10 flex items-center justify-center">
-              <Image src="/android-chrome-192x192.png" alt="" width={18} height={18} className="object-contain" />
+            <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center">
+              <Image src="/brand/k12-mark.png" alt="" width={24} height={24} className="object-cover" />
             </div>
             <p className="font-bold text-secondary text-sm">Blue Sands Admin</p>
           </div>

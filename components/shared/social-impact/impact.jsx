@@ -15,7 +15,7 @@ const targets = [
 
 export default function ImpactNumbers() {
   return (
-    <section id="impact" className="relative py-16 sm:py-20 lg:py-24 bg-cream scroll-mt-20">
+    <section id="impact" className="relative py-16 sm:py-20 lg:py-24 bg-cream scroll-mt-36">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
