@@ -13,12 +13,12 @@ const pillars = [
 
 export default function EcosystemSection() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24 bg-[#FFFBF0]">
+    <section className="relative overflow-hidden section-y bg-[#FFFBF0]">
       {/* Soft decorations */}
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-200/25 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-200/25 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}

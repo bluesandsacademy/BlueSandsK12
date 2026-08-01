@@ -17,7 +17,7 @@ const superpowers = [
 
 export default function BenefitsSection() {
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
+    <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
       {/* Background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-160 h-64 bg-amber-100/60 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-100/40 rounded-full blur-3xl pointer-events-none" />
@@ -27,7 +27,7 @@ export default function BenefitsSection() {
       <FloatSparkle className="absolute bottom-16 left-10 lg:bottom-20 lg:left-16 opacity-40" size={44} color="#3b82f6" />
       <FloatSparkle className="absolute top-24 left-[30%] opacity-20" size={28} color="#10b981" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

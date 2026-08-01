@@ -16,7 +16,7 @@ export default function CoordinatorSection() {
   return (
     <section
       id="coordinator"
-      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden section-y"
       style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}
     >
       {/* Playful floating shapes */}
@@ -24,7 +24,7 @@ export default function CoordinatorSection() {
       <div className="absolute bottom-10 left-8 w-10 h-10 bg-coral/30 rounded-full kid-float pointer-events-none" />
       <FloatSparkle className="absolute top-16 left-1/4 opacity-60" size={34} color="#9B5DE5" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

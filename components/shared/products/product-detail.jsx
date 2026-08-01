@@ -31,7 +31,7 @@ export default function ProductDetail({ slug }) {
         <div className="absolute top-16 left-8 w-10 h-10 bg-coral/30 blob-1 kid-float pointer-events-none" />
         <FloatSparkle className="absolute top-24 right-1/4 opacity-60" size={30} color="#FFC83D" />
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-20">
+        <div className="relative page-frame section-y-tight">
           <Link
             href="/products"
             className="inline-flex items-center gap-2 text-secondary font-bold mb-8 hover:text-primary transition-colors"
@@ -137,8 +137,8 @@ export default function ProductDetail({ slug }) {
       </section>
 
       {/* ── About + features ── */}
-      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-14">
+      <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+        <div className="relative page-frame grid lg:grid-cols-2 gap-10 lg:gap-14">
           <div className="space-y-4">
             <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl leading-tight">
               What makes it{" "}
@@ -173,8 +173,8 @@ export default function ProductDetail({ slug }) {
 
       {/* ── Inside the package ── */}
       {p.package?.length > 0 && (
-        <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+          <div className="relative page-frame">
             <div className="text-center mb-10 space-y-3">
               <SectionKicker className="text-primary">What&apos;s in the box</SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
@@ -220,8 +220,8 @@ export default function ProductDetail({ slug }) {
 
       {/* ── What's included (series titles) ── */}
       {p.included?.length > 0 && (
-        <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}>
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative section-y overflow-hidden" style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}>
+          <div className="relative page-frame">
             <div className="text-center mb-10 space-y-3">
               <SectionKicker className="text-primary">8 Books · 130 Experiments</SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
@@ -247,8 +247,8 @@ export default function ProductDetail({ slug }) {
       )}
 
       {/* ── How it works ── */}
-      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "#FFFBF0" }}>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+        <div className="relative page-frame">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl lg:text-5xl mb-12">
             How the AR Books <span className="text-grass doodle-underline">Work</span>
           </h2>
@@ -273,9 +273,9 @@ export default function ProductDetail({ slug }) {
       </section>
 
       {/* ── Other products ── */}
-      <section className="relative py-14 sm:py-18 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}>
+      <section className="relative section-y overflow-hidden" style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}>
         <FloatPlanet className="absolute top-10 right-8 opacity-40" size={70} />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative page-frame">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl mb-10">
             Explore More <span className="text-coral doodle-underline">Books</span>
           </h2>

@@ -59,14 +59,14 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+      <div className="relative page-frame pt-12 pb-6 flex flex-col sm:flex-row items-center justify-between gap-5">
         {/* Logo + copyright */}
         <div className="flex flex-col items-center sm:items-start gap-2">
           <Link href="/" className="inline-flex shrink-0">
             <Image
-              src="/brand/k12-logo-white.png"
-              width={640}
-              height={640}
+              src="/brand/k12-logo-dark.png"
+              width={768}
+              height={768}
               alt="Blue Sands K12"
               className="h-24 w-24"
             />

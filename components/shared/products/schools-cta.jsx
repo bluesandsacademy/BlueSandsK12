@@ -8,21 +8,23 @@ import { FloatPlanet } from "@/components/shared/k12-ar-pedia/science-floats";
 
 const DEMO_URL = "https://calendly.com/bluesandstemlabs/30min";
 
+// Covers both ranges now: the AR book kits and the classroom technology. This
+// is the page's only closing call to action, so it cannot be book-only.
 const bullets = [
   "Bulk orders for classrooms",
   "Teacher onboarding & training",
   "Set-up and rollout support",
-  "Works online or offline",
+  "Interactive boards and student tablets",
 ];
 
-/* Final bottom CTA for the products page — schools, STEM centres & bulk. */
+/* Final bottom CTA for the products page: schools, STEM centres & bulk. */
 export default function SchoolsCta() {
   return (
     <section
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative section-y overflow-hidden"
       style={{ background: "#FFFBF0" }}
     >
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -36,13 +38,14 @@ export default function SchoolsCta() {
               For Schools &amp; Centres
             </SectionKicker>
             <h2 className="font-display font-bold leading-tight text-3xl sm:text-4xl lg:text-5xl">
-              Bringing AR books to your{" "}
-              <span className="text-sunshine">classroom</span>
+              Fitting out a whole{" "}
+              <span className="text-sunshine">school</span>
             </h2>
             <p className="text-white/80 text-lg font-semibold">
               Kitting out a school, STEM centre or learning club? We help you
-              roll out the AR books and Spotty kits across classrooms, with
-              training and support for your teachers.
+              roll it out across classrooms, from AR book kits to interactive
+              boards and student tablets, with training and support for your
+              teachers.
             </p>
             <ul className="grid sm:grid-cols-2 gap-3">
               {bullets.map((b) => (

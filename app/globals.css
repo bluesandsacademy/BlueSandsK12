@@ -33,11 +33,66 @@
   --font-inter: var(--font-inter);
 }
 
-/* Shared page frame: navbar, footer and all content sections use max-w-8xl so
-   their left/right edges line up on every page. Defined explicitly because this
-   project uses max-w-8xl throughout but it isn't a built-in Tailwind size. */
+/* Shared page frame: the navbar, the footer and every content section use this
+   one class, so their left and right edges line up on every page. It replaces a
+   spread of max-w-8xl / 7xl / 6xl / 5xl / 3xl / 2xl containers that made the
+   left edge step in and out as you scrolled a single page.
+
+   The width lives here and nowhere else. Change this one value to retune the
+   whole site; do not narrow a section by swapping its frame, because that is
+   what broke the alignment before. When content needs a shorter line length,
+   constrain the *measure* inside the frame (`max-w-2xl`, `max-w-3xl`) and leave
+   the frame alone. */
+@utility page-frame {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: calc(var(--spacing) * 4);
+}
+@media (width >= 40rem) {
+  .page-frame {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+}
+@media (width >= 64rem) {
+  .page-frame {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+}
+
+/* Kept for any remaining one-off usages; the page frame above is the default. */
 @utility max-w-8xl {
   max-width: 90rem;
+}
+
+/* One vertical rhythm for every page section, for the same reason max-w-8xl
+   exists: sections were drifting between py-14, py-16, py-20 and py-24, so the
+   gap between two blocks changed depending on which component drew them and
+   the pages never felt like one system. `section-y` is the default band;
+   `section-y-tight` is for a band that deliberately sits closer to the one
+   above it, such as a hero handing off to the content beneath it. Change the
+   rhythm here, not in a component. */
+@utility section-y {
+  padding-block: calc(var(--spacing) * 16);
+}
+@utility section-y-tight {
+  padding-block: calc(var(--spacing) * 12);
+}
+@media (width >= 40rem) {
+  .section-y {
+    padding-block: calc(var(--spacing) * 20);
+  }
+  .section-y-tight {
+    padding-block: calc(var(--spacing) * 16);
+  }
+}
+@media (width >= 64rem) {
+  .section-y {
+    padding-block: calc(var(--spacing) * 24);
+  }
+  .section-y-tight {
+    padding-block: calc(var(--spacing) * 20);
+  }
 }
 
 /* Existing components reference var(--font-jarkata) for display text —

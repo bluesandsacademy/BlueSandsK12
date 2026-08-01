@@ -12,7 +12,7 @@ import { FloatSparkle } from "./science-floats";
 export default function ProductsTeaserSection() {
   return (
     <section
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative section-y overflow-hidden"
       style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}
     >
       {/* Playful shapes */}
@@ -20,7 +20,7 @@ export default function ProductsTeaserSection() {
       <div className="absolute bottom-20 left-8 w-8 h-8 bg-grape/30 rounded-full kid-float pointer-events-none" style={{ animationDelay: "0.7s" }} />
       <FloatSparkle className="absolute top-20 left-1/4 opacity-60" size={32} color="#FFC83D" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

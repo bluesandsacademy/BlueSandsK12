@@ -73,7 +73,7 @@ function FeatureCard({ label, line, imgSrc, color, index }) {
 export default function FeaturesSection() {
   return (
     <section
-      className="relative py-12 sm:py-14 lg:py-16 overflow-hidden"
+      className="relative section-y-tight overflow-hidden"
       style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}
     >
       {/* Science float decorations */}
@@ -81,7 +81,7 @@ export default function FeaturesSection() {
       <FloatPlanet className="absolute bottom-10 left-6 lg:bottom-14 lg:left-12 opacity-20" size={80} />
       <FloatSparkle className="absolute top-24 left-[28%] opacity-50" size={30} color="#FFC83D" />
 
-      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative page-frame">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

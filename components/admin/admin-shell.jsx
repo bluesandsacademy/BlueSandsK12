@@ -73,7 +73,7 @@ export default function AdminShell({ children }) {
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
               <Image
-                src="/brand/k12-mark-white.png"
+                src="/brand/k12-mark-dark.png"
                 alt="Blue Sands K12"
                 width={28}
                 height={28}
@@ -147,7 +147,7 @@ export default function AdminShell({ children }) {
           </button>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center">
-              <Image src="/brand/k12-mark.png" alt="" width={24} height={24} className="object-cover" />
+              <Image src="/brand/k12-mark-light.png" alt="" width={24} height={24} className="object-cover" />
             </div>
             <p className="font-bold text-secondary text-sm">Blue Sands Admin</p>
           </div>

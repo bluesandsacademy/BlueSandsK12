@@ -44,8 +44,8 @@ const sdgs = [
 
 export default function ImpactVoices() {
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative section-y bg-white">
+      <div className="page-frame">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}

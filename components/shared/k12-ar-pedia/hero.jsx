@@ -365,7 +365,7 @@ export default function K12HeroSection() {
         color="#FFC83D"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-8xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
+      <div className="relative z-10 page-frame py-14 sm:py-20 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left — copy (swaps per slide) */}
           <div className="relative">
