@@ -12,8 +12,8 @@ import {
   Handshake,
   HeartHandshake,
   Mail,
+  Download,
 } from "lucide-react";
-import CurrencySwitcher from "@/components/common/currency-switcher";
 
 const navLinks = [
   { name: "Home", href: "/", Icon: House },
@@ -81,11 +81,11 @@ export default function Header() {
           onClick={closeMenu}
         >
           <Image
-            src="/brand/k12-logo-light.png"
-            width={768}
-            height={768}
+            src="/brand/k12-logo-blue.png"
+            width={967}
+            height={1048}
             alt="Blue Sands K12"
-            className="h-14 w-14 sm:h-16 sm:w-16"
+            className="h-14 w-auto sm:h-24"
             priority
           />
         </Link>
@@ -107,13 +107,13 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <CurrencySwitcher />
           <Link
-            href="/products"
+            href="/brochure.pdf"
+            download
             className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-coral text-white text-sm font-display font-bold rounded-full shadow-[0_5px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_2px_0_#d63a3f] transition-all"
           >
-            <ShoppingBag className="w-4 h-4" strokeWidth={2.5} />
-            Shop Kits
+            <Download className="w-4 h-4" strokeWidth={2.5} />
+            Download Brochure
           </Link>
         </div>
 
@@ -147,16 +147,14 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-            <div className="flex justify-center pt-3">
-              <CurrencySwitcher />
-            </div>
             <Link
-              href="/products"
+              href="/brochure.pdf"
+              download
               onClick={closeMenu}
               className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-coral text-white text-center font-display font-bold rounded-xl shadow-[0_5px_0_#d63a3f]"
             >
-              <ShoppingBag className="w-5 h-5" strokeWidth={2.5} />
-              Shop Kits
+              <Download className="w-5 h-5" strokeWidth={2.5} />
+              Download Brochure
             </Link>
           </nav>
         </div>
