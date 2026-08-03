@@ -3,8 +3,23 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, CheckCircle2, CalendarCheck, BookOpen, Package, Tablet } from "lucide-react";
-import { products, getProduct, howItWorks, buyUrl, TABLET_NGN, TABLET_USD } from "@/lib/products";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  CalendarCheck,
+  BookOpen,
+  Package,
+  Tablet,
+} from "lucide-react";
+import {
+  products,
+  getProduct,
+  howItWorks,
+  buyUrl,
+  TABLET_NGN,
+  TABLET_USD,
+} from "@/lib/products";
 import AppStores from "@/components/shared/products/app-stores";
 import Price from "@/components/common/price";
 import CurrencyNote from "@/components/common/currency-note";
@@ -29,7 +44,11 @@ export default function ProductDetail({ slug }) {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-sky/20 via-cream to-cream">
         <div className="absolute top-16 left-8 w-10 h-10 bg-coral/30 blob-1 kid-float pointer-events-none" />
-        <FloatSparkle className="absolute top-24 right-1/4 opacity-60" size={30} color="#FFC83D" />
+        <FloatSparkle
+          className="absolute top-24 right-1/4 opacity-60"
+          size={30}
+          color="#FFC83D"
+        />
 
         <div className="relative page-frame section-y-tight">
           <Link
@@ -73,7 +92,9 @@ export default function ProductDetail({ slug }) {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="space-y-6"
             >
-              <SectionKicker className="text-primary">AR Book · {p.ageRange}</SectionKicker>
+              <SectionKicker className="text-primary">
+                AR Book · {p.ageRange}
+              </SectionKicker>
               <h1 className="font-display font-bold text-secondary leading-[1.05] text-4xl sm:text-5xl">
                 {p.name}
               </h1>
@@ -84,18 +105,25 @@ export default function ProductDetail({ slug }) {
               {/* Pricing */}
               <div
                 className="rounded-2xl p-5 border-2 flex items-center justify-between gap-4"
-                style={{ background: `${p.color}10`, borderColor: `${p.color}40` }}
+                style={{
+                  background: `${p.color}10`,
+                  borderColor: `${p.color}40`,
+                }}
               >
                 <div>
                   <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
                     From
                   </p>
-                  <p className="font-display font-black text-3xl leading-none mt-1" style={{ color: p.color }}>
+                  <p
+                    className="font-display font-black text-3xl leading-none mt-1"
+                    style={{ color: p.color }}
+                  >
                     <Price ngn={p.priceNGN} usd={p.priceUSD} />
                   </p>
                 </div>
                 <p className="text-xs font-semibold text-gray-500 max-w-[46%] text-right">
-                  Tablet not included, add one for <Price ngn={TABLET_NGN} usd={TABLET_USD} />.
+                  Tablet not included, add one for{" "}
+                  <Price ngn={TABLET_NGN} usd={TABLET_USD} />.
                 </p>
               </div>
 
@@ -123,28 +151,43 @@ export default function ProductDetail({ slug }) {
                 </a>
               </div>
 
-              {/* App included — Android + iOS */}
+              {/* App included: Android + iOS */}
               <AppStores className="pt-2" />
             </motion.div>
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 leading-none pointer-events-none">
-          <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="w-full" style={{ height: 50 }}>
-            <path fill="#FFFBF0" d="M0,50 C240,90 480,10 720,40 C960,70 1200,10 1440,40 L1440,90 L0,90 Z" />
+          <svg
+            viewBox="0 0 1440 90"
+            preserveAspectRatio="none"
+            className="w-full"
+            style={{ height: 50 }}
+          >
+            <path
+              fill="#FFFBF0"
+              d="M0,50 C240,90 480,10 720,40 C960,70 1200,10 1440,40 L1440,90 L0,90 Z"
+            />
           </svg>
         </div>
       </section>
 
       {/* ── About + features ── */}
-      <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+      <section
+        className="relative section-y overflow-hidden"
+        style={{ background: "#FFFBF0" }}
+      >
         <div className="relative page-frame grid lg:grid-cols-2 gap-10 lg:gap-14">
           <div className="space-y-4">
             <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl leading-tight">
               What makes it{" "}
-              <span className="doodle-underline" style={{ color: p.color }}>special</span>
+              <span className="doodle-underline" style={{ color: p.color }}>
+                special
+              </span>
             </h2>
-            <p className="text-gray-600 text-lg font-semibold leading-relaxed">{p.description}</p>
+            <p className="text-gray-600 text-lg font-semibold leading-relaxed">
+              {p.description}
+            </p>
           </div>
 
           <div className="space-y-3">
@@ -162,7 +205,11 @@ export default function ProductDetail({ slug }) {
                   className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
                   style={{ background: `${p.color}1f` }}
                 >
-                  <CheckCircle2 className="w-6 h-6" style={{ color: p.color }} strokeWidth={2.5} />
+                  <CheckCircle2
+                    className="w-6 h-6"
+                    style={{ color: p.color }}
+                    strokeWidth={2.5}
+                  />
                 </div>
                 <span className="font-bold text-secondary">{f}</span>
               </motion.div>
@@ -173,13 +220,20 @@ export default function ProductDetail({ slug }) {
 
       {/* ── Inside the package ── */}
       {p.package?.length > 0 && (
-        <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+        <section
+          className="relative section-y overflow-hidden"
+          style={{ background: "#FFFBF0" }}
+        >
           <div className="relative page-frame">
             <div className="text-center mb-10 space-y-3">
-              <SectionKicker className="text-primary">What&apos;s in the box</SectionKicker>
+              <SectionKicker className="text-primary">
+                What&apos;s in the box
+              </SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
                 Inside the{" "}
-                <span className="doodle-underline" style={{ color: p.color }}>package</span>
+                <span className="doodle-underline" style={{ color: p.color }}>
+                  package
+                </span>
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -197,36 +251,47 @@ export default function ProductDetail({ slug }) {
                     className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
                     style={{ background: `${p.color}1f` }}
                   >
-                    <Package className="w-5 h-5" style={{ color: p.color }} strokeWidth={2.2} />
+                    <Package
+                      className="w-5 h-5"
+                      style={{ color: p.color }}
+                      strokeWidth={2.2}
+                    />
                   </div>
                   <div>
-                    <p className="font-display font-bold text-secondary leading-tight">{item.name}</p>
-                    <p className="text-gray-500 text-sm font-semibold mt-0.5 leading-snug">{item.detail}</p>
+                    <p className="font-display font-bold text-secondary leading-tight">
+                      {item.name}
+                    </p>
+                    <p className="text-gray-500 text-sm font-semibold mt-0.5 leading-snug">
+                      {item.detail}
+                    </p>
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Tablet callout — not part of the kit; add it in the store cart */}
-            <div className="mt-5 flex items-center gap-3 rounded-2xl bg-amber-50 border-2 border-amber-200 px-5 py-4">
-              <Tablet className="w-6 h-6 text-amber-500 shrink-0" strokeWidth={2.2} />
-              <p className="text-sm font-semibold text-amber-800">
-                A tablet is <span className="font-bold">not included</span>. Spotty holds your own, or add one to your cart in the store for <Price ngn={TABLET_NGN} usd={TABLET_USD} />.
-              </p>
-            </div>
+            {/* Tablet callout: not part of the kit; add it in the store cart */}
           </div>
         </section>
       )}
 
       {/* ── What's included (series titles) ── */}
       {p.included?.length > 0 && (
-        <section className="relative section-y overflow-hidden" style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}>
+        <section
+          className="relative section-y overflow-hidden"
+          style={{
+            background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)",
+          }}
+        >
           <div className="relative page-frame">
             <div className="text-center mb-10 space-y-3">
-              <SectionKicker className="text-primary">8 Books · 130 Experiments</SectionKicker>
+              <SectionKicker className="text-primary">
+                8 Books · 130 Experiments
+              </SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl">
                 The full science{" "}
-                <span className="doodle-underline" style={{ color: p.color }}>series</span>
+                <span className="doodle-underline" style={{ color: p.color }}>
+                  series
+                </span>
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -236,9 +301,14 @@ export default function ProductDetail({ slug }) {
                   className="flex items-center gap-3 rounded-2xl bg-white p-4 border-2 border-primary/10 shadow-[0_5px_0_rgba(0,0,0,0.05)]"
                 >
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <BookOpen className="w-5 h-5 text-primary" strokeWidth={2.25} />
+                    <BookOpen
+                      className="w-5 h-5 text-primary"
+                      strokeWidth={2.25}
+                    />
                   </div>
-                  <span className="font-bold text-secondary text-sm sm:text-base">{title}</span>
+                  <span className="font-bold text-secondary text-sm sm:text-base">
+                    {title}
+                  </span>
                 </div>
               ))}
             </div>
@@ -247,10 +317,14 @@ export default function ProductDetail({ slug }) {
       )}
 
       {/* ── How it works ── */}
-      <section className="relative section-y overflow-hidden" style={{ background: "#FFFBF0" }}>
+      <section
+        className="relative section-y overflow-hidden"
+        style={{ background: "#FFFBF0" }}
+      >
         <div className="relative page-frame">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl lg:text-5xl mb-12">
-            How the AR Books <span className="text-grass doodle-underline">Work</span>
+            How the AR Books{" "}
+            <span className="text-grass doodle-underline">Work</span>
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {howItWorks.map((s, i) => (
@@ -264,7 +338,9 @@ export default function ProductDetail({ slug }) {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                   <s.Icon className="w-8 h-8 text-primary" strokeWidth={2} />
                 </div>
-                <h3 className="font-display font-bold text-secondary leading-tight">{s.title}</h3>
+                <h3 className="font-display font-bold text-secondary leading-tight">
+                  {s.title}
+                </h3>
                 <p className="text-gray-600 text-sm font-semibold">{s.sub}</p>
               </div>
             ))}
@@ -273,11 +349,17 @@ export default function ProductDetail({ slug }) {
       </section>
 
       {/* ── Other products ── */}
-      <section className="relative section-y overflow-hidden" style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}>
+      <section
+        className="relative section-y overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)",
+        }}
+      >
         <FloatPlanet className="absolute top-10 right-8 opacity-40" size={70} />
         <div className="relative page-frame">
           <h2 className="text-center font-display font-bold text-secondary text-3xl sm:text-4xl mb-10">
-            Explore More <span className="text-coral doodle-underline">Books</span>
+            Explore More{" "}
+            <span className="text-coral doodle-underline">Books</span>
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
             {others.map((o) => (

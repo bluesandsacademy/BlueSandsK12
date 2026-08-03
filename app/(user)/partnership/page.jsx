@@ -79,7 +79,7 @@ export default function PartnershipPage() {
       {/* <CoordinatorSection /> */}
 
       {/* Pre-order options */}
-      <K12PricingSection />
+      {/* <K12PricingSection /> */}
 
       {/* Reach / interactive map */}
       <DistributionSection />

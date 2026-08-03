@@ -3,7 +3,12 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, CalendarCheck, ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  ChevronDown,
+  CalendarCheck,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
 import { products, howItWorks } from "@/lib/products";
 import { solutions } from "@/lib/solutions";
 import Price from "@/components/common/price";
@@ -35,12 +40,18 @@ function readableOn(hex) {
 }
 
 function ProductCard({ p, index }) {
+  // The tablet is a per-student annual subscription priced only in USD (see
+  // lib/solutions.js), not a one-off NGN/USD kit price, so it renders through
+  // its own `price` field instead of <Price>.
+  const isSubscription = p.price?.mode === "subscription";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
+      className="h-full"
     >
       <Link
         href={`/products/${p.slug}`}
@@ -56,7 +67,7 @@ function ProductCard({ p, index }) {
             className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full text-xs font-extrabold text-white shadow-sm"
             style={{ background: p.color }}
           >
-            {p.ageRange}
+            {p.badge}
           </span>
           <Image
             src={p.image}
@@ -78,17 +89,19 @@ function ProductCard({ p, index }) {
           <div className="flex items-end justify-between mt-3">
             <div>
               <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                From
+                {isSubscription ? "Per student, per year" : "From"}
               </span>
               <p
                 className="font-display font-bold text-2xl leading-none mt-0.5"
                 style={{ color: p.color }}
               >
-                <Price ngn={p.priceNGN} usd={p.priceUSD} />
+                {isSubscription ? (
+                  `$${p.price.usd}`
+                ) : (
+                  <Price ngn={p.priceNGN} usd={p.priceUSD} />
+                )}
               </p>
-              <p className="text-xs font-bold text-gray-400 mt-1">
-                {p.ageRange}
-              </p>
+              <p className="text-xs font-bold text-gray-400 mt-1">{p.badge}</p>
             </div>
             <span
               className="font-display font-bold text-sm group-hover:translate-x-0.5 transition-transform"
@@ -103,7 +116,30 @@ function ProductCard({ p, index }) {
   );
 }
 
+// The Virtual Science Lab Tablet sits in the shop row beside the three AR
+// books, so head teachers browsing books see the school hardware too. It
+// keeps its own detail page (/products/virtual-science-lab-tablet) and its
+// full marketing block further down in "for schools": this is just a
+// second entry point, reshaped to fit the same card as the books.
+const tabletSolution = solutions.find(
+  (s) => s.slug === "virtual-science-lab-tablet",
+);
+const tabletCard = {
+  slug: tabletSolution.slug,
+  name: tabletSolution.name,
+  image: tabletSolution.hero.src,
+  blurb: tabletSolution.blurb,
+  color: tabletSolution.color,
+  badge: "SS1-SS3",
+  price: tabletSolution.price,
+};
+
 export default function ShopContent() {
+  const shopRowItems = [
+    ...products.map((p) => ({ ...p, badge: p.ageRange })),
+    tabletCard,
+  ];
+
   return (
     <>
       {/* ── Hero: a router, not a pitch ──
@@ -133,8 +169,8 @@ export default function ShopContent() {
             </h1>
             <p className="mt-5 max-w-xl text-lg sm:text-xl text-gray-600 font-semibold leading-snug">
               Point a tablet at the page and watch a lesson come to life, or fit
-              a whole school with an interactive board and a science lab on every
-              desk.
+              a whole school with an interactive board and a science lab on
+              every desk.
             </p>
           </motion.div>
 
@@ -161,7 +197,10 @@ export default function ShopContent() {
               </p>
               <span className="mt-5 inline-flex items-center gap-1.5 font-display font-bold text-coral">
                 Browse the books
-                <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
+                <ChevronDown
+                  className="w-5 h-5 group-hover:translate-y-0.5 transition-transform"
+                  strokeWidth={2.5}
+                />
               </span>
             </motion.a>
 
@@ -179,12 +218,15 @@ export default function ShopContent() {
                 Classroom technology
               </h2>
               <p className="mt-2 text-white/70 font-semibold text-sm leading-snug">
-                An interactive board for the front of the room, and a tablet that
-                puts a science laboratory on every desk.
+                An interactive board for the front of the room, and a tablet
+                that puts a science laboratory on every desk.
               </p>
               <span className="mt-5 inline-flex items-center gap-1.5 font-display font-bold text-sunshine">
                 See the school range
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" strokeWidth={2.5} />
+                <ArrowRight
+                  className="w-5 h-5 group-hover:translate-x-0.5 transition-transform"
+                  strokeWidth={2.5}
+                />
               </span>
             </motion.a>
           </div>
@@ -216,14 +258,21 @@ export default function ShopContent() {
           {/* Currency control sits with the prices, not only in the header */}
           <CurrencyNote className="mb-8 sm:mb-10" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {products.map((p, i) => (
-              <ProductCard key={p.slug} p={p} index={i} />
+          {/* Four cards (three AR books + the tablet) squeeze awkwardly into
+              any fixed grid width, so the row scrolls horizontally instead of
+              wrapping or shrinking the cards. */}
+          <div className="flex gap-6 lg:gap-8 overflow-x-auto pb-3 snap-x snap-mandatory scroll-smooth">
+            {shopRowItems.map((p, i) => (
+              <div
+                key={p.slug}
+                className="shrink-0 w-[78vw] sm:w-80 lg:w-[340px] snap-start"
+              >
+                <ProductCard p={p} index={i} />
+              </div>
             ))}
           </div>
         </div>
       </section>
-
 
       {/* ── How it works ── */}
       <section
@@ -279,7 +328,11 @@ export default function ShopContent() {
                     className="w-20 h-20 rounded-full flex items-center justify-center shadow-sm"
                     style={{ background: `${color}1a` }}
                   >
-                    <s.Icon className="w-9 h-9" style={{ color }} strokeWidth={2} />
+                    <s.Icon
+                      className="w-9 h-9"
+                      style={{ color }}
+                      strokeWidth={2}
+                    />
                   </div>
                   <h3 className="font-display font-bold text-secondary text-lg leading-tight">
                     {s.title}
@@ -301,7 +354,9 @@ export default function ShopContent() {
       <section
         id="for-schools"
         className="relative section-y overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)" }}
+        style={{
+          background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)",
+        }}
       >
         <div className="relative page-frame">
           <motion.div
@@ -317,19 +372,19 @@ export default function ShopContent() {
               <span className="text-primary doodle-underline">Technology</span>
             </h2>
             <p className="text-gray-600 text-lg font-semibold">
-              Beyond the book kits: an interactive board for the front of the
-              room, and a tablet that gives every student a science laboratory.
+              Beyond the book kits: an interactive board that replaces the
+              chalkboard at the front of the room.
             </p>
           </motion.div>
 
-          {/* Alternating rows rather than a card grid. A 2-up grid forces one
-              shared image aspect, and these two photos need opposite shapes:
-              the blackboard is a 2.17:1 classroom panorama, the tablet is 1:1.
-              Cropping either to a common box cuts the subject out (the teacher
-              in one, the tablet's own screen in the other). Here each image
-              renders at its natural height and nothing is lost. */}
+          {/* The Virtual Science Lab Tablet has its own card in the shop row
+              above, so it's left out of `solutions` here to avoid showing it
+              twice on the page. Kept as a mapped list, not a single card, in
+              case more classroom-technology solutions join the blackboard. */}
           <div className="space-y-14 lg:space-y-20 max-w-6xl mx-auto">
-            {solutions.map((s, i) => (
+            {solutions
+              .filter((s) => s.slug !== tabletSolution.slug)
+              .map((s, i) => (
               <motion.div
                 key={s.slug}
                 initial={{ opacity: 0, y: 30 }}
@@ -409,7 +464,6 @@ export default function ShopContent() {
           </div>
         </div>
       </section>
-
     </>
   );
 }

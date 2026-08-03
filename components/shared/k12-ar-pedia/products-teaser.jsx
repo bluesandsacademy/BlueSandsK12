@@ -5,9 +5,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import { products } from "@/lib/products";
+import { solutions } from "@/lib/solutions";
 import Price from "@/components/common/price";
 import SectionKicker from "./section-kicker";
 import { FloatSparkle } from "./science-floats";
+
+/* A quiet label above each row. The section now carries two kinds of purchase,
+   a book set a parent buys tonight and classroom equipment a school is quoted
+   for, and five cards in one undivided grid would read as five versions of the
+   same thing (and leave an orphan row in a 3-up). */
+function RowLabel({ children }) {
+  return (
+    <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-secondary/45 mb-4">
+      {children}
+    </p>
+  );
+}
 
 export default function ProductsTeaserSection() {
   return (
@@ -29,17 +42,21 @@ export default function ProductsTeaserSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 space-y-4 max-w-3xl mx-auto"
         >
-          <SectionKicker>Meet the Books</SectionKicker>
+          <SectionKicker>What we make</SectionKicker>
           <h2 className="font-display font-bold text-secondary leading-tight text-4xl sm:text-5xl lg:text-6xl">
-            AR Books That Make Learning{" "}
-            <span className="text-coral doodle-underline">Pop</span>
+            Books for home. Technology for the{" "}
+            <span className="text-coral doodle-underline">classroom</span>.
           </h2>
           <p className="text-gray-600 text-lg sm:text-2xl font-semibold">
-            Three augmented-reality book sets for curious kids ages 4–13.
+            Three AR book sets for ages 4 to 13, plus the board and the tablet
+            that fit out a whole school.
           </p>
         </motion.div>
 
-        {/* Product cards */}
+        {/* Books */}
+        <div className="max-w-4xl mx-auto">
+          <RowLabel>For home</RowLabel>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
           {products.map((p, i) => (
             <motion.div
@@ -93,6 +110,79 @@ export default function ProductsTeaserSection() {
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        {/* Classroom technology */}
+        <div className="max-w-4xl mx-auto mt-12">
+          <RowLabel>For schools</RowLabel>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {solutions.map((s, i) => {
+              const subscription = s.price.mode === "subscription";
+              return (
+                <motion.div
+                  key={s.slug}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  whileHover={{ y: -8 }}
+                >
+                  <Link
+                    href={`/products/${s.slug}`}
+                    className="group flex flex-col h-full rounded-[1.8rem] bg-white border-4 overflow-hidden shadow-[0_8px_0_rgba(0,0,0,0.06)]"
+                    style={{ borderColor: s.color }}
+                  >
+                    {/* object-contain on a tinted panel, the same treatment the
+                        book covers get on white. These two photos are a 2.17:1
+                        panorama and a 1:1 square, so any shared box with
+                        object-cover would crop the teacher out of one of them. */}
+                    <div
+                      className="relative aspect-video flex items-center justify-center p-3"
+                      style={{ background: `${s.color}0f` }}
+                    >
+                      <Image
+                        src={s.hero.src}
+                        alt={s.hero.alt}
+                        width={s.hero.w}
+                        height={s.hero.h}
+                        sizes="(min-width: 640px) 45vw, 90vw"
+                        className="w-full h-full object-contain rounded-xl"
+                      />
+                    </div>
+                    <div className="flex flex-col flex-1 p-4 gap-1">
+                      <h3 className="font-display font-bold text-secondary text-base sm:text-lg leading-tight">
+                        {s.name}
+                      </h3>
+                      <p className="text-gray-500 text-sm font-semibold leading-snug flex-1">
+                        {s.tagline}
+                      </p>
+                      <div className="flex items-center justify-between pt-2 mt-1 border-t-2 border-gray-100">
+                        <span
+                          className="font-display font-bold text-lg"
+                          style={{ color: s.color }}
+                        >
+                          {subscription ? (
+                            <>
+                              ${s.price.usd}
+                              <span className="text-xs font-bold text-gray-400">
+                                {" "}
+                                / student / year
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-base">Coming soon</span>
+                          )}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-primary text-sm font-bold group-hover:translate-x-0.5 transition-transform">
+                          View <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
 
         {/* CTA to full shop */}
