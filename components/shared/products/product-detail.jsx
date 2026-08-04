@@ -10,16 +10,8 @@ import {
   CalendarCheck,
   BookOpen,
   Package,
-  Tablet,
 } from "lucide-react";
-import {
-  products,
-  getProduct,
-  howItWorks,
-  buyUrl,
-  TABLET_NGN,
-  TABLET_USD,
-} from "@/lib/products";
+import { products, getProduct, howItWorks, buyUrl } from "@/lib/products";
 import AppStores from "@/components/shared/products/app-stores";
 import Price from "@/components/common/price";
 import CurrencyNote from "@/components/common/currency-note";
@@ -122,8 +114,7 @@ export default function ProductDetail({ slug }) {
                   </p>
                 </div>
                 <p className="text-xs font-semibold text-gray-500 max-w-[46%] text-right">
-                  Tablet not included, add one for{" "}
-                  <Price ngn={TABLET_NGN} usd={TABLET_USD} />.
+                  Includes a Smart Tablet, ready to scan the pages.
                 </p>
               </div>
 
@@ -237,39 +228,40 @@ export default function ProductDetail({ slug }) {
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {p.package.map((item, i) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: i * 0.07 }}
-                  className="flex items-start gap-4 rounded-2xl bg-white p-5 border-2 shadow-[0_5px_0_rgba(0,0,0,0.05)]"
-                  style={{ borderColor: `${p.color}22` }}
-                >
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: `${p.color}1f` }}
+              {p.package.map((item, i) => {
+                const ItemIcon = item.Icon || Package;
+                return (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45, delay: i * 0.07 }}
+                    className="flex items-start gap-4 rounded-2xl bg-white p-5 border-2 shadow-[0_5px_0_rgba(0,0,0,0.05)]"
+                    style={{ borderColor: `${p.color}22` }}
                   >
-                    <Package
-                      className="w-5 h-5"
-                      style={{ color: p.color }}
-                      strokeWidth={2.2}
-                    />
-                  </div>
-                  <div>
-                    <p className="font-display font-bold text-secondary leading-tight">
-                      {item.name}
-                    </p>
-                    <p className="text-gray-500 text-sm font-semibold mt-0.5 leading-snug">
-                      {item.detail}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: `${p.color}1f` }}
+                    >
+                      <ItemIcon
+                        className="w-5 h-5"
+                        style={{ color: p.color }}
+                        strokeWidth={2.2}
+                      />
+                    </div>
+                    <div>
+                      <p className="font-display font-bold text-secondary leading-tight">
+                        {item.name}
+                      </p>
+                      <p className="text-gray-500 text-sm font-semibold mt-0.5 leading-snug">
+                        {item.detail}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-
-            {/* Tablet callout: not part of the kit; add it in the store cart */}
           </div>
         </section>
       )}
