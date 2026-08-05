@@ -249,7 +249,7 @@ function QuoteForm() {
             exit={{ opacity: 0, x: -24 }}
             transition={{ duration: 0.25 }}
           >
-            {/* STEP 1 — What you need */}
+            {/* STEP 1: What you need */}
             {step === 1 && (
               <div className="space-y-6">
                 <div>
@@ -310,7 +310,7 @@ function QuoteForm() {
                       </div>
                     </div>
 
-                    {/* Indicative total — bulk pricing comes in the quote */}
+                    {/* Indicative total: bulk pricing comes in the quote */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <div>
                         <span className="text-sm font-semibold text-gray-500">Indicative total</span>
@@ -323,7 +323,7 @@ function QuoteForm() {
               </div>
             )}
 
-            {/* STEP 2 — Organisation */}
+            {/* STEP 2: Organisation */}
             {step === 2 && (
               <div className="space-y-6">
                 <div>
@@ -389,7 +389,7 @@ function QuoteForm() {
               </div>
             )}
 
-            {/* STEP 3 — Delivery */}
+            {/* STEP 3: Delivery */}
             {step === 3 && (
               <div className="space-y-6">
                 <div>
@@ -434,7 +434,7 @@ function QuoteForm() {
               </div>
             )}
 
-            {/* STEP 4 — Review */}
+            {/* STEP 4: Review */}
             {step === 4 && (
               <div className="space-y-6">
                 <div>
@@ -469,7 +469,9 @@ function QuoteForm() {
                   />
                   <span className="text-sm text-gray-600 leading-relaxed">
                     I agree to be contacted about this request and accept the{" "}
-                    <Link href="/legal/terms-of-sale" className="text-primary font-semibold hover:underline" target="_blank">Terms &amp; Conditions</Link>.
+                    <Link href="/legal/terms-of-sale" className="text-primary font-semibold hover:underline" target="_blank">Terms &amp; Conditions</Link>{" "}
+                    and the{" "}
+                    <Link href="/legal/preorder-policy" className="text-primary font-semibold hover:underline" target="_blank">Pre-Order Policy</Link>.
                   </span>
                 </label>
                 <FieldError msg={errors.agreed_to_contact} />
@@ -527,7 +529,7 @@ function Row({ label, value }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <span className="text-gray-500">{label}</span>
-      <span className="font-semibold text-secondary text-right">{value || "—"}</span>
+      <span className="font-semibold text-secondary text-right">{value || "Not provided"}</span>
     </div>
   );
 }
