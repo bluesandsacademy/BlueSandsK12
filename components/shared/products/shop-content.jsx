@@ -93,7 +93,11 @@ function ProductCard({ p, index }) {
           <div className="flex items-end justify-between mt-3">
             <div>
               <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                {isBundled ? "Included with" : isSubscription ? "For schools" : "From"}
+                {isBundled
+                  ? "Included with"
+                  : isSubscription
+                    ? "For schools"
+                    : "From"}
               </span>
               <p
                 className="font-display font-bold text-2xl leading-none mt-0.5"
@@ -279,7 +283,120 @@ export default function ShopContent() {
           </div>
         </div>
       </section>
+      {/* ── For schools: the classroom technology, not the book kits ── */}
+      <section
+        id="for-schools"
+        className="relative section-y overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)",
+        }}
+      >
+        <div className="relative page-frame">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12 space-y-3 max-w-2xl mx-auto"
+          >
+            <SectionKicker className="text-primary">For schools</SectionKicker>
+            <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
+              Classroom{" "}
+              <span className="text-primary doodle-underline">Technology</span>
+            </h2>
+            <p className="text-gray-600 text-lg font-semibold">
+              Beyond the book kits: an interactive board that replaces the
+              chalkboard at the front of the room.
+            </p>
+          </motion.div>
 
+          {/* The Virtual Science Lab Tablet has its own card in the shop row
+              above, so it's left out of `solutions` here to avoid showing it
+              twice on the page. Kept as a mapped list, not a single card, in
+              case more classroom-technology solutions join the blackboard. */}
+          <div className="space-y-14 lg:space-y-20 max-w-6xl mx-auto">
+            {solutions
+              .filter((s) => s.slug !== tabletSolution.slug)
+              .map((s, i) => (
+                <motion.div
+                  key={s.slug}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+                >
+                  <Link
+                    href={`/products/${s.slug}`}
+                    className={`group block rounded-4xl bg-white border-4 overflow-hidden shadow-[0_10px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform ${
+                      i % 2 === 1 ? "lg:order-2" : ""
+                    }`}
+                    style={{ borderColor: s.color }}
+                  >
+                    <Image
+                      src={s.hero.src}
+                      alt={s.hero.alt}
+                      width={s.hero.w}
+                      height={s.hero.h}
+                      sizes="(min-width: 1024px) 560px, 92vw"
+                      className="w-full h-auto"
+                    />
+                  </Link>
+
+                  <div className={i % 2 === 1 ? "lg:order-1" : ""}>
+                    <h3 className="font-display font-bold text-secondary text-2xl sm:text-3xl lg:text-4xl leading-tight">
+                      {s.name}
+                    </h3>
+                    <p className="text-gray-600 text-lg font-semibold mt-2 leading-snug">
+                      {s.tagline}
+                    </p>
+
+                    <ul className="mt-5 space-y-2.5">
+                      {s.outcomes.items.slice(0, 3).map((item) => (
+                        <li key={item} className="flex items-start gap-2.5">
+                          <CheckCircle2
+                            className="w-5 h-5 mt-0.5 shrink-0"
+                            style={{ color: s.color }}
+                            strokeWidth={2.5}
+                          />
+                          <span className="text-gray-600 font-semibold text-sm leading-snug">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="flex flex-wrap items-end gap-x-6 gap-y-4 mt-6">
+                      <div>
+                        <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
+                          {s.price.mode === "subscription"
+                            ? "Per student, per year"
+                            : "Pricing"}
+                        </span>
+                        <p
+                          className="font-display font-bold text-3xl leading-none mt-1"
+                          style={{ color: s.color }}
+                        >
+                          {s.price.mode === "subscription"
+                            ? `$${s.price.usd}`
+                            : "Coming soon"}
+                        </p>
+                      </div>
+                      <Link
+                        href={`/products/${s.slug}`}
+                        className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-white font-display font-bold shadow-[0_6px_0_rgba(0,0,0,0.15)] hover:translate-y-0.5 hover:shadow-[0_3px_0_rgba(0,0,0,0.15)] transition-all"
+                        style={{ background: s.color }}
+                      >
+                        See the Details
+                        <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+          </div>
+        </div>
+      </section>
       {/* ── How it works ── */}
       <section
         className="relative section-y overflow-hidden"
@@ -353,121 +470,6 @@ export default function ShopContent() {
 
           {/* Get the app: Android + iOS */}
           <AppStores className="mt-12 text-center" align="center" />
-        </div>
-      </section>
-
-      {/* ── For schools: the classroom technology, not the book kits ── */}
-      <section
-        id="for-schools"
-        className="relative section-y overflow-hidden"
-        style={{
-          background: "linear-gradient(180deg, #FFFBF0 0%, #EAF6FF 100%)",
-        }}
-      >
-        <div className="relative page-frame">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12 space-y-3 max-w-2xl mx-auto"
-          >
-            <SectionKicker className="text-primary">For schools</SectionKicker>
-            <h2 className="font-display font-bold text-secondary leading-tight text-3xl sm:text-4xl lg:text-5xl">
-              Classroom{" "}
-              <span className="text-primary doodle-underline">Technology</span>
-            </h2>
-            <p className="text-gray-600 text-lg font-semibold">
-              Beyond the book kits: an interactive board that replaces the
-              chalkboard at the front of the room.
-            </p>
-          </motion.div>
-
-          {/* The Virtual Science Lab Tablet has its own card in the shop row
-              above, so it's left out of `solutions` here to avoid showing it
-              twice on the page. Kept as a mapped list, not a single card, in
-              case more classroom-technology solutions join the blackboard. */}
-          <div className="space-y-14 lg:space-y-20 max-w-6xl mx-auto">
-            {solutions
-              .filter((s) => s.slug !== tabletSolution.slug)
-              .map((s, i) => (
-              <motion.div
-                key={s.slug}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
-              >
-                <Link
-                  href={`/products/${s.slug}`}
-                  className={`group block rounded-4xl bg-white border-4 overflow-hidden shadow-[0_10px_0_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-transform ${
-                    i % 2 === 1 ? "lg:order-2" : ""
-                  }`}
-                  style={{ borderColor: s.color }}
-                >
-                  <Image
-                    src={s.hero.src}
-                    alt={s.hero.alt}
-                    width={s.hero.w}
-                    height={s.hero.h}
-                    sizes="(min-width: 1024px) 560px, 92vw"
-                    className="w-full h-auto"
-                  />
-                </Link>
-
-                <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-                  <h3 className="font-display font-bold text-secondary text-2xl sm:text-3xl lg:text-4xl leading-tight">
-                    {s.name}
-                  </h3>
-                  <p className="text-gray-600 text-lg font-semibold mt-2 leading-snug">
-                    {s.tagline}
-                  </p>
-
-                  <ul className="mt-5 space-y-2.5">
-                    {s.outcomes.items.slice(0, 3).map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
-                        <CheckCircle2
-                          className="w-5 h-5 mt-0.5 shrink-0"
-                          style={{ color: s.color }}
-                          strokeWidth={2.5}
-                        />
-                        <span className="text-gray-600 font-semibold text-sm leading-snug">
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="flex flex-wrap items-end gap-x-6 gap-y-4 mt-6">
-                    <div>
-                      <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                        {s.price.mode === "subscription"
-                          ? "Per student, per year"
-                          : "Pricing"}
-                      </span>
-                      <p
-                        className="font-display font-bold text-3xl leading-none mt-1"
-                        style={{ color: s.color }}
-                      >
-                        {s.price.mode === "subscription"
-                          ? `$${s.price.usd}`
-                          : "Coming soon"}
-                      </p>
-                    </div>
-                    <Link
-                      href={`/products/${s.slug}`}
-                      className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-white font-display font-bold shadow-[0_6px_0_rgba(0,0,0,0.15)] hover:translate-y-0.5 hover:shadow-[0_3px_0_rgba(0,0,0,0.15)] transition-all"
-                      style={{ background: s.color }}
-                    >
-                      See the Details
-                      <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
     </>
