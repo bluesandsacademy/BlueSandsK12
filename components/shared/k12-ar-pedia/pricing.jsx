@@ -78,9 +78,11 @@ export default function K12PricingSection() {
       price: <Price ngn={p.priceNGN} usd={p.priceUSD} />,
       ctaHref: buyUrl(p) || DEMO_URL,
       ctaLabel: "Pre-Order",
+      ctaExternal: true,
     })),
     ...solutions.map((s) => {
       const subscription = s.price.mode === "subscription";
+      const bundled = s.price.mode === "bundled";
       return {
         key: s.slug,
         href: `/products/${s.slug}`,
@@ -92,10 +94,15 @@ export default function K12PricingSection() {
         name: s.name,
         eyebrow: s.kicker,
         blurb: s.blurb,
-        priceLabel: subscription ? "Per student, per year" : "Pricing",
-        price: subscription ? `$${s.price.usd}` : "Coming soon",
-        ctaHref: buyUrl(s) || DEMO_URL,
-        ctaLabel: "Get It",
+        priceLabel: subscription
+          ? "Per student, per year"
+          : bundled
+            ? `With ${s.price.bundledWith}`
+            : "Pricing",
+        price: subscription ? `$${s.price.usd}` : bundled ? "Included" : "Coming soon",
+        ctaHref: bundled ? "/products#products" : buyUrl(s) || DEMO_URL,
+        ctaLabel: bundled ? "Browse Books" : "Get It",
+        ctaExternal: !bundled,
       };
     }),
   ];
@@ -209,10 +216,10 @@ export default function K12PricingSection() {
               >
                 <div className="group flex flex-col w-full text-center">
                   {/* Height-bounded box, not a fixed aspect: these five images
-                      run from a 2.17:1 classroom panorama to a 1:1 tablet
-                      photo, and containing them inside a shared height keeps
-                      every card's text on the same baseline without cropping
-                      any of them. */}
+                      run from illustrated book covers to real classroom
+                      photos at different ratios, and containing them inside a
+                      shared height keeps every card's text on the same
+                      baseline without cropping any of them. */}
                   <Link
                     href={c.href}
                     className="flex items-center justify-center h-44 sm:h-52 mb-3"
@@ -258,8 +265,10 @@ export default function K12PricingSection() {
                     </Link>
                     <a
                       href={c.ctaHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...(c.ctaExternal && {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      })}
                       className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-display font-bold text-white shadow-[0_4px_0_rgba(0,0,0,0.18)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(0,0,0,0.18)] transition-all"
                       style={{ background: c.color }}
                     >
