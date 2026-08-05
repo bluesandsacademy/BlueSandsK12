@@ -40,10 +40,12 @@ function readableOn(hex) {
 }
 
 function ProductCard({ p, index }) {
-  // The tablet is a per-student annual subscription priced only in USD (see
-  // lib/solutions.js), not a one-off NGN/USD kit price, so it renders through
-  // its own `price` field instead of <Price>.
+  // The tablet is not sold on its own, it ships free inside every AR Book kit
+  // (see lib/solutions.js), so it renders through its own `price` field
+  // instead of the one-off NGN/USD <Price> the book kits use.
   const isSubscription = p.price?.mode === "subscription";
+  const isBundled = p.price?.mode === "bundled";
+  const isRealPhoto = isSubscription || isBundled;
 
   return (
     <motion.div
@@ -74,7 +76,9 @@ function ProductCard({ p, index }) {
             alt={p.name}
             fill
             sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 90vw"
-            className="object-contain p-5 drop-shadow-[0_14px_22px_rgba(2,52,90,0.16)] group-hover:scale-[1.04] transition-transform duration-500"
+            className={`object-contain p-5 drop-shadow-[0_14px_22px_rgba(2,52,90,0.16)] group-hover:scale-[1.04] transition-transform duration-500 ${
+              isRealPhoto ? "rounded-3xl" : ""
+            }`}
           />
         </div>
 
@@ -89,14 +93,16 @@ function ProductCard({ p, index }) {
           <div className="flex items-end justify-between mt-3">
             <div>
               <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                {isSubscription ? "Per student, per year" : "From"}
+                {isBundled ? "Included with" : isSubscription ? "For schools" : "From"}
               </span>
               <p
                 className="font-display font-bold text-2xl leading-none mt-0.5"
                 style={{ color: p.color }}
               >
-                {isSubscription ? (
-                  `$${p.price.usd}`
+                {isBundled ? (
+                  "AR Books"
+                ) : isSubscription ? (
+                  "Contact us"
                 ) : (
                   <Price ngn={p.priceNGN} usd={p.priceUSD} />
                 )}
@@ -144,8 +150,8 @@ export default function ShopContent() {
     <>
       {/* ── Hero: a router, not a pitch ──
           Two different people land here. A parent buying one AR book set for a
-          7-year-old, and a head teacher costing a classroom display or a
-          per-student subscription. The old hero spoke only to the parent
+          7-year-old, and a head teacher costing a classroom display or a bulk
+          kit order. The old hero spoke only to the parent
           ("made for curious kids ages 4-13") on a page that now sells both, so
           the school buyer had to scroll past three book cards to find out they
           were catered for. The hero's job is to sort them in one glance. */}

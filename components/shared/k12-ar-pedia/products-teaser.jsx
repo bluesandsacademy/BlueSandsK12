@@ -118,6 +118,7 @@ export default function ProductsTeaserSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {solutions.map((s, i) => {
               const subscription = s.price.mode === "subscription";
+              const bundled = s.price.mode === "bundled";
               return (
                 <motion.div
                   key={s.slug}
@@ -133,9 +134,9 @@ export default function ProductsTeaserSection() {
                     style={{ borderColor: s.color }}
                   >
                     {/* object-contain on a tinted panel, the same treatment the
-                        book covers get on white. These two photos are a 2.17:1
-                        panorama and a 1:1 square, so any shared box with
-                        object-cover would crop the teacher out of one of them. */}
+                        book covers get on white. A shared box with
+                        object-cover risks cropping a subject out of either
+                        photo, so both stay letterboxed instead. */}
                     <div
                       className="relative aspect-video flex items-center justify-center p-3"
                       style={{ background: `${s.color}0f` }}
@@ -169,6 +170,10 @@ export default function ProductsTeaserSection() {
                                 / student / year
                               </span>
                             </>
+                          ) : bundled ? (
+                            <span className="text-base">
+                              Included with AR Books
+                            </span>
                           ) : (
                             <span className="text-base">Coming soon</span>
                           )}

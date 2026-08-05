@@ -104,7 +104,9 @@ describe("solutions", () => {
 
   it("uses a known price mode, and quotes a figure only when subscribing", () => {
     for (const s of solutions) {
-      expect(["coming-soon", "subscription"]).toContain(s.price.mode);
+      expect(["coming-soon", "subscription", "bundled"]).toContain(
+        s.price.mode,
+      );
       if (s.price.mode === "subscription") {
         expect(typeof s.price.usd).toBe("number");
         expect(s.price.usd).toBeGreaterThan(0);

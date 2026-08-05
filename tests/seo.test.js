@@ -70,11 +70,21 @@ describe("solutionSchema", () => {
 
   it("quotes subscriptions in USD at the authored figure", () => {
     const subs = solutions.filter((s) => s.price.mode === "subscription");
-    expect(subs.length).toBeGreaterThan(0);
     for (const s of subs) {
       const offer = solutionSchema(s.slug).offers;
       expect(offer.priceCurrency).toBe("USD");
       expect(offer.price).toBe(s.price.usd);
+    }
+  });
+
+  it("publishes no standalone price for a solution bundled into another product", () => {
+    const bundled = solutions.filter((s) => s.price.mode === "bundled");
+    expect(bundled.length).toBeGreaterThan(0);
+    for (const s of bundled) {
+      const offer = solutionSchema(s.slug).offers;
+      expect(offer.availability).toBe("https://schema.org/InStock");
+      expect(offer.price).toBeUndefined();
+      expect(offer.priceCurrency).toBeUndefined();
     }
   });
 });

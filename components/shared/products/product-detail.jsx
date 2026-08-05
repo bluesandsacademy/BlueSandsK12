@@ -16,6 +16,7 @@ import AppStores from "@/components/shared/products/app-stores";
 import Price from "@/components/common/price";
 import CurrencyNote from "@/components/common/currency-note";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
+import KitCalculator from "@/components/shared/products/kit-calculator";
 import {
   FloatPlanet,
   FloatSparkle,
@@ -339,6 +340,10 @@ export default function ProductDetail({ slug }) {
           </div>
         </div>
       </section>
+
+      {/* ── Bulk order calculator: a school or parent group buying more than
+             one kit ── */}
+      <KitCalculator product={p} buyHref={buyHref} />
 
       {/* ── Other products ── */}
       <section

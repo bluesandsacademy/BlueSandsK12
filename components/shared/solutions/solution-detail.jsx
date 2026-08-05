@@ -13,7 +13,6 @@ import {
 import { solutions, getSolution } from "@/lib/solutions";
 import { products, buyUrl } from "@/lib/products";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
-import CostCalculator from "@/components/shared/solutions/cost-calculator";
 import LessonHotspots from "@/components/shared/solutions/lesson-hotspots";
 import FeatureExplorer from "@/components/shared/solutions/feature-explorer";
 import ResponsivePanels from "@/components/shared/solutions/responsive-panels";
@@ -28,10 +27,10 @@ const CREAM = "#FFFBF0";
 
 /* Section forms are derived from what each section contains, rather than one
    card recipe repeated down the page. The hero states the offer, one signature
-   section per product carries the decision (hotspots on the board's own photo,
-   the cost calculator for the subscription), the long capability lists collapse
-   into an explorer, and everything after that is deliberately quiet so the
-   signature section is the thing a visitor remembers. */
+   section per product carries the decision (hotspots on the board's own
+   photo), the long capability lists collapse into an explorer, and everything
+   after that is deliberately quiet so the signature section is the thing a
+   visitor remembers. */
 export default function SolutionDetail({ slug }) {
   const s = getSolution(slug);
   if (!s) return null;
@@ -40,17 +39,29 @@ export default function SolutionDetail({ slug }) {
   const otherSolutions = solutions.filter((x) => x.slug !== s.slug);
   const storeHref = buyUrl(s);
   const isSubscription = s.price.mode === "subscription";
+  const isBundled = s.price.mode === "bundled";
 
-  // The hero layout follows the photo. A 2.17:1 classroom panorama in a
-  // half-width column renders as a ~560x258 strip beside a much taller text
-  // block, so anything that wide becomes a full-width banner instead. Squarer
-  // photos keep the side-by-side split. Neither is ever cropped.
+  // The hero layout follows the photo. A wide panorama in a half-width column
+  // renders as a short strip beside a much taller text block, so anything
+  // that wide becomes a full-width banner instead. Squarer photos keep the
+  // side-by-side split. Neither is ever cropped.
   const wideHero = s.hero.w / s.hero.h >= 1.9;
 
-  const priceValue = isSubscription ? `$${s.price.usd}` : "Coming soon";
+  const priceValue = isSubscription
+    ? `$${s.price.usd}`
+    : isBundled
+      ? "Included"
+      : "Coming soon";
   const priceLabel = isSubscription
     ? "Per student, per year"
-    : "Quoted per classroom";
+    : isBundled
+      ? `With ${s.price.bundledWith}`
+      : "Quoted per classroom";
+
+  // Bundled means there's nothing to buy on its own: send the visitor to the
+  // AR Book kits it ships inside instead of a storefront line item for it.
+  const ctaHref = isBundled ? "/products#products" : storeHref;
+  const ctaLabel = isBundled ? "Browse AR Books" : "Get It for Your School";
 
   return (
     <>
@@ -130,7 +141,7 @@ export default function SolutionDetail({ slug }) {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <div className="flex flex-wrap items-end gap-x-8 gap-y-5">
-                  {isSubscription ? (
+                  {isSubscription || isBundled ? (
                     <div>
                       <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
                         {priceLabel}
@@ -153,13 +164,15 @@ export default function SolutionDetail({ slug }) {
                   )}
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a
-                      href={storeHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={ctaHref}
+                      {...(!isBundled && {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      })}
                       className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-7 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
                     >
                       <ShoppingBag className="w-5 h-5" strokeWidth={2.5} />
-                      Get It for Your School
+                      {ctaLabel}
                     </a>
                     <a
                       href={DEMO_URL}
@@ -347,14 +360,6 @@ export default function SolutionDetail({ slug }) {
       {s.lessonView && (
         <LessonHotspots lessonView={s.lessonView} image={s.hero} color={color} />
       )}
-      {s.calculator && (
-        <CostCalculator
-          config={s.calculator}
-          usdPerStudent={s.price.usd}
-          color={color}
-          storeHref={storeHref}
-        />
-      )}
 
       {/* ── The science labs: four disciplines, four accents. Parallel content
              rendered in parallel, but never four identical cards. ── */}
@@ -422,7 +427,7 @@ export default function SolutionDetail({ slug }) {
         color={color}
         kicker="Everything it can do"
         title={
-          isSubscription
+          isSubscription || isBundled
             ? "What the platform gives a school"
             : "What the board gives a teacher"
         }
@@ -563,13 +568,13 @@ export default function SolutionDetail({ slug }) {
               </ul>
               <div className="flex items-baseline justify-between gap-4 pt-5 mt-2">
                 <span className="font-display font-bold text-secondary">
-                  Per student, per year
+                  {priceLabel}
                 </span>
                 <span
                   className="font-display font-black text-3xl leading-none"
                   style={{ color }}
                 >
-                  ${s.price.usd}
+                  {priceValue}
                 </span>
               </div>
             </div>
