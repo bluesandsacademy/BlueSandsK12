@@ -40,12 +40,13 @@ function readableOn(hex) {
 }
 
 function ProductCard({ p, index }) {
-  // The tablet is not sold on its own, it ships free inside every AR Book kit
-  // (see lib/solutions.js), so it renders through its own `price` field
-  // instead of the one-off NGN/USD <Price> the book kits use.
+  // The tablet is a per-student annual subscription priced only in USD (see
+  // lib/solutions.js), not a one-off NGN/USD kit price, so it renders through
+  // its own `price` field instead of <Price>.
   const isSubscription = p.price?.mode === "subscription";
-  const isBundled = p.price?.mode === "bundled";
-  const isRealPhoto = isSubscription || isBundled;
+  const cheapestTier = isSubscription
+    ? p.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+    : null;
 
   return (
     <motion.div
@@ -77,7 +78,7 @@ function ProductCard({ p, index }) {
             fill
             sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 90vw"
             className={`object-contain p-5 drop-shadow-[0_14px_22px_rgba(2,52,90,0.16)] group-hover:scale-[1.04] transition-transform duration-500 ${
-              isRealPhoto ? "rounded-3xl" : ""
+              isSubscription ? "rounded-3xl" : ""
             }`}
           />
         </div>
@@ -93,20 +94,14 @@ function ProductCard({ p, index }) {
           <div className="flex items-end justify-between mt-3">
             <div>
               <span className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
-                {isBundled
-                  ? "Included with"
-                  : isSubscription
-                    ? "For schools"
-                    : "From"}
+                {isSubscription ? "For schools" : "From"}
               </span>
               <p
                 className="font-display font-bold text-2xl leading-none mt-0.5"
                 style={{ color: p.color }}
               >
-                {isBundled ? (
-                  "AR Books"
-                ) : isSubscription ? (
-                  "Contact us"
+                {isSubscription ? (
+                  `From $${cheapestTier.usd}`
                 ) : (
                   <Price ngn={p.priceNGN} usd={p.priceUSD} />
                 )}
