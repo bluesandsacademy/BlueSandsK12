@@ -78,11 +78,12 @@ export default function K12PricingSection() {
       price: <Price ngn={p.priceNGN} usd={p.priceUSD} />,
       ctaHref: buyUrl(p) || DEMO_URL,
       ctaLabel: "Pre-Order",
-      ctaExternal: true,
     })),
     ...solutions.map((s) => {
       const subscription = s.price.mode === "subscription";
-      const bundled = s.price.mode === "bundled";
+      const cheapestTier = subscription
+        ? s.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+        : null;
       return {
         key: s.slug,
         href: `/products/${s.slug}`,
@@ -94,15 +95,10 @@ export default function K12PricingSection() {
         name: s.name,
         eyebrow: s.kicker,
         blurb: s.blurb,
-        priceLabel: subscription
-          ? "Per student, per year"
-          : bundled
-            ? `With ${s.price.bundledWith}`
-            : "Pricing",
-        price: subscription ? `$${s.price.usd}` : bundled ? "Included" : "Coming soon",
-        ctaHref: bundled ? "/products#products" : buyUrl(s) || DEMO_URL,
-        ctaLabel: bundled ? "Browse Books" : "Get It",
-        ctaExternal: !bundled,
+        priceLabel: subscription ? "Per student, per year" : "Pricing",
+        price: subscription ? `From $${cheapestTier.usd}` : "Coming soon",
+        ctaHref: buyUrl(s) || DEMO_URL,
+        ctaLabel: "Get It",
       };
     }),
   ];
@@ -265,10 +261,8 @@ export default function K12PricingSection() {
                     </Link>
                     <a
                       href={c.ctaHref}
-                      {...(c.ctaExternal && {
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-display font-bold text-white shadow-[0_4px_0_rgba(0,0,0,0.18)] hover:translate-y-0.5 hover:shadow-[0_2px_0_rgba(0,0,0,0.18)] transition-all"
                       style={{ background: c.color }}
                     >

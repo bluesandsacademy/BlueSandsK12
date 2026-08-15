@@ -8,7 +8,10 @@ import {
   ArrowRight,
   CalendarCheck,
   Check,
+  RefreshCw,
   ShoppingBag,
+  Tablet,
+  X,
 } from "lucide-react";
 import { solutions, getSolution } from "@/lib/solutions";
 import { products, buyUrl } from "@/lib/products";
@@ -39,7 +42,6 @@ export default function SolutionDetail({ slug }) {
   const otherSolutions = solutions.filter((x) => x.slug !== s.slug);
   const storeHref = buyUrl(s);
   const isSubscription = s.price.mode === "subscription";
-  const isBundled = s.price.mode === "bundled";
 
   // The hero layout follows the photo. A wide panorama in a half-width column
   // renders as a short strip beside a much taller text block, so anything
@@ -47,21 +49,21 @@ export default function SolutionDetail({ slug }) {
   // side-by-side split. Neither is ever cropped.
   const wideHero = s.hero.w / s.hero.h >= 1.9;
 
+  // The headline price is the cheapest tier ("from $X"); the full with/without
+  // breakdown and the renewal rate live in the note under the CTAs and in the
+  // checklist comparison further down the page.
+  const cheapestTier = isSubscription
+    ? s.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+    : null;
   const priceValue = isSubscription
-    ? `$${s.price.usd}`
-    : isBundled
-      ? "Included"
-      : "Coming soon";
+    ? `From $${cheapestTier.usd}`
+    : "Coming soon";
   const priceLabel = isSubscription
     ? "Per student, per year"
-    : isBundled
-      ? `With ${s.price.bundledWith}`
-      : "Quoted per classroom";
+    : "Quoted per classroom";
 
-  // Bundled means there's nothing to buy on its own: send the visitor to the
-  // AR Book kits it ships inside instead of a storefront line item for it.
-  const ctaHref = isBundled ? "/products#products" : storeHref;
-  const ctaLabel = isBundled ? "Browse AR Books" : "Get It for Your School";
+  const ctaHref = storeHref;
+  const ctaLabel = "Get It for Your School";
 
   return (
     <>
@@ -141,7 +143,7 @@ export default function SolutionDetail({ slug }) {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <div className="flex flex-wrap items-end gap-x-8 gap-y-5">
-                  {isSubscription || isBundled ? (
+                  {isSubscription ? (
                     <div>
                       <p className="text-[11px] uppercase tracking-wide font-bold text-gray-400">
                         {priceLabel}
@@ -165,10 +167,8 @@ export default function SolutionDetail({ slug }) {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a
                       href={ctaHref}
-                      {...(!isBundled && {
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-7 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
                     >
                       <ShoppingBag className="w-5 h-5" strokeWidth={2.5} />
@@ -427,7 +427,7 @@ export default function SolutionDetail({ slug }) {
         color={color}
         kicker="Everything it can do"
         title={
-          isSubscription || isBundled
+          isSubscription
             ? "What the platform gives a school"
             : "What the board gives a teacher"
         }
@@ -526,60 +526,127 @@ export default function SolutionDetail({ slug }) {
         </div>
       </section>
 
-      {/* ── What the money buys, set as a statement rather than a card grid.
-             The content is a list of things paid for, so it is drawn as one. ── */}
+      {/* ── What the money buys, as a with/without-tablet comparison rather
+             than a card grid. The content is which line items differ between
+             the two tiers, so it is drawn as one table instead of two lists
+             that would otherwise repeat 12 of their 13 rows. Centred and
+             widened past the page's usual max-w-2xl measure: this is the
+             page's one decision moment, so it gets the room to read like a
+             pricing table instead of another paragraph-width block. ── */}
       {s.checklist && (
         <section
           className="relative section-y overflow-hidden"
           style={{ background: "linear-gradient(180deg, #EAF6FF 0%, #FFFBF0 100%)" }}
         >
           <div className="relative page-frame">
-            {/* Narrow measure, shared frame: a statement of line items reads
-                badly at 1152px, but its left edge still has to line up. */}
-            <div className="max-w-2xl">
-            <div className="mb-8 space-y-3">
+            <div className="max-w-xl mx-auto text-center mb-10 space-y-3">
               <SectionKicker className="text-primary">
                 {s.checklist.kicker}
               </SectionKicker>
               <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl leading-tight">
                 {s.checklist.title}
               </h2>
+              <p className="text-gray-600 font-semibold">
+                One subscription, two ways to start. Everything below runs the
+                same either way, except the tablet itself.
+              </p>
             </div>
+
             <MobileDisclosure
               label="See everything included"
               count={s.checklist.items.length}
             >
-            <div className="rounded-3xl bg-white border-2 border-secondary/10 p-6 sm:p-8 shadow-[0_8px_0_rgba(0,0,0,0.05)]">
+            <div
+              className="max-w-3xl mx-auto rounded-[2rem] bg-white border-4 overflow-hidden shadow-[0_14px_0_rgba(0,0,0,0.06)]"
+              style={{ borderColor: `${color}33` }}
+            >
+              {/* Column headers: the with-tablet tier is filled solid in the
+                  product colour so a scanning eye lands there first, the
+                  fuller of the two plans. */}
+              <div className="grid grid-cols-[1fr_5rem_5rem] sm:grid-cols-[1fr_9rem_9rem]">
+                <div className="flex items-end pb-3 pl-5 sm:pl-7">
+                  <span className="text-gray-400 text-[11px] sm:text-xs font-bold uppercase tracking-wide">
+                    What you get
+                  </span>
+                </div>
+                {s.price.tiers.map((t) => {
+                  const isWithTablet = t.key === "with-tablet";
+                  return (
+                    <div
+                      key={t.key}
+                      className="flex flex-col items-center justify-center gap-1 py-5 px-1.5"
+                      style={
+                        isWithTablet
+                          ? { background: color }
+                          : { background: `${color}0a` }
+                      }
+                    >
+                      {isWithTablet && (
+                        <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center mb-0.5">
+                          <Tablet className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+                        </span>
+                      )}
+                      <p
+                        className="font-display font-black text-2xl sm:text-3xl leading-none"
+                        style={{ color: isWithTablet ? "#fff" : color }}
+                      >
+                        ${t.usd}
+                      </p>
+                      <p
+                        className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide text-center leading-tight ${
+                          isWithTablet ? "text-white/75" : "text-gray-400"
+                        }`}
+                      >
+                        {t.label}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
               <ul>
-                {s.checklist.items.map((item) => (
+                {s.checklist.items.map((item, i) => (
                   <li
-                    key={item}
-                    className="flex items-baseline gap-3 py-2.5 border-b border-dashed border-secondary/15"
+                    key={item.label}
+                    className={`grid grid-cols-[1fr_5rem_5rem] sm:grid-cols-[1fr_9rem_9rem] items-center gap-2 pl-5 sm:pl-7 pr-1.5 py-3 ${
+                      i % 2 === 1 ? "bg-secondary/[0.025]" : ""
+                    }`}
                   >
-                    <span className="font-semibold text-secondary/85 text-sm sm:text-base">
-                      {item}
+                    <span className="font-semibold text-secondary/85 text-sm sm:text-base leading-snug">
+                      {item.label}
                     </span>
-                    <span className="flex-1" />
-                    <span className="font-bold text-grass text-xs uppercase tracking-wide shrink-0">
-                      Included
-                    </span>
+                    {s.price.tiers.map((t) => {
+                      const has = !item.tabletOnly || t.key === "with-tablet";
+                      return (
+                        <span key={t.key} className="flex justify-center">
+                          {has ? (
+                            <span className="w-7 h-7 rounded-full bg-grass/15 flex items-center justify-center">
+                              <Check className="w-4 h-4 text-grass" strokeWidth={3} />
+                            </span>
+                          ) : (
+                            <span className="w-7 h-7 rounded-full bg-secondary/[0.06] flex items-center justify-center">
+                              <X className="w-4 h-4 text-secondary/25" strokeWidth={3} />
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })}
                   </li>
                 ))}
               </ul>
-              <div className="flex items-baseline justify-between gap-4 pt-5 mt-2">
-                <span className="font-display font-bold text-secondary">
-                  {priceLabel}
-                </span>
-                <span
-                  className="font-display font-black text-3xl leading-none"
-                  style={{ color }}
-                >
-                  {priceValue}
-                </span>
+
+              <div className="flex items-center justify-center gap-2.5 px-5 py-5 border-t-2 border-secondary/10 bg-secondary/[0.02]">
+                <RefreshCw className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2.5} />
+                <p className="text-gray-500 text-xs sm:text-sm font-semibold text-center">
+                  Both tiers renew at{" "}
+                  <span className="font-bold text-secondary">
+                    ${s.price.renewalUsd} per student, per year
+                  </span>{" "}
+                  from year two.
+                </p>
               </div>
             </div>
             </MobileDisclosure>
-            </div>
           </div>
         </section>
       )}

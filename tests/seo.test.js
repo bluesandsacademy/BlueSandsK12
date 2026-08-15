@@ -68,23 +68,16 @@ describe("solutionSchema", () => {
     }
   });
 
-  it("quotes subscriptions in USD at the authored figure", () => {
+  it("quotes subscription tiers in USD as a price range", () => {
     const subs = solutions.filter((s) => s.price.mode === "subscription");
+    expect(subs.length).toBeGreaterThan(0);
     for (const s of subs) {
       const offer = solutionSchema(s.slug).offers;
+      expect(offer["@type"]).toBe("AggregateOffer");
       expect(offer.priceCurrency).toBe("USD");
-      expect(offer.price).toBe(s.price.usd);
-    }
-  });
-
-  it("publishes no standalone price for a solution bundled into another product", () => {
-    const bundled = solutions.filter((s) => s.price.mode === "bundled");
-    expect(bundled.length).toBeGreaterThan(0);
-    for (const s of bundled) {
-      const offer = solutionSchema(s.slug).offers;
-      expect(offer.availability).toBe("https://schema.org/InStock");
-      expect(offer.price).toBeUndefined();
-      expect(offer.priceCurrency).toBeUndefined();
+      expect(offer.lowPrice).toBe(Math.min(...s.price.tiers.map((t) => t.usd)));
+      expect(offer.highPrice).toBe(Math.max(...s.price.tiers.map((t) => t.usd)));
+      expect(offer.offerCount).toBe(s.price.tiers.length);
     }
   });
 });
@@ -116,7 +109,8 @@ describe("meta titles", () => {
       const title = solutionMetaTitle(s);
       expect(title).toContain(s.name);
       if (s.price.mode === "subscription") {
-        expect(title).toContain(`$${s.price.usd}`);
+        const lowest = Math.min(...s.price.tiers.map((t) => t.usd));
+        expect(title).toContain(`$${lowest}`);
       } else {
         expect(title).not.toContain("$");
       }

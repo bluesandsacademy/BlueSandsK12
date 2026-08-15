@@ -102,16 +102,20 @@ describe("solutions", () => {
     }
   });
 
-  it("uses a known price mode, and quotes a figure only when subscribing", () => {
+  it("uses a known price mode, and quotes tiers only when subscribing", () => {
     for (const s of solutions) {
-      expect(["coming-soon", "subscription", "bundled"]).toContain(
-        s.price.mode,
-      );
+      expect(["coming-soon", "subscription"]).toContain(s.price.mode);
       if (s.price.mode === "subscription") {
-        expect(typeof s.price.usd).toBe("number");
-        expect(s.price.usd).toBeGreaterThan(0);
+        expect(Array.isArray(s.price.tiers)).toBe(true);
+        expect(s.price.tiers.length).toBeGreaterThan(0);
+        for (const t of s.price.tiers) {
+          expect(typeof t.usd).toBe("number");
+          expect(t.usd).toBeGreaterThan(0);
+        }
+        expect(typeof s.price.renewalUsd).toBe("number");
+        expect(s.price.renewalUsd).toBeGreaterThan(0);
       } else {
-        expect(s.price.usd).toBeUndefined();
+        expect(s.price.tiers).toBeUndefined();
       }
     }
   });

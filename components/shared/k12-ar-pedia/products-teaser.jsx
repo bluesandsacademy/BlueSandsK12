@@ -118,7 +118,9 @@ export default function ProductsTeaserSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {solutions.map((s, i) => {
               const subscription = s.price.mode === "subscription";
-              const bundled = s.price.mode === "bundled";
+              const cheapestTier = subscription
+                ? s.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+                : null;
               return (
                 <motion.div
                   key={s.slug}
@@ -164,16 +166,12 @@ export default function ProductsTeaserSection() {
                         >
                           {subscription ? (
                             <>
-                              ${s.price.usd}
+                              From ${cheapestTier.usd}
                               <span className="text-xs font-bold text-gray-400">
                                 {" "}
                                 / student / year
                               </span>
                             </>
-                          ) : bundled ? (
-                            <span className="text-base">
-                              Included with AR Books
-                            </span>
                           ) : (
                             <span className="text-base">Coming soon</span>
                           )}
