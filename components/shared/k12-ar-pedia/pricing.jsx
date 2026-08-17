@@ -56,7 +56,9 @@ export default function K12PricingSection() {
     const el = scroller.current;
     if (!el) return;
     const card = el.firstElementChild;
-    const step = card ? card.getBoundingClientRect().width + 24 : el.clientWidth;
+    const step = card
+      ? card.getBoundingClientRect().width + 24
+      : el.clientWidth;
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
@@ -81,8 +83,9 @@ export default function K12PricingSection() {
     })),
     ...solutions.map((s) => {
       const subscription = s.price.mode === "subscription";
-      const cheapestTier = subscription
-        ? s.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+      const mainTier = subscription
+        ? (s.price.tiers.find((t) => t.key === "with-tablet") ??
+          s.price.tiers[0])
         : null;
       return {
         key: s.slug,
@@ -95,8 +98,8 @@ export default function K12PricingSection() {
         name: s.name,
         eyebrow: s.kicker,
         blurb: s.blurb,
-        priceLabel: subscription ? "Per student, per year" : "Pricing",
-        price: subscription ? `From $${cheapestTier.usd}` : "Coming soon",
+        priceLabel: subscription ? "Full package, tablet included" : "Pricing",
+        price: subscription ? `$${mainTier.usd}` : "Coming soon",
         ctaHref: buyUrl(s) || DEMO_URL,
         ctaLabel: "Get It",
       };
@@ -220,14 +223,34 @@ export default function K12PricingSection() {
                     href={c.href}
                     className="flex items-center justify-center h-44 sm:h-52 mb-3"
                   >
-                    <Image
-                      src={c.src}
-                      alt={c.alt}
-                      width={c.w}
-                      height={c.h}
-                      sizes="(min-width: 1024px) 286px, (min-width: 640px) 268px, 248px"
-                      className="w-full h-full object-contain rounded-2xl drop-shadow-[0_18px_30px_rgba(2,52,90,0.18)] group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {c.key === "virtual-science-lab-tablet" ? (
+                      /* This one photo is a true square (1024x1024), unlike
+                         the wider/taller art on every other card, so
+                         `object-contain` in the shared height box letterboxes
+                         it and rounding the <img> itself only rounds the
+                         blank margins either side, not the artwork. A square
+                         frame matching the photo's own ratio puts the rounded
+                         edge on the actual pixels instead. */
+                      <div className="h-full aspect-square overflow-hidden rounded-xl">
+                        <Image
+                          src={c.src}
+                          alt={c.alt}
+                          width={c.w}
+                          height={c.h}
+                          sizes="(min-width: 1024px) 286px, (min-width: 640px) 268px, 248px"
+                          className="w-full h-full object-cover drop-shadow-[0_18px_30px_rgba(2,52,90,0.18)] group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    ) : (
+                      <Image
+                        src={c.src}
+                        alt={c.alt}
+                        width={c.w}
+                        height={c.h}
+                        sizes="(min-width: 1024px) 286px, (min-width: 640px) 268px, 248px"
+                        className="w-full h-full object-contain rounded-2xl drop-shadow-[0_18px_30px_rgba(2,52,90,0.18)] group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
                   </Link>
 
                   <h3 className="font-display font-bold text-secondary text-lg leading-tight">
