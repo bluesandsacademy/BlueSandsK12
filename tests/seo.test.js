@@ -109,8 +109,10 @@ describe("meta titles", () => {
       const title = solutionMetaTitle(s);
       expect(title).toContain(s.name);
       if (s.price.mode === "subscription") {
-        const lowest = Math.min(...s.price.tiers.map((t) => t.usd));
-        expect(title).toContain(`$${lowest}`);
+        const mainTier =
+          s.price.tiers.find((t) => t.key === "with-tablet") ??
+          s.price.tiers[0];
+        expect(title).toContain(`$${mainTier.usd}`);
       } else {
         expect(title).not.toContain("$");
       }
