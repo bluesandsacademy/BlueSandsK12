@@ -21,9 +21,10 @@ export default function SolutionFaqs({ faqs, color }) {
     >
       <div className="relative page-frame">
         {/* Measure is constrained inside the frame, not by narrowing the frame:
-           a question list wants ~65 characters, but its left edge must still
-           line up with every other section on the page. */}
-        <div className="max-w-3xl">
+           a question list wants ~65 characters. On desktop the block is
+           centered in the frame; on mobile and tablet it stays pinned to the
+           left edge like every other section. */}
+        <div className="max-w-3xl lg:mx-auto">
         <div className="mb-10 space-y-3">
           <SectionKicker className="text-primary">Before you decide</SectionKicker>
           <h2 className="font-display font-bold text-secondary text-3xl sm:text-4xl leading-tight">

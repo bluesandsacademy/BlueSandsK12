@@ -168,7 +168,7 @@ export default function ShopContent() {
             <h1 className="mt-3 font-display font-bold text-secondary leading-[1.04] text-[2.4rem] sm:text-5xl lg:text-[3.4rem]">
               AR books for home.{" "}
               <span className="text-primary doodle-underline">
-                Classroom technology
+                Smart tablets and virtual science labs.
               </span>{" "}
               for schools.
             </h1>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SectionKicker from "@/components/shared/k12-ar-pedia/section-kicker";
 
@@ -24,6 +24,28 @@ export default function FeatureExplorer({ groups, color, kicker, title }) {
   const [active, setActive] = useState(0);
   const current = groups[active];
 
+  // On a phone the rail scrolls further than one screen can show, and a flat
+  // cut edge gives no hint that "Safe for Students" exists four taps to the
+  // right. These fades read the rail's own scroll position, so they are only
+  // ever visible on the side there is still something to scroll to.
+  const railRef = useRef(null);
+  const [edges, setEdges] = useState({ start: true, end: true });
+
+  const readEdges = () => {
+    const el = railRef.current;
+    if (!el) return;
+    setEdges({
+      start: el.scrollLeft <= 1,
+      end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 1,
+    });
+  };
+
+  useEffect(() => {
+    readEdges();
+    window.addEventListener("resize", readEdges);
+    return () => window.removeEventListener("resize", readEdges);
+  }, [groups]);
+
   return (
     <section
       className="relative section-y overflow-hidden"
@@ -45,50 +67,70 @@ export default function FeatureExplorer({ groups, color, kicker, title }) {
               the strip costs one or two rows and the panel is only ever as
               tall as its own content. It also matches the real toolbar sitting
               on the board in the photo above. */}
-          <div
-            role="tablist"
-            aria-label="Capabilities"
-            className="
-              flex gap-1.5 lg:flex-wrap
-              overflow-x-auto lg:overflow-visible
-              px-3 py-3
-              snap-x snap-mandatory lg:snap-none
-              rounded-3xl bg-secondary
-              scrollbar-none [&::-webkit-scrollbar]:hidden
-            "
-          >
-            {groups.map((f, i) => {
-              const isActive = i === active;
-              return (
-                <button
-                  key={f.title}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setActive(i)}
-                  className={`
-                    shrink-0 snap-start
-                    flex items-center gap-2.5 text-left
-                    rounded-2xl px-4 py-3
-                    font-display font-bold text-sm leading-tight
-                    transition-colors duration-200
-                    ${
-                      isActive
-                        ? "text-white"
-                        : "text-white/55 hover:text-white hover:bg-white/5"
-                    }
-                  `}
-                  style={isActive ? { background: color } : undefined}
-                >
-                  <f.Icon
-                    className="w-5 h-5 shrink-0"
-                    strokeWidth={2.2}
-                    aria-hidden="true"
-                  />
-                  <span className="whitespace-nowrap">{f.title}</span>
-                </button>
-              );
-            })}
+          <div className="relative">
+            <div
+              ref={railRef}
+              onScroll={readEdges}
+              role="tablist"
+              aria-label="Capabilities"
+              className="
+                flex gap-1.5 lg:flex-wrap
+                overflow-x-auto lg:overflow-visible
+                px-3 py-3
+                snap-x snap-mandatory lg:snap-none
+                rounded-3xl bg-secondary
+                scrollbar-none [&::-webkit-scrollbar]:hidden
+              "
+            >
+              {groups.map((f, i) => {
+                const isActive = i === active;
+                return (
+                  <button
+                    key={f.title}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActive(i)}
+                    className={`
+                      shrink-0 snap-start
+                      flex items-center gap-2.5 text-left
+                      rounded-2xl px-4 py-3
+                      font-display font-bold text-sm leading-tight
+                      transition-colors duration-200
+                      ${
+                        isActive
+                          ? "text-white"
+                          : "text-white/55 hover:text-white hover:bg-white/5"
+                      }
+                    `}
+                    style={isActive ? { background: color } : undefined}
+                  >
+                    <f.Icon
+                      className="w-5 h-5 shrink-0"
+                      strokeWidth={2.2}
+                      aria-hidden="true"
+                    />
+                    <span className="whitespace-nowrap">{f.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Edge fades, phone only: the rail's own bg-secondary bleeding
+                to transparent, so a tab sitting half-cut at the edge reads as
+                "more here" instead of looking like the last one. */}
+            <div
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-y-0 left-0 w-10 rounded-l-3xl bg-gradient-to-r from-secondary to-transparent transition-opacity duration-200 lg:hidden ${
+                edges.start ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <div
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-3xl bg-gradient-to-l from-secondary to-transparent transition-opacity duration-200 lg:hidden ${
+                edges.end ? "opacity-0" : "opacity-100"
+              }`}
+            />
           </div>
 
           {/* Detail panel */}

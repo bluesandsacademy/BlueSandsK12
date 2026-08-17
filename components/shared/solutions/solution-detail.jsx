@@ -49,17 +49,16 @@ export default function SolutionDetail({ slug }) {
   // side-by-side split. Neither is ever cropped.
   const wideHero = s.hero.w / s.hero.h >= 1.9;
 
-  // The headline price is the cheapest tier ("from $X"); the full with/without
-  // breakdown and the renewal rate live in the note under the CTAs and in the
-  // checklist comparison further down the page.
-  const cheapestTier = isSubscription
-    ? s.price.tiers.reduce((a, b) => (b.usd < a.usd ? b : a))
+  // The headline price is the full package (tablet included), since that is
+  // what most schools are actually deciding on; the discount for bringing
+  // your own device, and the renewal rate, live in the note under the CTAs
+  // and in the checklist comparison further down the page.
+  const mainTier = isSubscription
+    ? (s.price.tiers.find((t) => t.key === "with-tablet") ?? s.price.tiers[0])
     : null;
-  const priceValue = isSubscription
-    ? `From $${cheapestTier.usd}`
-    : "Coming soon";
+  const priceValue = isSubscription ? `$${mainTier.usd}` : "Coming soon";
   const priceLabel = isSubscription
-    ? "Per student, per year"
+    ? "Full package, tablet included"
     : "Quoted per classroom";
 
   const ctaHref = storeHref;
@@ -299,8 +298,15 @@ export default function SolutionDetail({ slug }) {
                    mobile. Left to fill a 480px column a 2:3 poster runs 720px
                    tall and outweighs the checklist beside it, which is the same
                    imbalance in the other direction. Square and landscape shots
-                   take the full column. */
-                className={`rounded-3xl border-4 overflow-hidden bg-white shadow-[0_10px_0_rgba(0,0,0,0.06)] mx-auto lg:mx-0 ${
+                   take the full column.
+
+                   Hidden below lg: this page's gallery is a single photo, the
+                   same one already shown full-size in the hero seconds
+                   earlier. Side by side with the outcomes list on desktop it
+                   reads as a pairing; stacked on a phone it is just the hero
+                   photo again, so it drops out until there is room to run it
+                   beside text rather than above it. */
+                className={`hidden lg:block rounded-3xl border-4 overflow-hidden bg-white shadow-[0_10px_0_rgba(0,0,0,0.06)] mx-auto lg:mx-0 ${
                   s.gallery[0].w / s.gallery[0].h < 0.9
                     ? "max-w-[19rem]"
                     : "max-w-sm lg:max-w-md"
@@ -638,11 +644,12 @@ export default function SolutionDetail({ slug }) {
               <div className="flex items-center justify-center gap-2.5 px-5 py-5 border-t-2 border-secondary/10 bg-secondary/[0.02]">
                 <RefreshCw className="w-4 h-4 text-gray-400 shrink-0" strokeWidth={2.5} />
                 <p className="text-gray-500 text-xs sm:text-sm font-semibold text-center">
-                  Both tiers renew at{" "}
+                  Both tiers include your first year of Virtual Science Labs
+                  free. From year two, renews at{" "}
                   <span className="font-bold text-secondary">
                     ${s.price.renewalUsd} per student, per year
-                  </span>{" "}
-                  from year two.
+                  </span>
+                  .
                 </p>
               </div>
             </div>
