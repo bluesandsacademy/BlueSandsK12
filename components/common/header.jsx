@@ -107,14 +107,14 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/brochure.pdf"
-            download
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-coral text-white text-sm font-display font-bold rounded-full shadow-[0_5px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_2px_0_#d63a3f] transition-all"
+          <span
+            aria-disabled="true"
+            title="Brochure coming soon"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-secondary/15 text-secondary/40 text-sm font-display font-bold rounded-full cursor-not-allowed select-none"
           >
             <Download className="w-4 h-4" strokeWidth={2.5} />
             Download Brochure
-          </Link>
+          </span>
         </div>
 
         {/* Mobile toggle */}
@@ -147,15 +147,14 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/brochure.pdf"
-              download
-              onClick={closeMenu}
-              className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-coral text-white text-center font-display font-bold rounded-xl shadow-[0_5px_0_#d63a3f]"
+            <span
+              aria-disabled="true"
+              title="Brochure coming soon"
+              className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-secondary/15 text-secondary/40 text-center font-display font-bold rounded-xl cursor-not-allowed select-none"
             >
               <Download className="w-5 h-5" strokeWidth={2.5} />
               Download Brochure
-            </Link>
+            </span>
           </nav>
         </div>
       )}
