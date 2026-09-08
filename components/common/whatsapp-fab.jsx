@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
+
+// Routes with their own persistent bottom action bar, where a floating chat
+// button would collide with it and distract from a focused task.
+const HIDDEN_ON = ["/k12-preorder"];
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2347034194669";
 const WA_LINK = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
@@ -16,6 +21,7 @@ const WhatsAppGlyph = (props) => (
 );
 
 export default function WhatsAppFab() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [lifted, setLifted] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
@@ -48,6 +54,8 @@ export default function WhatsAppFab() {
     io.observe(footer);
     return () => io.disconnect();
   }, []);
+
+  if (HIDDEN_ON.some((p) => pathname?.startsWith(p))) return null;
 
   return (
     <div
