@@ -60,11 +60,11 @@ export default function SchoolsCta() {
             </ul>
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
-                href="/preorder"
+                href="/k12-preorder"
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-8 py-4 text-white font-display font-bold text-lg shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all"
               >
                 <FileText className="w-5 h-5" strokeWidth={2.5} />
-                Request a Quote
+                Request K12 Pre-Order
               </Link>
               <a
                 href={DEMO_URL}

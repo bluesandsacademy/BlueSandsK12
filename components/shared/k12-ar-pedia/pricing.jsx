@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, School } from "lucide-react";
 import { products, buyUrl } from "@/lib/products";
 import { solutions } from "@/lib/solutions";
 import Price from "@/components/common/price";
@@ -297,6 +297,26 @@ export default function K12PricingSection() {
               </motion.div>
             ))}
           </div>
+        </div>
+
+        {/* Schools reserve the Blue Sands K12 platform ahead of launch. */}
+        <div className="mt-14 rounded-3xl bg-secondary px-6 py-8 sm:px-10 sm:py-10 text-center sm:text-left sm:flex sm:items-center sm:justify-between sm:gap-8">
+          <div className="max-w-xl">
+            <h3 className="font-display font-bold text-white text-xl sm:text-2xl">
+              Running this across a school?
+            </h3>
+            <p className="text-white/70 text-[15px] sm:text-base mt-1.5">
+              Tell us your packages, licences and launch timing. Our team follows up
+              with pricing and next steps. No payment now.
+            </p>
+          </div>
+          <Link
+            href="/k12-preorder"
+            className="mt-5 sm:mt-0 inline-flex items-center justify-center gap-2 rounded-2xl bg-coral px-7 py-4 text-white font-display font-bold text-base shadow-[0_8px_0_#d63a3f] hover:translate-y-0.5 hover:shadow-[0_5px_0_#d63a3f] transition-all shrink-0"
+          >
+            <School className="w-5 h-5" strokeWidth={2.5} />
+            Request K12 Pre-Order
+          </Link>
         </div>
       </div>
     </section>

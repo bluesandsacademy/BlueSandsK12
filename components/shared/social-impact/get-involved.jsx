@@ -10,7 +10,7 @@ const ways = [
     audience: "Schools & educators",
     desc: "Bring AR Pedia to your classrooms and give every pupil a working science lab.",
     cta: "Bring AR Pedia to your school",
-    href: "/preorder",
+    href: "/k12-preorder",
     Icon: School,
     color: "#0483e2",
   },
