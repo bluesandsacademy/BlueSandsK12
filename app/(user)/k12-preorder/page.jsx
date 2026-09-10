@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,15 +12,15 @@ import {
   Check,
   CheckCircle2,
   Loader2,
-  GraduationCap,
 } from "lucide-react";
 import {
   SCHOOL_TYPES,
-  PLATFORM_INTERESTS,
+  PREORDER_PACKAGES,
   SUBSCRIPTION_DURATIONS,
   ACADEMIC_YEAR_OPTIONS,
   validateK12Preorder,
   labelFor,
+  getPackage,
 } from "@/lib/k12-preorder";
 
 /* Blue Sands K12 platform pre-order.
@@ -34,7 +35,6 @@ const STEPS = [
   { id: "contact", title: "Your contact details" },
   { id: "school", title: "About your school" },
   { id: "package", title: "Your pre-order package" },
-  { id: "interests", title: "What you want to use" },
   { id: "launch", title: "When you want to launch" },
   { id: "requirements", title: "Anything else we should know" },
   { id: "review", title: "Review and confirm" },
@@ -53,9 +53,7 @@ const EMPTY = {
   current_lms: "",
   package: "",
   student_licenses: "",
-  teacher_admin_accounts: "",
   subscription_durations: [],
-  interests: [],
   implementation_date: "",
   academic_year: "",
   demo_requested: null,
@@ -165,6 +163,119 @@ function CheckList({ options, values, onToggle }) {
   );
 }
 
+// Picture picker for the four pre-order packages. All four stay visible at once
+// (two columns, even on the smallest phones) so a school can compare them, and
+// the chosen one expands a detail panel underneath.
+function PackagePicker({ value, onChange }) {
+  const chosen = getPackage(value);
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        {PREORDER_PACKAGES.map((p) => {
+          const selected = value === p.id;
+          return (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => onChange(p.id)}
+              aria-pressed={selected}
+              className={`relative flex flex-col rounded-2xl border-2 p-3 text-left transition-colors ${
+                selected
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              }`}
+            >
+              {selected && (
+                <span className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                </span>
+              )}
+              <div className="flex items-center justify-center overflow-hidden rounded-2xl bg-white h-28 sm:h-32 mb-2.5">
+                <Image
+                  src={p.image}
+                  alt={p.label}
+                  width={p.imageW}
+                  height={p.imageH}
+                  sizes="(min-width: 640px) 240px, 45vw"
+                  className="max-h-full w-auto object-contain rounded-2xl"
+                />
+              </div>
+              <p className="font-display font-bold text-secondary text-[15px] leading-tight">
+                {p.label}
+              </p>
+              <p className="text-[13px] font-semibold text-gray-400 mt-0.5">
+                {p.ageRange}
+              </p>
+            </button>
+          );
+        })}
+      </div>
+
+      {chosen && (
+        <motion.div
+          key={chosen.id}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4 sm:p-5 space-y-4"
+        >
+          <div className="grid grid-cols-2 gap-3 text-[13px]">
+            <div>
+              <p className="font-semibold uppercase tracking-wide text-gray-400">
+                Age bracket
+              </p>
+              <p className="text-[15px] font-semibold text-secondary mt-0.5">
+                {chosen.ageRange}
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold uppercase tracking-wide text-gray-400">
+                Books
+              </p>
+              <p className="text-[15px] font-semibold text-secondary mt-0.5">
+                {chosen.books}
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[13px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">
+              Topics in the package
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {chosen.topics.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full bg-primary/5 px-2.5 py-1 text-[13px] font-semibold text-primary"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[13px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">
+              In the box
+            </p>
+            <ul className="space-y-1">
+              {chosen.includes.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-center gap-2 text-[15px] font-medium text-secondary"
+                >
+                  <Check className="h-4 w-4 text-grass shrink-0" strokeWidth={2.5} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 function SummaryRow({ label, value }) {
   return (
     <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 py-2 border-b border-gray-100 last:border-0">
@@ -219,7 +330,6 @@ export default function K12PreorderPage() {
     ],
     school: ["school_type", "student_count"],
     package: ["package", "student_licenses", "subscription_durations"],
-    interests: ["interests"],
     launch: ["implementation_date", "academic_year"],
     requirements: [],
     review: ["agreed_preorder"],
@@ -456,8 +566,7 @@ export default function K12PreorderPage() {
               <div className="space-y-6">
                 <div>
                   <Label required>Package you are interested in</Label>
-                  <RadioCards
-                    options={PLATFORM_INTERESTS}
+                  <PackagePicker
                     value={form.package}
                     onChange={(v) => set("package", v)}
                   />
@@ -471,14 +580,7 @@ export default function K12PreorderPage() {
                   onChange={(e) => set("student_licenses", e.target.value)}
                   error={errors.student_licenses}
                 />
-                <NumberField
-                  label="Number of teacher / admin accounts"
-                  placeholder="e.g. 35"
-                  value={form.teacher_admin_accounts}
-                  onChange={(e) =>
-                    set("teacher_admin_accounts", e.target.value)
-                  }
-                />
+
                 <div>
                   <Label hint="Choose any that could work for your school">
                     Preferred subscription duration
@@ -489,20 +591,6 @@ export default function K12PreorderPage() {
                     onToggle={(id) => toggleIn("subscription_durations", id)}
                   />
                 </div>
-              </div>
-            )}
-
-            {step.id === "interests" && (
-              <div className="space-y-3">
-                <Label hint="Pick everything your school would use. This helps us shape your quote.">
-                  What are you interested in?
-                </Label>
-                <CheckList
-                  options={PLATFORM_INTERESTS}
-                  values={form.interests}
-                  onToggle={(id) => toggleIn("interests", id)}
-                />
-                <FieldError msg={errors.interests} />
               </div>
             )}
 
@@ -585,10 +673,11 @@ export default function K12PreorderPage() {
                     }
                   />
                   <SummaryRow label="Students" value={form.student_count} />
+                  <SummaryRow label="Teachers" value={form.teacher_count} />
                   <SummaryRow
                     label="Package"
                     value={
-                      form.package && labelFor(PLATFORM_INTERESTS, form.package)
+                      form.package && labelFor(PREORDER_PACKAGES, form.package)
                     }
                   />
                   <SummaryRow
@@ -599,12 +688,6 @@ export default function K12PreorderPage() {
                     label="Duration"
                     value={form.subscription_durations
                       .map((d) => labelFor(SUBSCRIPTION_DURATIONS, d))
-                      .join(", ")}
-                  />
-                  <SummaryRow
-                    label="Interests"
-                    value={form.interests
-                      .map((i) => labelFor(PLATFORM_INTERESTS, i))
                       .join(", ")}
                   />
                   <SummaryRow

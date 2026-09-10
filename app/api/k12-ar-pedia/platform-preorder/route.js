@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   validateK12Preorder,
   normaliseK12Preorder,
-  PLATFORM_INTERESTS,
+  PREORDER_PACKAGES,
   labelFor,
 } from "@/lib/k12-preorder";
 import {
@@ -67,7 +67,7 @@ export async function POST(request) {
     if (error) throw error;
 
     // Notifications must not fail the submission. Settle all, log failures.
-    const packageLabel = labelFor(PLATFORM_INTERESTS, row.package);
+    const packageLabel = labelFor(PREORDER_PACKAGES, row.package);
     await Promise.allSettled([
       sendK12PreorderAcknowledgement({
         to:              row.email,

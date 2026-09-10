@@ -23,13 +23,14 @@ create table if not exists public.k12_platform_preorders (
   current_lms             text,
 
   -- 3. Pre-order package
-  package                 text,              -- one PLATFORM_INTERESTS id
+  package                 text,              -- one PREORDER_PACKAGES id (a /products/<slug>)
   student_licenses        integer,
-  teacher_admin_accounts  integer,
+  teacher_admin_accounts  integer,           -- retired from the form 2026-09-10; column kept, no longer written
   subscription_durations  text[] not null default '{}',  -- termly | annual | multi_year
 
-  -- 4. What are you interested in
-  interests               text[] not null default '{}',  -- PLATFORM_INTERESTS ids
+  -- 4. (retired 2026-09-10) the "what are you interested in" multi-select was
+  -- removed from the form; column kept for old rows, no longer written.
+  interests               text[] not null default '{}',
 
   -- 5. Preferred launch
   implementation_date     date,
