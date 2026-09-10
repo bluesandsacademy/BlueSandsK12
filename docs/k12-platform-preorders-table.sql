@@ -24,6 +24,7 @@ create table if not exists public.k12_platform_preorders (
 
   -- 3. Pre-order package
   package                 text,              -- one PREORDER_PACKAGES id (a /products/<slug>)
+  tablet_option           text,              -- added 2026-09-10: 'with' | 'without' | null; only the virtual-science-lab-tablet package sets it
   student_licenses        integer,
   teacher_admin_accounts  integer,           -- retired from the form 2026-09-10; column kept, no longer written
   subscription_durations  text[] not null default '{}',  -- termly | annual | multi_year
@@ -59,3 +60,7 @@ create index if not exists k12_platform_preorders_status_idx
 -- bypasses RLS. Enable RLS with no public policies so the anon key cannot read
 -- submissions.
 alter table public.k12_platform_preorders enable row level security;
+
+-- ── 2026-09-10 migration, for a table that already exists ──────────────────
+-- If the table above was created before this date, run:
+--   alter table public.k12_platform_preorders add column if not exists tablet_option text;

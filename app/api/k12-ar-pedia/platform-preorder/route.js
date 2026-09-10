@@ -4,6 +4,7 @@ import {
   validateK12Preorder,
   normaliseK12Preorder,
   PREORDER_PACKAGES,
+  TABLET_OPTIONS,
   labelFor,
 } from "@/lib/k12-preorder";
 import {
@@ -58,16 +59,31 @@ export async function POST(request) {
 
     const row = normaliseK12Preorder(body);
 
-    const { data, error } = await supabaseAdmin
-      .from("k12_platform_preorders")
-      .insert({ ...row, status: "new" })
-      .select("id")
-      .single();
+    const insert = (payload) =>
+      supabaseAdmin
+        .from("k12_platform_preorders")
+        .insert(payload)
+        .select("id")
+        .single();
+
+    let { data, error } = await insert({ ...row, status: "new" });
+
+    // `tablet_option` is a newer column. If the migration has not run yet,
+    // Postgres reports an undefined column (42703); drop it and retry so the
+    // submission still lands.
+    if (error?.code === "42703" && "tablet_option" in row) {
+      const rest = { ...row, status: "new" };
+      delete rest.tablet_option;
+      ({ data, error } = await insert(rest));
+    }
 
     if (error) throw error;
 
     // Notifications must not fail the submission. Settle all, log failures.
-    const packageLabel = labelFor(PREORDER_PACKAGES, row.package);
+    const baseLabel = labelFor(PREORDER_PACKAGES, row.package);
+    const packageLabel = row.tablet_option
+      ? `${baseLabel} (${labelFor(TABLET_OPTIONS, row.tablet_option)})`
+      : baseLabel;
     await Promise.allSettled([
       sendK12PreorderAcknowledgement({
         to:              row.email,

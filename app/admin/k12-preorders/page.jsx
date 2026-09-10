@@ -27,11 +27,12 @@ export default async function K12PreordersPage({ searchParams }) {
       `school_org_name.ilike.%${search}%,contact_person.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`,
     );
 
-  // Stat cards read the whole table (package + status only), independent of the
-  // current filter or page.
+  // Stat cards read the whole table, independent of the current filter or page.
+  // `select("*")` rather than a column list so a not-yet-migrated `tablet_option`
+  // column can't break the query.
   const [{ data: rows, count }, { data: allRows }] = await Promise.all([
     query,
-    supabaseAdmin.from("k12_platform_preorders").select("package,status"),
+    supabaseAdmin.from("k12_platform_preorders").select("*"),
   ]);
 
   const stats = summarisePreorders(allRows || []);

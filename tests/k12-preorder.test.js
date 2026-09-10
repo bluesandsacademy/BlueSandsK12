@@ -6,12 +6,16 @@ import {
   PREORDER_PACKAGES,
   SUBSCRIPTION_DURATIONS,
   ACADEMIC_YEAR_OPTIONS,
+  TABLET_OPTIONS,
   validateK12Preorder,
   normaliseK12Preorder,
   labelFor,
   getPackage,
+  packagePrice,
   summarisePreorders,
 } from "@/lib/k12-preorder";
+
+const TABLET = "virtual-science-lab-tablet";
 
 const validBody = () => ({
   school_org_name: "Bright Stars Academy",
@@ -36,7 +40,7 @@ const validBody = () => ({
 
 describe("option lists", () => {
   it("every list option has a non-empty id and label", () => {
-    for (const list of [SCHOOL_TYPES, SUBSCRIPTION_DURATIONS, ACADEMIC_YEAR_OPTIONS]) {
+    for (const list of [SCHOOL_TYPES, SUBSCRIPTION_DURATIONS, ACADEMIC_YEAR_OPTIONS, TABLET_OPTIONS]) {
       for (const opt of list) {
         expect(opt.id).toMatch(/^[a-z0-9_]+$/);
         expect(opt.label.trim().length).toBeGreaterThan(0);
@@ -59,6 +63,14 @@ describe("option lists", () => {
       expect(p.priceUSD).toBeGreaterThan(0);
       expect(p.priceNGN).toBeGreaterThan(0);
     }
+  });
+
+  it("only the tablet package has a without-tablet tier, $50 cheaper", () => {
+    const withOption = PREORDER_PACKAGES.filter((p) => p.hasTabletOption);
+    expect(withOption.map((p) => p.id)).toEqual([TABLET]);
+    const t = getPackage(TABLET);
+    expect(t.priceUSD - t.priceWithoutUSD).toBe(50);
+    expect(t.priceWithoutNGN).toBeLessThan(t.priceNGN);
   });
 
   it("package ids are unique", () => {
@@ -106,6 +118,12 @@ describe("validateK12Preorder", () => {
     expect(validateK12Preorder({ ...validBody(), subscription_durations: ["weekly"] }).errors).toHaveProperty("subscription_durations");
   });
 
+  it("rejects an unknown tablet_option but allows with / without / absent", () => {
+    expect(validateK12Preorder({ ...validBody(), tablet_option: "maybe" }).errors).toHaveProperty("tablet_option");
+    expect(validateK12Preorder({ ...validBody(), package: TABLET, tablet_option: "without" }).valid).toBe(true);
+    expect(validateK12Preorder({ ...validBody(), package: TABLET }).valid).toBe(true);
+  });
+
   it("requires the pre-order confirmation checkbox", () => {
     expect(validateK12Preorder({ ...validBody(), agreed_preorder: false }).errors).toHaveProperty("agreed_preorder");
   });
@@ -119,6 +137,23 @@ describe("validateK12Preorder", () => {
     delete body.demo_requested;
     delete body.additional_requirements;
     expect(validateK12Preorder(body).valid).toBe(true);
+  });
+});
+
+describe("packagePrice", () => {
+  it("returns the standard price for a book package regardless of tablet_option", () => {
+    const p = getPackage("into-the-community");
+    expect(packagePrice(p, "without")).toEqual({ usd: 250, ngn: 345_000 });
+  });
+
+  it("returns the lower tier for the tablet when taken without the device", () => {
+    const t = getPackage(TABLET);
+    expect(packagePrice(t, "with")).toEqual({ usd: t.priceUSD, ngn: t.priceNGN });
+    expect(packagePrice(t, "without")).toEqual({ usd: t.priceWithoutUSD, ngn: t.priceWithoutNGN });
+  });
+
+  it("is safe for a missing package", () => {
+    expect(packagePrice(null)).toEqual({ usd: 0, ngn: 0 });
   });
 });
 
@@ -155,6 +190,16 @@ describe("summarisePreorders", () => {
     expect(s.total).toBe(2);
     expect(s.valued).toBe(0);
     expect(s.valueUSD).toBe(0);
+  });
+
+  it("uses the without-tablet price when the row says so", () => {
+    const t = getPackage(TABLET);
+    const s = summarisePreorders([
+      { package: TABLET, status: "new", tablet_option: "with" },
+      { package: TABLET, status: "new", tablet_option: "without" },
+    ]);
+    expect(s.valueUSD).toBe(t.priceUSD + t.priceWithoutUSD);
+    expect(s.valueNGN).toBe(t.priceNGN + t.priceWithoutNGN);
   });
 
   it("handles an empty list", () => {
@@ -199,5 +244,11 @@ describe("normaliseK12Preorder", () => {
     const row = normaliseK12Preorder({ ...validBody(), teacher_count: "", current_lms: "   " });
     expect(row.teacher_count).toBeNull();
     expect(row.current_lms).toBeNull();
+  });
+
+  it("only sets tablet_option for the tablet package", () => {
+    expect(normaliseK12Preorder({ ...validBody(), tablet_option: "without" }).tablet_option).toBeNull();
+    expect(normaliseK12Preorder({ ...validBody(), package: TABLET, tablet_option: "without" }).tablet_option).toBe("without");
+    expect(normaliseK12Preorder({ ...validBody(), package: TABLET }).tablet_option).toBe("with");
   });
 });
