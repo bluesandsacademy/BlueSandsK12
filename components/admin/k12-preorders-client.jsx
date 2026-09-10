@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { PLATFORM_INTERESTS, labelFor } from "@/lib/k12-preorder";
+import { PREORDER_PACKAGES, labelFor } from "@/lib/k12-preorder";
 
 export const STATUS_OPTIONS = ["new", "contacted", "qualified", "closed", "declined"];
 
@@ -121,7 +121,7 @@ export default function K12PreordersClient({ initialRows, total, page, limit, fi
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div>
                 <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Package</p>
-                <p className="font-semibold text-secondary truncate">{labelFor(PLATFORM_INTERESTS, row.package)}</p>
+                <p className="font-semibold text-secondary truncate">{labelFor(PREORDER_PACKAGES, row.package)}</p>
               </div>
               <div>
                 <p className="text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Licenses</p>
@@ -154,7 +154,7 @@ export default function K12PreordersClient({ initialRows, total, page, limit, fi
                   <p className="text-secondary">{row.contact_person}</p>
                   <p className="text-xs text-gray-400">{row.email}</p>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{labelFor(PLATFORM_INTERESTS, row.package)}</td>
+                <td className="px-6 py-4 text-gray-600">{labelFor(PREORDER_PACKAGES, row.package)}</td>
                 <td className="px-6 py-4 font-bold text-secondary">{row.student_licenses ?? "Not set"}</td>
                 <td className="px-6 py-4"><StatusPill value={row.status} /></td>
                 <td className="px-6 py-4 text-gray-400 whitespace-nowrap text-xs">{fmtDate(row.created_at)}</td>

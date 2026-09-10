@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
-import { ChevronLeft, Building2, GraduationCap, Package, CalendarClock, StickyNote, ListChecks } from "lucide-react";
+import { ChevronLeft, Building2, GraduationCap, Package, CalendarClock, StickyNote } from "lucide-react";
 import {
   SCHOOL_TYPES,
-  PLATFORM_INTERESTS,
+  PREORDER_PACKAGES,
   SUBSCRIPTION_DURATIONS,
   ACADEMIC_YEAR_OPTIONS,
   labelFor,
+  getPackage,
 } from "@/lib/k12-preorder";
 import { STATUS_OPTIONS } from "./k12-preorders-client";
 
@@ -80,7 +81,7 @@ export default function K12PreorderDetailClient({ preorder }) {
     }
   };
 
-  const interests = (preorder.interests || []).map((i) => labelFor(PLATFORM_INTERESTS, i));
+  const pkg = getPackage(preorder.package);
   const durations = (preorder.subscription_durations || []).map((d) => labelFor(SUBSCRIPTION_DURATIONS, d));
 
   return (
@@ -146,9 +147,10 @@ export default function K12PreorderDetailClient({ preorder }) {
 
         <Section title="Package" icon={Package}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Package" value={labelFor(PLATFORM_INTERESTS, preorder.package)} />
+            <Field label="Package" value={labelFor(PREORDER_PACKAGES, preorder.package)} />
+            <Field label="Age bracket" value={pkg?.ageRange} />
+            <Field label="Books" value={pkg?.books} />
             <Field label="Student licenses" value={preorder.student_licenses} />
-            <Field label="Teacher / admin accounts" value={preorder.teacher_admin_accounts} />
             <Field label="Preferred duration" value={durations.join(", ")} />
           </div>
         </Section>
@@ -163,17 +165,15 @@ export default function K12PreorderDetailClient({ preorder }) {
         </Section>
       </div>
 
-      <Section title="Interested in" icon={ListChecks}>
-        {interests.length === 0 ? (
-          <p className="text-sm text-gray-400">Nothing selected.</p>
-        ) : (
+      {pkg && (
+        <Section title="Package contents" icon={Package}>
           <div className="flex flex-wrap gap-2">
-            {interests.map((label) => (
+            {[...pkg.topics, ...pkg.includes].map((label) => (
               <span key={label} className="px-3 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold">{label}</span>
             ))}
           </div>
-        )}
-      </Section>
+        </Section>
+      )}
 
       <Section title="Additional requirements" icon={StickyNote}>
         <p className="text-sm text-secondary whitespace-pre-wrap">
