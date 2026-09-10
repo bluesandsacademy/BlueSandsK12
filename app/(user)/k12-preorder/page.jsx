@@ -18,10 +18,13 @@ import {
   PREORDER_PACKAGES,
   SUBSCRIPTION_DURATIONS,
   ACADEMIC_YEAR_OPTIONS,
+  TABLET_OPTIONS,
   validateK12Preorder,
   labelFor,
   getPackage,
+  packagePrice,
 } from "@/lib/k12-preorder";
+import { fmtNGN } from "@/lib/products";
 
 /* Blue Sands K12 platform pre-order.
 
@@ -52,6 +55,7 @@ const EMPTY = {
   teacher_count: "",
   current_lms: "",
   package: "",
+  tablet_option: "with",
   student_licenses: "",
   subscription_durations: [],
   implementation_date: "",
@@ -166,8 +170,13 @@ function CheckList({ options, values, onToggle }) {
 // Picture picker for the four pre-order packages. All four stay visible at once
 // (two columns, even on the smallest phones) so a school can compare them, and
 // the chosen one expands a detail panel underneath.
-function PackagePicker({ value, onChange }) {
+function PackagePicker({ value, onChange, tabletOption, onTabletOption }) {
   const chosen = getPackage(value);
+  const cardPrice = (p) =>
+    p.hasTabletOption ? `From ${fmtNGN(p.priceWithoutNGN)}` : fmtNGN(p.priceNGN);
+  const unit = (p) => (p.hasTabletOption ? "per student" : "per kit");
+  const chosenPrice = chosen ? packagePrice(chosen, tabletOption) : null;
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
@@ -206,6 +215,13 @@ function PackagePicker({ value, onChange }) {
               <p className="text-[13px] font-semibold text-gray-400 mt-0.5">
                 {p.ageRange}
               </p>
+              <p className="text-[15px] font-display font-bold text-secondary mt-1.5">
+                {cardPrice(p)}
+                <span className="text-[12px] font-semibold text-gray-400">
+                  {" "}
+                  {unit(p)}
+                </span>
+              </p>
             </button>
           );
         })}
@@ -219,6 +235,38 @@ function PackagePicker({ value, onChange }) {
           transition={{ duration: 0.2 }}
           className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4 sm:p-5 space-y-4"
         >
+          {chosen.hasTabletOption && (
+            <div>
+              <p className="text-[13px] font-semibold uppercase tracking-wide text-gray-400 mb-1.5">
+                Smart Tablet
+              </p>
+              <div className="grid grid-cols-1 gap-2.5">
+                {TABLET_OPTIONS.map((o) => (
+                  <OptionRow
+                    key={o.id}
+                    selected={tabletOption === o.id}
+                    onClick={() => onTabletOption(o.id)}
+                  >
+                    {o.label}
+                  </OptionRow>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-baseline justify-between rounded-xl bg-primary/5 px-3.5 py-3">
+            <span className="text-[13px] font-semibold uppercase tracking-wide text-primary">
+              List price
+            </span>
+            <span className="font-display font-bold text-secondary text-lg">
+              {fmtNGN(chosenPrice.ngn)}
+              <span className="text-[12px] font-semibold text-gray-400">
+                {" "}
+                {chosen.hasTabletOption ? "per student" : "per kit"}
+              </span>
+            </span>
+          </div>
+
           <div className="grid grid-cols-2 gap-3 text-[13px]">
             <div>
               <p className="font-semibold uppercase tracking-wide text-gray-400">
@@ -568,7 +616,12 @@ export default function K12PreorderPage() {
                   <Label required>Package you are interested in</Label>
                   <PackagePicker
                     value={form.package}
-                    onChange={(v) => set("package", v)}
+                    onChange={(v) => {
+                      set("package", v);
+                      set("tablet_option", "with");
+                    }}
+                    tabletOption={form.tablet_option}
+                    onTabletOption={(v) => set("tablet_option", v)}
                   />
                   <FieldError msg={errors.package} />
                 </div>
@@ -680,6 +733,27 @@ export default function K12PreorderPage() {
                       form.package && labelFor(PREORDER_PACKAGES, form.package)
                     }
                   />
+                  {getPackage(form.package)?.hasTabletOption && (
+                    <SummaryRow
+                      label="Smart Tablet"
+                      value={labelFor(TABLET_OPTIONS, form.tablet_option)}
+                    />
+                  )}
+                  {getPackage(form.package) && (
+                    <SummaryRow
+                      label="List price"
+                      value={`${fmtNGN(
+                        packagePrice(
+                          getPackage(form.package),
+                          form.tablet_option,
+                        ).ngn,
+                      )} ${
+                        getPackage(form.package).hasTabletOption
+                          ? "per student"
+                          : "per kit"
+                      }`}
+                    />
+                  )}
                   <SummaryRow
                     label="Student licenses"
                     value={form.student_licenses}
