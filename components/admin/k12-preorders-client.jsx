@@ -3,8 +3,12 @@
 import { useState, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import {
+  Search, SlidersHorizontal, ChevronLeft, ChevronRight, ArrowRight,
+  ClipboardList, Clock, CheckCircle2, CreditCard,
+} from "lucide-react";
 import { PREORDER_PACKAGES, labelFor } from "@/lib/k12-preorder";
+import { fmtUSD, fmtNGN } from "@/lib/products";
 
 export const STATUS_OPTIONS = ["new", "contacted", "qualified", "closed", "declined"];
 
@@ -26,7 +30,24 @@ function StatusPill({ value }) {
   );
 }
 
-export default function K12PreordersClient({ initialRows, total, page, limit, filters }) {
+function StatCard({ Icon, accent, accentBg, label, value, sub }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div className="flex items-center gap-2.5 mb-2.5">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: accentBg }}>
+          <Icon className="h-4 w-4" style={{ color: accent }} strokeWidth={2.2} />
+        </span>
+        <span className="text-[13px] font-semibold text-gray-400">{label}</span>
+      </div>
+      <p className="text-2xl font-black text-secondary leading-none" style={{ fontFamily: "var(--font-jarkata)" }}>
+        {value}
+      </p>
+      {sub && <p className="text-xs text-gray-400 mt-1.5">{sub}</p>}
+    </div>
+  );
+}
+
+export default function K12PreordersClient({ initialRows, total, page, limit, filters, stats }) {
   const router   = useRouter();
   const pathname = usePathname();
   const [, startTransition] = useTransition();
@@ -59,6 +80,44 @@ export default function K12PreordersClient({ initialRows, total, page, limit, fi
           Platform pre-order requests. {total} total request{total !== 1 ? "s" : ""}.
         </p>
       </div>
+
+      {/* Stat cards */}
+      {stats && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <StatCard
+            Icon={ClipboardList}
+            accent="#0483e2"
+            accentBg="#e8f4ff"
+            label="Total pre-orders"
+            value={stats.total}
+            sub="All time"
+          />
+          <StatCard
+            Icon={Clock}
+            accent="#d97706"
+            accentBg="#fffbeb"
+            label="Awaiting review"
+            value={stats.awaiting}
+            sub="Status: new"
+          />
+          <StatCard
+            Icon={CheckCircle2}
+            accent="#7c3aed"
+            accentBg="#f5f3ff"
+            label="Qualified"
+            value={stats.qualified}
+            sub="Progressing to a deal"
+          />
+          <StatCard
+            Icon={CreditCard}
+            accent="#059669"
+            accentBg="#ecfdf5"
+            label="Estimated value"
+            value={fmtUSD(stats.valueUSD)}
+            sub={`${fmtNGN(stats.valueNGN)} across ${stats.valued} pre-order${stats.valued !== 1 ? "s" : ""}, declined excluded`}
+          />
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">

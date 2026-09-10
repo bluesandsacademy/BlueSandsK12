@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import K12PreordersClient from "@/components/admin/k12-preorders-client";
+import { summarisePreorders } from "@/lib/k12-preorder";
 
 export const metadata = { title: "Admin: K12 Pre-Orders" };
 
@@ -26,7 +27,14 @@ export default async function K12PreordersPage({ searchParams }) {
       `school_org_name.ilike.%${search}%,contact_person.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`,
     );
 
-  const { data: rows, count } = await query;
+  // Stat cards read the whole table (package + status only), independent of the
+  // current filter or page.
+  const [{ data: rows, count }, { data: allRows }] = await Promise.all([
+    query,
+    supabaseAdmin.from("k12_platform_preorders").select("package,status"),
+  ]);
+
+  const stats = summarisePreorders(allRows || []);
 
   return (
     <K12PreordersClient
@@ -35,6 +43,7 @@ export default async function K12PreordersPage({ searchParams }) {
       page={page}
       limit={limit}
       filters={{ status, search }}
+      stats={stats}
     />
   );
 }

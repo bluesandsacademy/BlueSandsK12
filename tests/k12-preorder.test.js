@@ -10,6 +10,7 @@ import {
   normaliseK12Preorder,
   labelFor,
   getPackage,
+  summarisePreorders,
 } from "@/lib/k12-preorder";
 
 const validBody = () => ({
@@ -55,6 +56,8 @@ describe("option lists", () => {
       expect(p.books.trim().length).toBeGreaterThan(0);
       expect(p.topics.length).toBeGreaterThan(0);
       expect(p.includes.length).toBeGreaterThan(0);
+      expect(p.priceUSD).toBeGreaterThan(0);
+      expect(p.priceNGN).toBeGreaterThan(0);
     }
   });
 
@@ -116,6 +119,48 @@ describe("validateK12Preorder", () => {
     delete body.demo_requested;
     delete body.additional_requirements;
     expect(validateK12Preorder(body).valid).toBe(true);
+  });
+});
+
+describe("summarisePreorders", () => {
+  it("counts rows and sums one package price per pre-order", () => {
+    const s = summarisePreorders([
+      { package: "into-the-community", status: "new" },       // $250
+      { package: "into-the-community", status: "contacted" }, // $250
+      { package: "ar-science-lab-full-kit", status: "qualified" }, // $450
+    ]);
+    expect(s.total).toBe(3);
+    expect(s.awaiting).toBe(1);
+    expect(s.qualified).toBe(1);
+    expect(s.valued).toBe(3);
+    expect(s.valueUSD).toBe(950);
+    expect(s.valueNGN).toBe(345_000 + 345_000 + 620_000);
+  });
+
+  it("excludes declined rows from the value but still counts them in total", () => {
+    const s = summarisePreorders([
+      { package: "into-the-community", status: "declined" },
+      { package: "into-the-community", status: "new" },
+    ]);
+    expect(s.total).toBe(2);
+    expect(s.valued).toBe(1);
+    expect(s.valueUSD).toBe(250);
+  });
+
+  it("ignores rows with an unknown or missing package", () => {
+    const s = summarisePreorders([
+      { package: null, status: "new" },
+      { package: "gone", status: "contacted" },
+    ]);
+    expect(s.total).toBe(2);
+    expect(s.valued).toBe(0);
+    expect(s.valueUSD).toBe(0);
+  });
+
+  it("handles an empty list", () => {
+    expect(summarisePreorders()).toEqual({
+      total: 0, awaiting: 0, qualified: 0, valued: 0, valueUSD: 0, valueNGN: 0,
+    });
   });
 });
 

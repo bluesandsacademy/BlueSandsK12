@@ -13,6 +13,7 @@ import {
   labelFor,
   getPackage,
 } from "@/lib/k12-preorder";
+import { fmtUSD, fmtNGN } from "@/lib/products";
 import { STATUS_OPTIONS } from "./k12-preorders-client";
 
 function Section({ title, icon: Icon, children }) {
@@ -148,6 +149,7 @@ export default function K12PreorderDetailClient({ preorder }) {
         <Section title="Package" icon={Package}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Package" value={labelFor(PREORDER_PACKAGES, preorder.package)} />
+            <Field label="List price" value={pkg && `${fmtUSD(pkg.priceUSD)} / ${fmtNGN(pkg.priceNGN)}`} />
             <Field label="Age bracket" value={pkg?.ageRange} />
             <Field label="Books" value={pkg?.books} />
             <Field label="Student licenses" value={preorder.student_licenses} />
