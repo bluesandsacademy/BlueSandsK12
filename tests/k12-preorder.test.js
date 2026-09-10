@@ -65,12 +65,22 @@ describe("option lists", () => {
     }
   });
 
-  it("only the tablet package has a without-tablet tier, $50 cheaper", () => {
+  it("only the tablet package has the with/without choice", () => {
     const withOption = PREORDER_PACKAGES.filter((p) => p.hasTabletOption);
     expect(withOption.map((p) => p.id)).toEqual([TABLET]);
-    const t = getPackage(TABLET);
-    expect(t.priceUSD - t.priceWithoutUSD).toBe(50);
-    expect(t.priceWithoutNGN).toBeLessThan(t.priceNGN);
+  });
+
+  it("tablet options carry a price, unit and description", () => {
+    expect(TABLET_OPTIONS.map((o) => o.id)).toEqual(["with", "without"]);
+    for (const o of TABLET_OPTIONS) {
+      expect(o.priceNGN).toBeGreaterThan(0);
+      expect(o.priceUSD).toBeGreaterThan(0);
+      expect(o.unit.trim().length).toBeGreaterThan(0);
+      expect(o.description.length).toBeGreaterThan(20);
+    }
+    const [withT, withoutT] = TABLET_OPTIONS;
+    expect(withT.priceNGN).toBe(160_000);
+    expect(withoutT.priceNGN).toBe(50_000);
   });
 
   it("package ids are unique", () => {
@@ -141,19 +151,21 @@ describe("validateK12Preorder", () => {
 });
 
 describe("packagePrice", () => {
-  it("returns the standard price for a book package regardless of tablet_option", () => {
+  it("returns the per-kit price for a book package regardless of tablet_option", () => {
     const p = getPackage("into-the-community");
-    expect(packagePrice(p, "without")).toEqual({ usd: 250, ngn: 345_000 });
+    expect(packagePrice(p, "without")).toEqual({ usd: 250, ngn: 345_000, unit: "per kit" });
   });
 
-  it("returns the lower tier for the tablet when taken without the device", () => {
+  it("prices the tablet by its chosen option, defaulting to 'with'", () => {
     const t = getPackage(TABLET);
-    expect(packagePrice(t, "with")).toEqual({ usd: t.priceUSD, ngn: t.priceNGN });
-    expect(packagePrice(t, "without")).toEqual({ usd: t.priceWithoutUSD, ngn: t.priceWithoutNGN });
+    const [withT, withoutT] = TABLET_OPTIONS;
+    expect(packagePrice(t, "with")).toEqual({ usd: withT.priceUSD, ngn: withT.priceNGN, unit: withT.unit });
+    expect(packagePrice(t, "without")).toEqual({ usd: withoutT.priceUSD, ngn: withoutT.priceNGN, unit: withoutT.unit });
+    expect(packagePrice(t, undefined)).toEqual(packagePrice(t, "with"));
   });
 
   it("is safe for a missing package", () => {
-    expect(packagePrice(null)).toEqual({ usd: 0, ngn: 0 });
+    expect(packagePrice(null)).toEqual({ usd: 0, ngn: 0, unit: null });
   });
 });
 
@@ -193,13 +205,13 @@ describe("summarisePreorders", () => {
   });
 
   it("uses the without-tablet price when the row says so", () => {
-    const t = getPackage(TABLET);
+    const [withT, withoutT] = TABLET_OPTIONS;
     const s = summarisePreorders([
       { package: TABLET, status: "new", tablet_option: "with" },
       { package: TABLET, status: "new", tablet_option: "without" },
     ]);
-    expect(s.valueUSD).toBe(t.priceUSD + t.priceWithoutUSD);
-    expect(s.valueNGN).toBe(t.priceNGN + t.priceWithoutNGN);
+    expect(s.valueUSD).toBe(withT.priceUSD + withoutT.priceUSD);
+    expect(s.valueNGN).toBe(withT.priceNGN + withoutT.priceNGN);
   });
 
   it("handles an empty list", () => {

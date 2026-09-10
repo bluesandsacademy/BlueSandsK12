@@ -157,7 +157,7 @@ export default function K12PreorderDetailClient({ preorder }) {
             )}
             <Field
               label="List price"
-              value={price && `${fmtNGN(price.ngn)} / ${fmtUSD(price.usd)} ${pkg.hasTabletOption ? "per student" : "per kit"}`}
+              value={price && `${fmtNGN(price.ngn)} / ${fmtUSD(price.usd)} ${price.unit}`}
             />
             <Field label="Age bracket" value={pkg?.ageRange} />
             <Field label="Books" value={pkg?.books} />

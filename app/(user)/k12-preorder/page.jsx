@@ -110,13 +110,16 @@ function NumberField(props) {
 }
 
 // Full-width selectable row. Big touch target, whole row is the control.
-function OptionRow({ selected, onClick, kind = "radio", children }) {
+// Pass `description` for a second line under the label.
+function OptionRow({ selected, onClick, kind = "radio", description, children }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`flex items-center gap-3 w-full min-h-13.5 px-4 py-3 text-left rounded-xl border-2 transition-colors ${
+      className={`flex gap-3 w-full min-h-13.5 px-4 py-3 text-left rounded-xl border-2 transition-colors ${
+        description ? "items-start" : "items-center"
+      } ${
         selected
           ? "border-primary bg-primary/5 text-secondary"
           : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
@@ -124,12 +127,21 @@ function OptionRow({ selected, onClick, kind = "radio", children }) {
     >
       <span
         className={`shrink-0 w-5 h-5 flex items-center justify-center border-2 ${
-          kind === "radio" ? "rounded-full" : "rounded-md"
-        } ${selected ? "border-primary bg-primary text-white" : "border-gray-300 bg-white"}`}
+          description ? "mt-0.5" : ""
+        } ${kind === "radio" ? "rounded-full" : "rounded-md"} ${
+          selected ? "border-primary bg-primary text-white" : "border-gray-300 bg-white"
+        }`}
       >
         {selected && <Check className="w-3.5 h-3.5" strokeWidth={3} />}
       </span>
-      <span className="text-[15px] font-semibold">{children}</span>
+      <span className="min-w-0">
+        <span className="block text-[15px] font-semibold">{children}</span>
+        {description && (
+          <span className="block text-[13px] font-medium text-gray-500 mt-0.5 leading-snug">
+            {description}
+          </span>
+        )}
+      </span>
     </button>
   );
 }
@@ -172,9 +184,7 @@ function CheckList({ options, values, onToggle }) {
 // the chosen one expands a detail panel underneath.
 function PackagePicker({ value, onChange, tabletOption, onTabletOption }) {
   const chosen = getPackage(value);
-  const cardPrice = (p) =>
-    p.hasTabletOption ? `From ${fmtNGN(p.priceWithoutNGN)}` : fmtNGN(p.priceNGN);
-  const unit = (p) => (p.hasTabletOption ? "per student" : "per kit");
+  const cardPrice = (p) => packagePrice(p, "with");
   const chosenPrice = chosen ? packagePrice(chosen, tabletOption) : null;
 
   return (
@@ -216,10 +226,10 @@ function PackagePicker({ value, onChange, tabletOption, onTabletOption }) {
                 {p.ageRange}
               </p>
               <p className="text-[15px] font-display font-bold text-secondary mt-1.5">
-                {cardPrice(p)}
+                {fmtNGN(cardPrice(p).ngn)}
                 <span className="text-[12px] font-semibold text-gray-400">
                   {" "}
-                  {unit(p)}
+                  {cardPrice(p).unit}
                 </span>
               </p>
             </button>
@@ -246,6 +256,7 @@ function PackagePicker({ value, onChange, tabletOption, onTabletOption }) {
                     key={o.id}
                     selected={tabletOption === o.id}
                     onClick={() => onTabletOption(o.id)}
+                    description={o.description}
                   >
                     {o.label}
                   </OptionRow>
@@ -262,7 +273,7 @@ function PackagePicker({ value, onChange, tabletOption, onTabletOption }) {
               {fmtNGN(chosenPrice.ngn)}
               <span className="text-[12px] font-semibold text-gray-400">
                 {" "}
-                {chosen.hasTabletOption ? "per student" : "per kit"}
+                {chosenPrice.unit}
               </span>
             </span>
           </div>
@@ -739,21 +750,19 @@ export default function K12PreorderPage() {
                       value={labelFor(TABLET_OPTIONS, form.tablet_option)}
                     />
                   )}
-                  {getPackage(form.package) && (
-                    <SummaryRow
-                      label="List price"
-                      value={`${fmtNGN(
-                        packagePrice(
-                          getPackage(form.package),
-                          form.tablet_option,
-                        ).ngn,
-                      )} ${
-                        getPackage(form.package).hasTabletOption
-                          ? "per student"
-                          : "per kit"
-                      }`}
-                    />
-                  )}
+                  {getPackage(form.package) &&
+                    (() => {
+                      const pr = packagePrice(
+                        getPackage(form.package),
+                        form.tablet_option,
+                      );
+                      return (
+                        <SummaryRow
+                          label="List price"
+                          value={`${fmtNGN(pr.ngn)} ${pr.unit}`}
+                        />
+                      );
+                    })()}
                   <SummaryRow
                     label="Student licenses"
                     value={form.student_licenses}
