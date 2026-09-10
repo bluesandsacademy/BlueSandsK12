@@ -12,7 +12,7 @@ import {
   Handshake,
   HeartHandshake,
   Mail,
-  Download,
+  School,
 } from "lucide-react";
 
 const navLinks = [
@@ -107,14 +107,13 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <span
-            aria-disabled="true"
-            title="Brochure coming soon"
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-secondary/15 text-secondary/40 text-sm font-display font-bold rounded-full cursor-not-allowed select-none"
+          <Link
+            href="/k12-preorder"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-primary text-white text-sm font-display font-bold rounded-full hover:bg-secondary transition-colors"
           >
-            <Download className="w-4 h-4" strokeWidth={2.5} />
-            Download Brochure
-          </span>
+            <School className="w-4 h-4" strokeWidth={2.5} />
+            K12 Pre-Order
+          </Link>
         </div>
 
         {/* Mobile toggle */}
@@ -147,14 +146,14 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-            <span
-              aria-disabled="true"
-              title="Brochure coming soon"
-              className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-secondary/15 text-secondary/40 text-center font-display font-bold rounded-xl cursor-not-allowed select-none"
+            <Link
+              href="/k12-preorder"
+              onClick={closeMenu}
+              className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-primary text-white text-center font-display font-bold rounded-xl hover:bg-secondary transition-colors"
             >
-              <Download className="w-5 h-5" strokeWidth={2.5} />
-              Download Brochure
-            </span>
+              <School className="w-5 h-5" strokeWidth={2.5} />
+              K12 Pre-Order
+            </Link>
           </nav>
         </div>
       )}
